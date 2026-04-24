@@ -1,26 +1,239 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Uncut Sans';
+  src: url('/uncut_sans-main/Webfonts/UncutSans-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --font-sans:  'Uncut Sans', sans-serif;
+  --bg:          rgb(250,249,247);
+  --surface:     rgb(240,238,233);
+  --dot-color:   rgba(0,0,0,0.07);
+  --c-primary:   rgba(22, 22, 22, 0.88);
+  --c-high:      rgba(0,0,0,0.78);
+  --c-mid:       rgba(10, 10, 10, 0.65);
+  --c-body:      rgba(0,0,0,0.55);
+  --c-secondary: rgba(0,0,0,0.45);
+  --c-dim:       rgba(0,0,0,0.35);
+  --c-faint:     rgba(0,0,0,0.28);
+  --c-ghost:     rgba(0,0,0,0.18);
+  --divider:     rgba(0,0,0,0.06);
+  --border:      rgba(0,0,0,0.08);
+  --border-mid:  rgba(0,0,0,0.12);
+  --hover-bg:    rgba(0,0,0,0.04);
+  --image-bg:    rgba(0,0,0,0.03);
+  --icon-color:  rgba(0,0,0,0.4);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+body.dark {
+  --bg:          rgb(14,13,12);
+  --surface:     rgb(26,24,21);
+  --dot-color:   rgba(255,255,255,0.055);
+  --c-primary:   rgba(255,255,255,0.92);
+  --c-high:      rgba(255,255,255,0.82);
+  --c-mid:       rgba(255,255,255,0.70);
+  --c-body:      rgba(255,255,255,0.60);
+  --c-secondary: rgba(255,255,255,0.50);
+  --c-dim:       rgba(255,255,255,0.42);
+  --c-faint:     rgba(255,255,255,0.35);
+  --c-ghost:     rgba(255,255,255,0.20);
+  --divider:     rgba(255,255,255,0.07);
+  --border:      rgba(255,255,255,0.09);
+  --border-mid:  rgba(255,255,255,0.14);
+  --hover-bg:    rgba(255,255,255,0.06);
+  --image-bg:    rgba(255,255,255,0.05);
+  --icon-color:  rgba(255,255,255,0.45);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body.sunset {
+  --bg:          rgb(252,247,233);
+  --surface:     rgb(247,237,208);
+  --dot-color:   rgba(160,110,20,0.09);
+  --c-primary:   rgba(44,28,4,0.90);
+  --c-high:      rgba(44,28,4,0.80);
+  --c-mid:       rgba(44,28,4,0.65);
+  --c-body:      rgba(44,28,4,0.55);
+  --c-secondary: rgba(44,28,4,0.45);
+  --c-dim:       rgba(44,28,4,0.36);
+  --c-faint:     rgba(44,28,4,0.27);
+  --c-ghost:     rgba(44,28,4,0.16);
+  --divider:     rgba(160,110,20,0.10);
+  --border:      rgba(160,110,20,0.15);
+  --border-mid:  rgba(160,110,20,0.22);
+  --hover-bg:    rgba(160,110,20,0.07);
+  --image-bg:    rgba(160,110,20,0.04);
+  --icon-color:  rgba(44,28,4,0.40);
+}
+
+/* Shadow bg: only visible in sunset mode */
+.shadow-bg {
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+body.sunset .shadow-bg {
+  opacity: 1;
+}
+
+/* Smooth theme transitions — applied only during the switch, not during hover */
+body.theme-switching,
+body.theme-switching * {
+  transition:
+    background-color 0.45s ease,
+    color            0.35s ease,
+    border-color     0.35s ease,
+    fill             0.35s ease !important;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg);
+  color: var(--c-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ── Tamagotchi ───────────────────────────────────────────── */
+.tama-egg {
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+}
+.tama-lcd-grid {
+  background-image:
+    linear-gradient(rgba(33,51,27,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(33,51,27,0.05) 1px, transparent 1px);
+  background-size: 2px 2px;
+}
+.tama-glass {
+  background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 40%);
+}
+.tama-plastic {
+  background: radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 60%);
+}
+@keyframes tama-marquee {
+  0%   { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+@keyframes tama-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+@keyframes tama-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-2px); }
+}
+
+/* ── End Tamagotchi ───────────────────────────────────────── */
+
+@keyframes avatarSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes avatarWiggle {
+  0%   { transform: perspective(300px) rotateZ(0deg)  scale(1.07); }
+  20%  { transform: perspective(300px) rotateZ(-9deg) scale(1.12); }
+  40%  { transform: perspective(300px) rotateZ(7deg)  scale(1.11); }
+  60%  { transform: perspective(300px) rotateZ(-5deg) scale(1.09); }
+  80%  { transform: perspective(300px) rotateZ(3deg)  scale(1.08); }
+  100% { transform: perspective(300px) rotateZ(0deg)  scale(1.07); }
+}
+
+@keyframes avatarRipple {
+  0%   { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(2); }
+}
+
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes shimmerSlide {
+  0%   { left: -120px; opacity: 0; }
+  5%   { opacity: 0.25; }
+  95%  { opacity: 0.25; }
+  100% { left: 110%; opacity: 0; }
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Padding */
+  .rsp-px        { padding-left: 20px !important; padding-right: 20px !important; }
+  .rsp-pb        { padding-bottom: 80px !important; }
+
+  /* Grids → single column */
+  .rsp-stack     { grid-template-columns: 1fr !important; gap: 24px !important; }
+  .rsp-stack-sm  { grid-template-columns: 1fr !important; gap: 8px !important; }
+
+  /* About: center tamagotchi below text */
+  .rsp-tama      { display: flex !important; justify-content: center !important; }
+
+  /* Case study heading */
+  .rsp-cs-h1     { font-size: 22px !important; line-height: 1.2 !important; margin-bottom: 24px !important; }
+
+  /* Hero profile row */
+  .rsp-hero-row  { gap: 12px !important; }
+
+  /* Experience grid: stack columns */
+  .rsp-exp-row   { grid-template-columns: 1fr !important; gap: 4px !important; padding: 16px 0 !important; }
+  .rsp-exp-period { font-size: 12px !important; margin-top: 2px !important; }
+
+  /* Contact handle text: trim on very small screens */
+  .rsp-handle    { display: none !important; }
+
+  /* Footer */
+  .rsp-footer-inner  { padding: 28px 20px !important; }
+  .rsp-footer-bottom { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
+
+  /* Section spec strip: let items wrap without dividers looking odd */
+  .rsp-spec-item { border-right: none !important; padding-right: 0 !important; margin-right: 24px !important; }
+
+  /* Hide arrows in folder carousel on touch */
+  .rsp-hide      { display: none !important; }
+
+  /* Accordion: swap to mobile carousel */
+  .rsp-accordion-desktop { display: none !important; }
+  .rsp-accordion-mobile  { display: block !important; }
+
+  /* Multi-highlight: swap grid for carousel */
+  .rsp-mh-desktop { display: none !important; }
+  .rsp-mh-mobile  { display: flex !important; flex-direction: column; gap: 12px; }
+
+  /* Photo gallery: swap polaroid for simple grid */
+  .rsp-gallery-desktop { display: none !important; }
+  .rsp-gallery-mobile  { display: block !important; }
+
+  /* Experience: company left + role right on same row, then period + desc stacked */
+  .rsp-exp-item {
+    grid-template-areas: "company role" "period period" "desc desc" !important;
+    grid-template-columns: 1fr auto !important;
+    column-gap: 12px !important;
+  }
+  .rsp-exp-role { text-align: right !important; }
+  .rsp-exp-desc { grid-area: desc !important; }
+
+  /* Case study: collapse sidebar grid + show mobile back button */
+  .rsp-cs-grid       { display: block !important; padding: 0 20px !important; }
+  .rsp-toc-sidebar   { display: none !important; }
+  .rsp-back-mobile   { display: block !important; }
 }

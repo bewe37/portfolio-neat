@@ -1,65 +1,265 @@
-import Image from "next/image";
+import LogoAvatar from "@/components/LogoAvatar"
+import ContactList from "@/components/ContactList"
+import ThemeToggle from "@/components/ThemeToggle"
+import HeroTextWithPen from "@/components/HeroTextWithPen"
+import HeaderNav from "@/components/HeaderNav"
+import ProjectFolders, { AMD_PAPERS, AMD_AI_PAPERS, FME_PAPERS } from "@/components/ProjectFolders"
+import MeteorFrame from "@/components/MeteorFrame"
+import MarqueeFooter from "@/components/MarqueeFooter"
+import AboutSection from "@/components/AboutSection"
+import PhotoGallery from "@/components/PhotoGallery"
 
-export default function Home() {
+const PROJECTS = [
+  {
+    title: "Conversational AI — AMD Adrenalin",
+    category: "Product Design",
+    date: "2025",
+    description: "Designing a conversational AI assistant embedded in AMD's Adrenalin software for millions of gamers.",
+    href: "/amd_ai_project",
+    folder: "/redFur.svg",
+    folderTransform: "none",
+    chip: "/amdchip.svg",
+    papers: ["/amdMainImage.png", "/Pinned Widgets Container.svg", "/Now Playing In-Game Widget.svg"],
+    paperCfg: AMD_AI_PAPERS,
+  },
+  {
+    title: "The Design System That Kept AMD's Team Aligned",
+    category: "Design System",
+    date: "May 2025 – Dec 2025",
+    description: "Building a scalable component library that unified design and engineering across AMD's product suite.",
+    href: "/amd_project",
+    folder: "/metal.svg",
+    chip: "/amdchip.svg",
+    papers: ["/DSHighlight.png", "/comp 1.png", "/comp 3.png"],
+    paperCfg: AMD_PAPERS,
+  },
+  {
+    title: "Reducing Clutter Without Losing Context",
+    category: "Product Design",
+    date: "April – August 2024",
+    description: "Streamlining FME's annotation workflow so users can focus on insight, not interface noise.",
+    href: "/fme_annotation_project",
+    folder: "/chequereds.svg",
+    chip: "/safechip.svg",
+    chipSize: 100,
+    papers: ["/Annotation WindowD.png", "/AnnotationsExample.svg"],
+    paperCfg: FME_PAPERS,
+  },
+  {
+    title: "Simplifying Donation Tracking at Scale",
+    category: "Product Design",
+    date: "February 2026 – Now",
+    description: "Designing a clear, humane dashboard for nonprofits to manage donor relationships at scale.",
+    href: "/blueprint",
+    folder: "/plastic.svg",
+    chip: "/bpLogo.svg",
+    chipSize: 52,
+    papers: ["/blueprintpeak.png", "/CardPeak.png", "/CardPeak2.png"],
+    peekPapers: true,
+  },
+  {
+    title: "New Project",
+    category: "Product Design",
+    date: "2026",
+    description: "Coming soon.",
+    href: "/",
+    folder: "/avocado.svg",
+  },
+]
+
+
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div
+      style={{
+        minHeight: "100dvh",
+        display: "flex",
+        justifyContent: "center",
+        position: "relative",
+        zIndex: 1,
+      }}
+    >
+      <main
+        style={{
+          width: "100%",
+          maxWidth: 1280,
+          padding: "0 48px 48px",
+          display: "flex",
+          flexDirection: "column",
+        }}
+        className="rsp-px"
+      >
+        {/* ── Hero ───────────────────────────────────────────────────── */}
+        <section
+          style={{
+            position: "relative",
+            padding: "56px 0 48px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 28,
+            overflow: "visible",
+          }}
+        >
+          <MeteorFrame />
+
+          {/* Profile row */}
+          <div
+            className="rsp-hero-row"
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              justifyContent: "space-between",
+              gap: 20,
+              position: "relative",
+              zIndex: 20,
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <LogoAvatar />
+
+              <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <span
+                  style={{
+                    fontFamily: "var(--font-geist), Geist, sans-serif",
+                    fontSize: 18,
+                    fontWeight: 700,
+                    letterSpacing: "-0.01em",
+                    lineHeight: 1.2,
+                    color: "var(--c-primary)",
+                  }}
+                >
+                  georgius
+                </span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    fontSize: 16,
+                    fontWeight: 500,
+                    color: "var(--c-dim)",
+                    letterSpacing: "-0.01em",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Product Designer
+                </span>
+              </div>
+            </div>
+
+            <div style={{ paddingTop: 4, display: "flex", alignItems: "center", gap: 8 }}>
+              <HeaderNav aboutLink="/projects" />
+              <ThemeToggle />
+            </div>
+          </div>
+
+          {/* Bio */}
+          <div style={{ position: "relative", zIndex: 1, maxWidth: 720 }}>
+            <HeroTextWithPen
+              before="Hey, I'm"
+              name="Georgius"
+              nameColor="rgb(255,107,48)"
+              middle="a design engineer at"
+              company="AMD"
+              companyLink="/amd_software_simplified"
+              companyColor="rgb(80,100,200)"
+              after=" based in Toronto. I spend most of my time crafting polished interfaces for web experiences, and I'm passionate about accessibility, web animation and building products."
+              fontSize={17}
+              fontWeight={400}
+              fontFamily="var(--font-sans)"
+              textColor="var(--c-primary)"
+              dimmedColor="var(--c-dim)"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+          </div>
+        </section>
+
+        {/* ── Selected Work ───────────────────────────────────────────── */}
+        <section style={{ padding: "48px 0 72px", display: "flex", flexDirection: "column", gap: 32 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: 17, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.2, margin: 0 }}>
+              Selected projects
+            </p>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 400, color: "var(--c-dim)", letterSpacing: "-0.01em", lineHeight: 1.5, margin: 0 }}>
+              Curated projects of past work experience &amp; experiments.
+            </p>
+          </div>
+
+          {/* Textured panel */}
+          <div style={{
+            position:        "relative",
+            borderRadius:    20,
+            padding:         "0 40px 48px",
+            backgroundColor: "var(--surface)",
+            backgroundImage: "radial-gradient(circle, var(--dot-color) 1px, transparent 1px)",
+            backgroundSize:  "18px 18px",
+            overflow:        "visible",
+          }}>
+            <ProjectFolders projects={PROJECTS} />
+          </div>
+        </section>
+
+        {/* ── About ───────────────────────────────────────────────────── */}
+        <AboutSection />
+
+        {/* ── Through the lens ───────────────────────────────────────── */}
+        <section style={{ padding: "48px 0 72px", display: "flex", flexDirection: "column", gap: 32 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: 17, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.2, margin: 0 }}>
+              Through the lens
+            </p>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 400, color: "var(--c-dim)", letterSpacing: "-0.01em", lineHeight: 1.5, margin: 0 }}>
+              Places, moments, and things I've pointed a camera at.
+            </p>
+          </div>
+          <PhotoGallery />
+        </section>
+
+        {/* ── Experience ──────────────────────────────────────────────── */}
+        <section style={{ padding: "48px 0 72px", display: "flex", flexDirection: "column", gap: 32 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: 17, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.2, margin: 0 }}>
+              Experience
+            </p>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", borderTop: "1px solid var(--divider)" }}>
+            {[
+              { company: "AMD",              role: "Design Engineer",        period: "May 2025 – Present",       desc: "Designing and building software experiences for AMD's Adrenalin platform, used by millions of gamers worldwide." },
+              { company: "Safe Software",    role: "Product Designer",       period: "Apr 2024 – Aug 2024",      desc: "Redesigned the annotation workflow in FME, reducing visual clutter while preserving spatial context for data engineers." },
+              { company: "Blueprint AMS",    role: "Product Designer",       period: "Feb 2026 – Present",       desc: "Leading design for a donor management platform built to simplify nonprofit operations at scale." },
+              { company: "Vosyn",            role: "Product Design Intern",  period: "Sep – Dec 2023",           desc: "Contributed to early-stage product design for an AI-driven multilingual media platform, working across UX research and interface design." },
+            ].map((exp, i, arr) => (
+              <div key={i} className="rsp-exp-item" style={{
+                display:             "grid",
+                gridTemplateAreas:   '"company role" "period desc"',
+                gridTemplateColumns: "180px 1fr",
+                columnGap:           32,
+                rowGap:              6,
+                padding:             "24px 0",
+                borderBottom:        i < arr.length - 1 ? "1px solid var(--divider)" : "none",
+              }}>
+                <span className="rsp-exp-company" style={{ gridArea: "company", fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 600, color: "var(--c-high)", letterSpacing: "-0.01em", alignSelf: "baseline" }}>{exp.company}</span>
+                <span className="rsp-exp-role"    style={{ gridArea: "role",    fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 600, color: "var(--c-mid)",  letterSpacing: "-0.01em", alignSelf: "baseline" }}>{exp.role}</span>
+                <span className="rsp-exp-period"  style={{ gridArea: "period",  fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 400, color: "var(--c-secondary)", letterSpacing: "-0.01em" }}>{exp.period}</span>
+                <span className="rsp-exp-desc"    style={{ gridArea: "desc",    fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 400, color: "var(--c-secondary)", letterSpacing: "-0.01em", lineHeight: 1.7 }}>{exp.desc}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── Contact ─────────────────────────────────────────────────── */}
+        <section style={{ padding: "48px 0 72px", display: "flex", flexDirection: "column", gap: 32 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: 17, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.2, margin: 0 }}>
+              Contact
+            </p>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 400, color: "var(--c-dim)", letterSpacing: "-0.01em", lineHeight: 1.5, margin: 0 }}>
+              Open to new opportunities and collaborations.
+            </p>
+          </div>
+          <ContactList />
+        </section>
+
+        {/* ── Footer ─────────────────────────────────────────────────── */}
+        <MarqueeFooter />
       </main>
     </div>
-  );
+  )
 }
