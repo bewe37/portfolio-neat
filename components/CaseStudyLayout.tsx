@@ -73,11 +73,11 @@ function SectionLabel({ text }: { text: string }) {
     <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 28 }}>
       <span style={{
         fontFamily:    "var(--font-sans)",
-        fontSize:      10,
-        fontWeight:    500,
+        fontSize:      11,
+        fontWeight:    600,
         letterSpacing: "0.08em",
         textTransform: "uppercase" as const,
-        color:         "var(--c-ghost)",
+        color:         "var(--c-secondary)",
         whiteSpace:    "nowrap" as const,
       }}>
         {text}
@@ -610,6 +610,7 @@ function NoodleAnimation() {
         transform:       `scale(${NOODLE_SCALE})`,
         transformOrigin: "bottom left",
         overflow:        "visible",
+        opacity:         0,
       }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/noodle-bottom.svg" alt="" draggable={false}
