@@ -18,22 +18,20 @@ const PHOTOS: Photo[] = [
   { src: "/image4.jpg"                       },
 ]
 
-// pre-set scatter so the table looks intentional, not random
-// x capped at ~590 so all cards are visible at ~750px container width
 const LAYOUT = [
-  { x: 240, y:  40, r: -5.5 },
-  { x: 374, y:  96, r:  3.2 },
-  { x: 514, y:  34, r: -2.8 },
-  { x: 648, y:  82, r:  5.5 },
-  { x: 782, y:  32, r: -4.2 },
-  { x: 304, y: 230, r:  4.5 },
-  { x: 436, y: 224, r: -6.0 },
-  { x: 574, y: 212, r:  2.8 },
-  { x: 706, y: 222, r: -3.5 },
-  { x: 824, y: 208, r:  4.8 },
+  { x:  28, y:  24, r: -5.5 },
+  { x: 196, y:  72, r:  3.2 },
+  { x: 364, y:  18, r: -2.8 },
+  { x: 528, y:  64, r:  5.5 },
+  { x: 696, y:  20, r: -4.2 },
+  { x: 112, y: 240, r:  4.5 },
+  { x: 280, y: 232, r: -6.0 },
+  { x: 448, y: 222, r:  2.8 },
+  { x: 612, y: 230, r: -3.5 },
+  { x: 764, y: 216, r:  4.8 },
 ]
 
-const SPRING = { type: "spring" as const, stiffness: 280, damping: 22 }
+const SPRING = { type: "spring" as const, stiffness: 300, damping: 24 }
 
 function Card({
   photo, ix, iy, ir, zIndex, onActivate, containerRef,
@@ -62,8 +60,8 @@ function Card({
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
       animate={{
-        rotate: dragging ? ir * 0.25 : hovered ? 0 : ir,
-        scale:  dragging ? 1.09 : hovered ? 1.05 : 1,
+        rotate: dragging ? ir * 0.2 : hovered ? 0 : ir,
+        scale:  dragging ? 1.08 : hovered ? 1.04 : 1,
       }}
       transition={SPRING}
       style={{
@@ -78,31 +76,40 @@ function Card({
       }}
     >
       <div style={{
-        backgroundColor: "#ffffff",
-        padding:         "7px 7px 30px",
+        backgroundColor: "#fefcf8",
+        padding:         "8px 8px 32px",
         borderRadius:    3,
         boxShadow:       dragging || hovered
-          ? "0 22px 52px rgba(0,0,0,0.24), 0 4px 14px rgba(0,0,0,0.10)"
-          : "0 4px 18px rgba(0,0,0,0.13), 0 1px 4px rgba(0,0,0,0.06)",
-        transition:  "box-shadow 0.2s ease",
-        userSelect:  "none",
+          ? "0 28px 64px rgba(0,0,0,0.28), 0 8px 20px rgba(0,0,0,0.13)"
+          : "0 4px 16px rgba(0,0,0,0.11), 0 1px 4px rgba(0,0,0,0.06)",
+        transition:      "box-shadow 0.22s ease",
+        userSelect:      "none",
       }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={photo.src}
-          alt={photo.label ?? ""}
-          draggable={false}
-          style={{ width: 122, height: 132, objectFit: "cover", display: "block", pointerEvents: "none" }}
-        />
+        <div style={{
+          overflow:  "hidden",
+          borderRadius: 1,
+          boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.06)",
+          lineHeight: 0,
+        }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={photo.src}
+            alt={photo.label ?? ""}
+            draggable={false}
+            style={{ width: 156, height: 148, objectFit: "cover", display: "block", pointerEvents: "none" }}
+          />
+        </div>
         <p style={{
-          margin:        "10px 0 0",
-          fontFamily:    "var(--font-sans)",
-          fontSize:      9,
-          fontWeight:    600,
-          color:         "rgba(0,0,0,0.28)",
-          letterSpacing: "0.07em",
+          margin:        0,
+          padding:       "9px 4px 0",
+          fontFamily:    "'Departure Mono', monospace",
+          fontSize:      10,
+          fontWeight:    400,
+          color:         "rgba(0,0,0,0.38)",
+          letterSpacing: "0.05em",
           textTransform: "uppercase",
           textAlign:     "center",
+          lineHeight:    1,
           minHeight:     12,
         }}>
           {photo.label ?? ""}
@@ -142,10 +149,17 @@ export default function PhotoGallery() {
         }}
       >
         <p style={{
-          position: "absolute", bottom: 14, right: 18, zIndex: 0,
-          fontFamily: "var(--font-sans)", fontSize: 10, fontWeight: 500,
-          color: "var(--c-faint)", letterSpacing: "0.06em", textTransform: "lowercase",
-          margin: 0, pointerEvents: "none",
+          position:      "absolute",
+          bottom:        14,
+          right:         18,
+          zIndex:        0,
+          fontFamily:    "'Departure Mono', monospace",
+          fontSize:      9,
+          fontWeight:    400,
+          color:         "var(--c-faint)",
+          letterSpacing: "0.04em",
+          margin:        0,
+          pointerEvents: "none",
         }}>
           drag to play
         </p>
@@ -164,7 +178,7 @@ export default function PhotoGallery() {
         ))}
       </div>
 
-      {/* ── Mobile: simple 2×2 grid + View all ── */}
+      {/* ── Mobile: simple 2×2 grid ── */}
       <div className="rsp-gallery-mobile" style={{ display: "none" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, borderRadius: 16, overflow: "hidden" }}>
           {PREVIEW_PHOTOS.map((photo, i) => (
@@ -178,10 +192,16 @@ export default function PhotoGallery() {
               />
               {photo.label && (
                 <span style={{
-                  position: "absolute", bottom: 8, left: 10,
-                  fontFamily: "var(--font-sans)", fontSize: 9, fontWeight: 600,
-                  color: "rgba(255,255,255,0.8)", letterSpacing: "0.07em",
-                  textTransform: "uppercase", textShadow: "0 1px 4px rgba(0,0,0,0.5)",
+                  position:      "absolute",
+                  bottom:        8,
+                  left:          10,
+                  fontFamily:    "'Departure Mono', monospace",
+                  fontSize:      8,
+                  fontWeight:    400,
+                  color:         "rgba(255,255,255,0.82)",
+                  letterSpacing: "0.06em",
+                  textTransform: "uppercase",
+                  textShadow:    "0 1px 4px rgba(0,0,0,0.5)",
                 }}>
                   {photo.label}
                 </span>

@@ -135,8 +135,8 @@ function Tooltip({
         <motion.div
           initial={{ opacity: 0, y: -6, scale: 0.94 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -4, scale: 0.96, transition: { duration: 0.12, ease: "easeIn" } }}
-          transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
+          exit={{ opacity: 0, y: -4, scale: 0.97, transition: { duration: 0.14, ease: [0.55, 0, 1, 0.45] } }}
+          transition={{ duration: 0.22, ease: [0.215, 0.61, 0.355, 1] }}
           style={{
             position: "absolute",
             top: coords.y + offset,
@@ -280,6 +280,25 @@ function PenChip({
   return inner
 }
 
+/* ── Inline tilt logo chip ───────────────────────────────────────────── */
+function InlineLogoChip({ src, alt, link, size = 40 }: { src: string; alt: string; link?: string; size?: number }) {
+  const [hov, setHov] = useState(false)
+  const inner = (
+    <motion.span
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      animate={{ rotate: hov ? -10 : 0, scale: hov ? 1.18 : 1, y: hov ? -3 : 0 }}
+      transition={{ type: "spring", stiffness: 420, damping: 18 }}
+      style={{ display: "inline-block", verticalAlign: "-4px", margin: "0 7px", cursor: link ? "pointer" : "default", lineHeight: 0 }}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={src} alt={alt} draggable={false} style={{ width: size, height: "auto", display: "block", userSelect: "none" }} />
+    </motion.span>
+  )
+  if (link) return <a href={link} target="_blank" rel="noopener noreferrer" style={{ display: "inline", textDecoration: "none" }}>{inner}</a>
+  return inner
+}
+
 /* ── Main ────────────────────────────────────────────────────────────── */
 export default function HeroTextWithPen({
   before = "Hey, I'm",
@@ -293,6 +312,13 @@ export default function HeroTextWithPen({
   companyLink = "/amd_software_simplified",
   companyColor = "rgb(176, 190, 255)",
   companyImage,
+  companyLogoSrc,
+  companyLogoSize = 40,
+  afterCompany,
+  secondCompany,
+  secondCompanyLink,
+  secondCompanyLogoSrc,
+  secondCompanyLogoSize = 40,
   strokeWidth = 1.6,
   duration = 0.7,
   idleOpacity = 0.7,
@@ -317,6 +343,9 @@ export default function HeroTextWithPen({
   before?: string; middle?: string; after?: string
   name?: string; nameLink?: string; nameColor?: string; nameImage?: { src?: string }
   company?: string; companyLink?: string; companyColor?: string; companyImage?: { src?: string }
+  companyLogoSrc?: string; companyLogoSize?: number
+  afterCompany?: string
+  secondCompany?: string; secondCompanyLink?: string; secondCompanyLogoSrc?: string; secondCompanyLogoSize?: number
   strokeWidth?: number; duration?: number; idleOpacity?: number; wordGap?: number
   circlePadX?: number; circlePadY?: number; roughness?: number
   textColor?: string; dimmedColor?: string; fontSize?: number; lineHeight?: number
@@ -338,7 +367,14 @@ export default function HeroTextWithPen({
       {before}
       <PenChip label={name} link={nameLink || undefined} color={nameColor} seedBase={1} image={nameImage} font={nameFont} {...chipProps} />
       {middle}
-      <PenChip label={company} link={companyLink || undefined} color={companyColor} seedBase={2} image={companyImage} font={companyFont} {...chipProps} />
+      {companyLogoSrc
+        ? <InlineLogoChip src={companyLogoSrc} alt={company} link={companyLink || undefined} size={companyLogoSize} />
+        : <PenChip label={company} link={companyLink || undefined} color={companyColor} seedBase={2} image={companyImage} font={companyFont} {...chipProps} />
+      }
+      {afterCompany}
+      {secondCompanyLogoSrc && (
+        <InlineLogoChip src={secondCompanyLogoSrc} alt={secondCompany ?? ""} link={secondCompanyLink} size={secondCompanyLogoSize} />
+      )}
       {after}
     </motion.p>
   )

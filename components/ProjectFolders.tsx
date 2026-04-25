@@ -20,6 +20,7 @@ interface Project {
   paperCfg?: ImagePaper[]
   rotation?: number
   folderTransform?: string
+  comingSoon?: boolean
 }
 
 interface PlainPaper {
@@ -112,7 +113,61 @@ function FolderItem({ project, index }: { project: Project; index: number }) {
           transition: "filter 0.22s ease",
         }}
       >
-        {paperCfg.slice(0, project.paperCount ?? paperCfg.length).map((p, i) => {
+        {project.comingSoon ? (
+          <motion.div
+            animate={{
+              y:      hovered ? -38 : 0,
+              scale:  hovered ? 1.18 : 0.88,
+              rotate: hovered ? -3 : 0,
+            }}
+            transition={{ type: "spring", stiffness: 420, damping: 18 }}
+            style={{
+              position:       "absolute",
+              bottom:         paperBottom + 8,
+              left:           "50%",
+              x:              "-50%",
+              zIndex:         2,
+              pointerEvents:  "none",
+              display:        "flex",
+              alignItems:     "center",
+              justifyContent: "center",
+            }}
+          >
+            <motion.span
+              animate={{ opacity: hovered ? 1 : 0.72 }}
+              transition={{ duration: 0.2 }}
+              style={{
+                fontFamily:    "var(--font-sans)",
+                fontSize:      11,
+                fontWeight:    700,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color:         hovered ? "var(--c-primary)" : "var(--c-secondary)",
+                padding:       "5px 14px",
+                borderRadius:  99,
+                border:        "1px solid var(--border-mid)",
+                background:    "var(--bg)",
+                whiteSpace:    "nowrap",
+                boxShadow:     hovered
+                  ? "0 6px 24px rgba(0,0,0,0.14), 0 1px 4px rgba(0,0,0,0.08)"
+                  : "0 2px 8px rgba(0,0,0,0.07)",
+                transition:    "box-shadow 0.22s ease, color 0.22s ease",
+                display:       "flex",
+                alignItems:    "center",
+                gap:           6,
+              }}
+            >
+              <motion.span
+                animate={{ rotate: hovered ? [0, -12, 10, -6, 4, 0] : 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                style={{ display: "inline-block", fontSize: 12 }}
+              >
+                ✦
+              </motion.span>
+              Coming soon
+            </motion.span>
+          </motion.div>
+        ) : paperCfg.slice(0, project.paperCount ?? paperCfg.length).map((p, i) => {
           const imgSrc = project.papers?.[i]
           const ip = isImagePaper(p) ? p : null
           const pw = ip ? ip.pw : PAPER_W

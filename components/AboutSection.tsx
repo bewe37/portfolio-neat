@@ -6,7 +6,7 @@ export default function AboutSection() {
 
       <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
         <p style={{ fontFamily: "var(--font-sans)", fontSize: 17, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.2, margin: 0 }}>
-          About
+          About Me
         </p>
       </div>
 

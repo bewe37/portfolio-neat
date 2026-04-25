@@ -46,7 +46,8 @@ interface Section {
 
 interface Props {
   title: string
-  category: string
+  category?: string
+  year?: string
   role: string
   team?: string
   overview: string
@@ -564,6 +565,71 @@ function BackButton({ href }: { href: string }) {
   )
 }
 
+const RENDER_W   = 200
+const DISPLAY_W  = 110
+const NOODLE_SCALE = DISPLAY_W / RENDER_W
+const BOT_H      = 89
+const MID_H_FULL = 91
+const MIN_H      = 18
+const TOP_H      = 81
+const WRAP_H     = 180
+const TOP_DROP   = 14
+
+function NoodleAnimation() {
+  const midClipRef = useRef<HTMLDivElement>(null)
+  const topImgRef  = useRef<HTMLImageElement>(null)
+
+  useEffect(() => {
+    let rafId: number
+    function tick() {
+      const st  = window.scrollY
+      const max = document.documentElement.scrollHeight - window.innerHeight
+      const p   = max > 0 ? Math.min(1, Math.max(0, st / max)) : 0
+      const midH = Math.max(MIN_H, Math.round(MID_H_FULL * (1 - p)))
+      if (midClipRef.current) midClipRef.current.style.height = midH + "px"
+      if (topImgRef.current)  topImgRef.current.style.bottom  = (BOT_H + midH - TOP_DROP) + "px"
+    }
+    function onScroll() {
+      cancelAnimationFrame(rafId)
+      rafId = requestAnimationFrame(tick)
+    }
+    tick()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => { window.removeEventListener("scroll", onScroll); cancelAnimationFrame(rafId) }
+  }, [])
+
+  return (
+    <div style={{ position: "relative", width: DISPLAY_W, height: Math.round(WRAP_H * NOODLE_SCALE), flexShrink: 0, overflow: "visible" }}>
+      {/* Inner div rendered at full 200px then scaled down — keeps SVG crisp */}
+      <div style={{
+        position:        "absolute",
+        bottom:          0,
+        left:            0,
+        width:           RENDER_W,
+        height:          WRAP_H,
+        transform:       `scale(${NOODLE_SCALE})`,
+        transformOrigin: "bottom left",
+        overflow:        "visible",
+      }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/noodle-bottom.svg" alt="" draggable={false}
+          style={{ position: "absolute", bottom: 0, left: 0, width: RENDER_W, height: BOT_H }} />
+
+        <div ref={midClipRef}
+          style={{ position: "absolute", bottom: BOT_H, left: 0, width: RENDER_W, height: MID_H_FULL, overflow: "hidden" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/noodle-middle.svg" alt="" draggable={false}
+            style={{ position: "absolute", bottom: 0, left: 0, width: RENDER_W, height: MID_H_FULL }} />
+        </div>
+
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img ref={topImgRef} src="/noodle-top.svg" alt="" draggable={false}
+          style={{ position: "absolute", bottom: BOT_H + MID_H_FULL - TOP_DROP, left: 0, width: RENDER_W, height: TOP_H }} />
+      </div>
+    </div>
+  )
+}
+
 function TableOfContents({ backHref, items, activeId }: {
   backHref: string
   items: Array<{ label: string; id: string }>
@@ -783,7 +849,7 @@ function SpecValue({ value }: { value: string | string[] }) {
 }
 
 export default function CaseStudyLayout({
-  title, role, team, overview, specs, cover,
+  title, category: _category, year: _year, role, team, overview, specs, cover,
   sections, lockedSections, password, passwordDesc,
   backHref = "/", banner,
 }: Props) {
@@ -802,6 +868,7 @@ export default function CaseStudyLayout({
   const tocItems = [
     { label: "Overview", id: "sec-overview" },
     ...sections.map(s => ({ label: s.label, id: secId(s.label) })),
+    ...(unlocked && lockedSections ? lockedSections.map(s => ({ label: s.label, id: secId(s.label) })) : []),
   ]
 
   useEffect(() => {
@@ -819,7 +886,7 @@ export default function CaseStudyLayout({
     })
     return () => observer.disconnect()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [unlocked])
 
   const tryUnlock = () => {
     if (pwInput === password) { setUnlocked(true); setPwError(false) }
@@ -834,7 +901,7 @@ export default function CaseStudyLayout({
           width:               "100%",
           maxWidth:            1200,
           display:             "grid",
-          gridTemplateColumns: "190px 1fr",
+          gridTemplateColumns: "280px 1fr",
           alignItems:          "start",
           padding:             "0 48px",
         }}
@@ -842,9 +909,23 @@ export default function CaseStudyLayout({
         {/* TOC Sidebar — desktop only */}
         <div
           className="rsp-toc-sidebar"
-          style={{ position: "sticky", top: 0, height: "100dvh", overflow: "hidden", paddingRight: 80 }}
+          style={{
+            position:      "sticky",
+            top:           0,
+            height:        "100dvh",
+            display:       "flex",
+            flexDirection: "row",
+            alignItems:    "flex-start",
+            gap:           16,
+            paddingRight:  24,
+          }}
         >
-          <TableOfContents backHref={backHref} items={tocItems} activeId={activeId} />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <TableOfContents backHref={backHref} items={tocItems} activeId={activeId} />
+          </div>
+          <div style={{ paddingTop: 56, display: "flex", flexDirection: "column", justifyContent: "center", height: "100dvh" }}>
+            <NoodleAnimation />
+          </div>
         </div>
 
         {/* Main content */}
@@ -1031,7 +1112,7 @@ export default function CaseStudyLayout({
 
           {/* Locked sections */}
           {password && unlocked && lockedSections?.map((sec, si) => (
-            <SectionBlock key={`locked-${si}`} sec={sec} />
+            <SectionBlock key={`locked-${si}`} sec={sec} id={secId(sec.label)} />
           ))}
 
         </main>

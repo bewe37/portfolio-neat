@@ -51,12 +51,12 @@ function applyTheme(theme: Theme) {
   requestAnimationFrame(() => {
     body.classList.remove("dark", "sunset")
     if (theme !== "light") body.classList.add(theme)
-    setTimeout(() => body.classList.remove("theme-switching"), 500)
+    setTimeout(() => body.classList.remove("theme-switching"), 600)
   })
 }
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("light")
+  const [theme,   setTheme]   = useState<Theme>("light")
   const [hovered, setHovered] = useState(false)
 
   useEffect(() => {
@@ -74,7 +74,7 @@ export default function ThemeToggle() {
     localStorage.setItem("theme", next)
   }
 
-  const Icon = ICONS[theme]
+  const Icon      = ICONS[theme]
   const iconColor = hovered ? "rgb(255,107,48)" : "var(--c-secondary)"
 
   return (

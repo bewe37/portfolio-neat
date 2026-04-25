@@ -100,17 +100,6 @@ export default function FmeProject() {
             },
           ],
         },
-        {
-          label: "Iconography Redesign",
-          images: ["/IconographRebranding.png", "/IconRebrandingResult.png", "/IconographRebrandingResult2.png"],
-          body:   "Led the handoff of a comprehensive icon library redesign spanning 47+ icons aligned to FME Platform's modernized visual language. Defined SVG export specifications and integration guidelines coordinated directly with the engineering team, covering stroke normalization, fill rules, and named layer conventions for automation.",
-        },
-        {
-          label: "Design System",
-          images: ["/ThumbnailV2.png", "/dsexample.png"],
-          videos: ["/DSFME.mp4"],
-          body:   "The iconography handoff surfaced a systemic problem: without a shared token layer, every component handoff required manual cross-referencing between Figma frames and the engineering codebase — a slow, error-prone process that did not scale. Initiated the FME Design System foundation with semantic tokens for color, spacing, typography, and iconography, each with a 1:1 mapping to CSS custom properties via a lightweight codegen step.",
-        },
       ]}
     />
   )

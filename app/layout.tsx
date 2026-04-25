@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import "./globals.css"
 import ShadowBg from "@/components/ShadowBg"
+import BuddyGate from "@/components/BuddyGate"
 
 export const metadata: Metadata = {
   title: "Georgius — Product Designer",
@@ -12,7 +13,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <ShadowBg />
-{children}
+        {children}
+        <BuddyGate />
         <div style={{
           position:       "fixed",
           bottom:         0,

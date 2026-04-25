@@ -1,11 +1,27 @@
 @import "tailwindcss";
 
 @font-face {
+  font-family: 'Departure Mono';
+  src: url('/DepartureMono-1.500/DepartureMono-Regular.woff2') format('woff2'),
+       url('/DepartureMono-1.500/DepartureMono-Regular.woff')  format('woff');
+  font-weight: 400;
+  font-style:  normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Uncut Sans';
   src: url('/uncut_sans-main/Webfonts/UncutSans-Variable.woff2') format('woff2');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
+}
+
+@layer base {
+  ::selection {
+    background: rgb(255, 107, 48) !important;
+    color: #fff !important;
+  }
 }
 
 :root {
@@ -82,10 +98,10 @@ body.sunset .shadow-bg {
 body.theme-switching,
 body.theme-switching * {
   transition:
-    background-color 0.45s ease,
-    color            0.35s ease,
-    border-color     0.35s ease,
-    fill             0.35s ease !important;
+    background-color 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+    color            0.4s  cubic-bezier(0.4, 0, 0.2, 1),
+    border-color     0.4s  cubic-bezier(0.4, 0, 0.2, 1),
+    fill             0.4s  cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 * {
@@ -141,8 +157,42 @@ a {
   0%, 100% { transform: translateY(0); }
   50%       { transform: translateY(-2px); }
 }
+@keyframes tama-sway {
+  0%   { transform: translateY(0px)  rotate(0deg);  }
+  18%  { transform: translateY(-4px) rotate(-6deg); }
+  36%  { transform: translateY(0px)  rotate(0deg);  }
+  54%  { transform: translateY(-3px) rotate(5deg);  }
+  72%  { transform: translateY(-1px) rotate(-2deg); }
+  100% { transform: translateY(0px)  rotate(0deg);  }
+}
+@keyframes tama-float {
+  0%   { transform: translateY(0);     opacity: 1;   }
+  70%  { opacity: 0.5; }
+  100% { transform: translateY(-20px); opacity: 0;   }
+}
+@keyframes tama-jump {
+  0%   { transform: translateY(0);     }
+  20%  { transform: translateY(-14px); }
+  45%  { transform: translateY(-8px);  }
+  65%  { transform: translateY(-12px); }
+  85%  { transform: translateY(-3px);  }
+  100% { transform: translateY(0);     }
+}
+@keyframes tama-sleep {
+  0%, 100% { transform: rotate(6deg) translateY(0);   }
+  50%       { transform: rotate(6deg) translateY(-1px); }
+}
+@keyframes tama-zzz {
+  0%   { transform: translateY(0)    scale(0.6); opacity: 0.9; }
+  100% { transform: translateY(-18px) scale(1.1); opacity: 0;   }
+}
+@keyframes tama-think {
+  0%,90%  { opacity: 0; }
+  45%     { opacity: 1; }
+}
 
 /* ── End Tamagotchi ───────────────────────────────────────── */
+
 
 @keyframes avatarSpin {
   from { transform: rotate(0deg); }

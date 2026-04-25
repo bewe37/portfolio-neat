@@ -58,12 +58,13 @@ const PROJECTS = [
     peekPapers: true,
   },
   {
-    title: "New Project",
-    category: "Product Design",
+    title: "Playground",
+    category: "Experiments",
     date: "2026",
     description: "Coming soon.",
     href: "/",
     folder: "/avocado.svg",
+    comingSoon: true,
   },
 ]
 
@@ -120,15 +121,15 @@ export default function HomePage() {
               <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <span
                   style={{
-                    fontFamily: "var(--font-geist), Geist, sans-serif",
-                    fontSize: 18,
+                    fontFamily:  "'Departure Mono', monospace",
+                    fontSize: 17,
                     fontWeight: 700,
-                    letterSpacing: "-0.01em",
+                    letterSpacing: "-0.02em",
                     lineHeight: 1.2,
                     color: "var(--c-primary)",
                   }}
                 >
-                  georgius
+                  GEORGIUS
                 </span>
                 <span
                   style={{
@@ -157,11 +158,17 @@ export default function HomePage() {
               before="Hey, I'm"
               name="Georgius"
               nameColor="rgb(255,107,48)"
-              middle="a design engineer at"
+              middle="— Toronto-based product designer, previously at"
               company="AMD"
-              companyLink="/amd_software_simplified"
-              companyColor="rgb(80,100,200)"
-              after=" based in Toronto. I spend most of my time crafting polished interfaces for web experiences, and I'm passionate about accessibility, web animation and building products."
+              companyLink="https://www.amd.com"
+              companyLogoSrc="/amdchip.svg"
+              companyLogoSize={54}
+              afterCompany=" & "
+              secondCompany="Safe Software"
+              secondCompanyLink="https://www.safe.com"
+              secondCompanyLogoSrc="/safechip.svg"
+              secondCompanyLogoSize={80}
+              after=". I do the invisible work, turning &ldquo;why is this so confusing&rdquo; into &ldquo;wait, that was easy?&rdquo; Mostly through obsessive detail-tweaking and too much coffee."
               fontSize={17}
               fontWeight={400}
               fontFamily="var(--font-sans)"
@@ -248,7 +255,7 @@ export default function HomePage() {
         <section style={{ padding: "48px 0 72px", display: "flex", flexDirection: "column", gap: 32 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             <p style={{ fontFamily: "var(--font-sans)", fontSize: 17, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.2, margin: 0 }}>
-              Contact
+              Find me at
             </p>
             <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 400, color: "var(--c-dim)", letterSpacing: "-0.01em", lineHeight: 1.5, margin: 0 }}>
               Open to new opportunities and collaborations.

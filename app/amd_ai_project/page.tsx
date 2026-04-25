@@ -25,12 +25,12 @@ export default function AmdAiProject() {
             {
               title: "AMD Chat",
               body:  "Describe what's wrong in plain language — \"my game is stuttering,\" \"fan is too loud\" — and the AI surfaces a one-tap fix backed by your live hardware data.",
-              videos: ["/Convai.mp4"],
+              videos: ["/DemoAmdChat.mp4"],
             },
             {
               title: "In-Game Mode",
               body:  "Most-used controls surface immediately when you enter a game. No navigation, no hunting — the overlay adapts to what you need mid-session.",
-              videos: ["/Recording.mp4"],
+              videos: ["/DemoRecording.mp4"],
               objectPosition: "left center",
             },
             {
@@ -52,12 +52,12 @@ export default function AmdAiProject() {
             {
               title: "Read-only metrics, no controls.",
               body:  "The overlay became a dashboard you could only look at. Any change meant exiting, opening the full app, and navigating to the right panel — enough friction that most users just didn't bother.",
-              image: "/MetricsIssues.png",
+              image: "/MetricsIssue.png",
             },
             {
               title: "Settings only experts could parse.",
               body:  "As more features moved into the full application, the terminology got increasingly technical. Casual users had no way to know what a setting did or how it'd affect their system.",
-              image: "/Technical.png",
+              image: "/Problem Space 4.png",
             },
           ],
         },
@@ -97,12 +97,12 @@ export default function AmdAiProject() {
             {
               title:  "Describe the problem, get a fix.",
               body:   "Type or say what's wrong — \"my game is stuttering,\" \"fan is too loud\" — and the AI reads your live hardware data and hands you a one-tap fix on the spot.",
-              videos: ["/Convai.mp4"],
+              videos: ["/DemoAmdChat.mp4"],
             },
             {
               title:  "Responses that become controls.",
               body:   "Instead of just text, the assistant can generate a pinnable widget — turning a recommendation into a persistent, actionable control right inside the overlay.",
-              videos: ["/Conversational.mp4"],
+              videos: ["/DemoChatPin.mp4"],
             },
           ],
         },
@@ -112,12 +112,12 @@ export default function AmdAiProject() {
             {
               title: "Pinned controls, always accessible.",
               body:  "Pinned widgets persist across overlay sessions — key controls stay visible without interrupting what you're doing.",
-              image: "/PinnedWidgets.png",
+              image: "/Pinned Widgets.png",
             },
             {
               title:  "Manual widget customization.",
               body:   "Users can also add widgets themselves, tailoring the overlay to their needs beyond what the AI suggests.",
-              videos: ["/AddWidget.mp4"],
+              videos: ["/ManualAddition.mp4"],
             },
           ],
         },
@@ -125,7 +125,7 @@ export default function AmdAiProject() {
           label: "Overall Structure",
           title: "Layout built around how users scan.",
           body:  "System info stays right, consistent with the existing overlay. The center is the action space — AMD Chat at the core, widgets panel alongside it.",
-          images: ["/StructureDiagram.png", "/StructureAfter.png"],
+          images: ["/StructureBefore.png", "/StructureAfter.png"],
         },
         {
           label: "In-Game Mode",
@@ -133,17 +133,17 @@ export default function AmdAiProject() {
             {
               title: "Most-used controls, one click away.",
               body:  "Gamers act, they don't browse. The in-game modal surfaces the most-reached-for controls immediately — no navigation needed.",
-              image: "/InGameModal.png",
+              image: "/InGameWidget.png",
             },
             {
               title:  "Tune performance without touching settings.",
               body:   "A single slider adjusts the right combination of graphics settings for your system — no manual parameter tweaking.",
-              videos: ["/InGame.mp4"],
+              videos: ["/DemoOneClick.mp4"],
             },
             {
               title:  "Start recording without leaving the game.",
               body:   "Screen recording triggers directly from AMD Chat or a keyboard shortcut — no need to open the full application.",
-              videos: ["/Recording.mp4"],
+              videos: ["/DemoRecording.mp4"],
             },
           ],
         },
