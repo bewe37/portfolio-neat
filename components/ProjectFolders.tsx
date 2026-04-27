@@ -318,7 +318,7 @@ function ArrowButton({ dir, onClick, disabled }: { dir: "left" | "right"; onClic
         position:        "absolute",
         top:             "50%",
         transform:       "translateY(-50%)",
-        [dir === "left" ? "left" : "right"]: 0,
+        [dir === "left" ? "left" : "right"]: 6,
         width:           34,
         height:          34,
         borderRadius:    "50%",
@@ -344,6 +344,132 @@ function ArrowButton({ dir, onClick, disabled }: { dir: "left" | "right"; onClic
   )
 }
 
+
+function MobilePapers({ project }: { project: Project }) {
+  const hasImages = (project.papers?.length ?? 0) > 0
+  const paperCfg: PaperCfg[] = project.paperCfg ?? (hasImages ? (project.peekPapers ? PEEK_PAPERS : IMG_PAPERS) : PAPERS)
+  const cfgs = project.comingSoon ? [] : paperCfg.slice(0, project.paperCount ?? paperCfg.length)
+  const paperBottom = FOLDER_W - 36
+
+  return (
+    <>
+      {project.comingSoon && (
+        <div style={{
+          position:      "absolute",
+          bottom:        paperBottom + 8,
+          left:          "50%",
+          transform:     "translateX(-50%)",
+          zIndex:        2,
+          display:       "flex",
+          alignItems:    "center",
+          gap:           6,
+          fontFamily:    "var(--font-sans)",
+          fontSize:      11,
+          fontWeight:    700,
+          letterSpacing: "0.08em",
+          textTransform: "uppercase" as const,
+          color:         "var(--c-secondary)",
+          padding:       "5px 14px",
+          borderRadius:  99,
+          border:        "1px solid var(--border-mid)",
+          background:    "var(--bg)",
+          whiteSpace:    "nowrap" as const,
+          boxShadow:     "0 2px 8px rgba(0,0,0,0.07)",
+        }}>
+          ✦ Coming soon
+        </div>
+      )}
+      {cfgs.map((p, i) => {
+        const imgSrc = project.papers?.[i]
+        const ip = isImagePaper(p) ? p : null
+        const pw = ip ? ip.pw : PAPER_W
+        return (
+          <div
+            key={i}
+            style={{
+              position:        "absolute",
+              bottom:          paperBottom,
+              left:            Math.round(CW / 2 - pw / 2 + p.dx),
+              width:           pw,
+              ...(ip ? {} : { height: PAPER_H }),
+              borderRadius:    10,
+              backgroundColor: p.color,
+              boxShadow:       "0 4px 16px rgba(0,0,0,0.11), 0 1px 3px rgba(0,0,0,0.07)",
+              zIndex:          ip ? ip.zIndex : i,
+              transform:       `rotate(${p.hoverR}deg) translateY(${p.hoverY}px)`,
+              transformOrigin: "bottom center",
+              padding:         hasImages && !(ip?.noPad) ? 6 : 0,
+            }}
+          >
+            {imgSrc && (
+              <div style={{ overflow: "hidden", borderRadius: ip?.noPad ? 10 : 4, height: ip?.cropH ?? "auto", boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.10)" }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={imgSrc} alt="" draggable={false} style={{ width: "100%", height: "auto", display: "block", pointerEvents: "none" }} />
+              </div>
+            )}
+          </div>
+        )
+      })}
+    </>
+  )
+}
+
+function ProjectCard({ project, index }: { project: Project; index: number }) {
+  const folderSrc = project.folder ?? "/chequereds.svg"
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-32px" }}
+      transition={{ duration: 0.42, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
+      style={{ width: "100%" }}
+    >
+      <Link href={project.href} style={{ textDecoration: "none", display: "block" }}>
+        <div style={{
+          borderRadius:    20,
+          backgroundColor: "var(--surface)",
+          backgroundImage: "radial-gradient(circle, var(--dot-color) 1px, transparent 1px)",
+          backgroundSize:  "18px 18px",
+          display:         "flex",
+          flexDirection:   "column",
+          alignItems:      "center",
+          paddingTop:      PAPER_HEADROOM + 24,
+          paddingBottom:   32,
+          width:           "100%",
+        }}>
+          <div style={{ position: "relative", width: CW, height: CH, filter: "drop-shadow(0 4px 14px rgba(0,0,0,0.13))" }}>
+            <MobilePapers project={project} />
+            <div style={{ position: "absolute", bottom: 0, left: "50%", width: FOLDER_H, height: FOLDER_W, transform: "translateX(-50%)", zIndex: 3 }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={folderSrc}
+                alt={project.title}
+                draggable={false}
+                style={project.folderTransform != null ? {
+                  position: "absolute", display: "block", width: FOLDER_H, height: FOLDER_W, top: 0, left: 0, objectFit: "fill", pointerEvents: "none",
+                } : {
+                  position: "absolute", display: "block", width: FOLDER_W, height: FOLDER_H,
+                  top: (FOLDER_W - FOLDER_H) / 2, left: (FOLDER_H - FOLDER_W) / 2,
+                  transform: "rotate(-90deg)", objectFit: "fill", pointerEvents: "none",
+                }}
+              />
+              {project.chip && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={project.chip} alt="" draggable={false} style={{ position: "absolute", bottom: 28, right: 22, width: project.chipSize ?? 80, height: "auto", display: "block", zIndex: 4 }} />
+              )}
+            </div>
+          </div>
+        </div>
+        <div style={{ padding: "12px 4px 4px" }}>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: 11, fontWeight: 600, color: "var(--c-faint)", letterSpacing: "-0.01em", margin: "0 0 4px" }}>{project.category}</p>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 600, color: "var(--c-mid)", letterSpacing: "-0.02em", lineHeight: 1.35, margin: 0 }}>{project.title}</p>
+        </div>
+      </Link>
+    </motion.div>
+  )
+}
+
 export default function ProjectFolders({ projects }: { projects: Project[] }) {
   const scrollRef = useRef<HTMLDivElement>(null)
 
@@ -352,46 +478,49 @@ export default function ProjectFolders({ projects }: { projects: Project[] }) {
   }
 
   return (
-    <div style={{ position: "relative" }}>
-      {/* Arrow buttons — sit above fold content area, below fade overlays */}
-      <div style={{
-        position:      "absolute",
-        top:           PAPER_HEADROOM,
-        bottom:        0,
-        left:          -18,
-        right:         -18,
-        pointerEvents: "none",
-      }}>
-        <ArrowButton dir="left"  disabled={false} onClick={() => scroll("left")}  />
-        <ArrowButton dir="right" disabled={false} onClick={() => scroll("right")} />
+    <>
+      {/* ── Desktop: folder carousel ── */}
+      <div className="rsp-hide-mobile" style={{ position: "relative" }}>
+        <div style={{
+          position:      "absolute",
+          top:           PAPER_HEADROOM,
+          bottom:        0,
+          left:          0,
+          right:         0,
+          pointerEvents: "none",
+        }}>
+          <ArrowButton dir="left"  disabled={false} onClick={() => scroll("left")}  />
+          <ArrowButton dir="right" disabled={false} onClick={() => scroll("right")} />
+        </div>
+
+        <div
+          ref={scrollRef}
+          className="hide-scrollbar"
+          style={{
+            display:        "flex",
+            gap:            40,
+            overflowX:      "auto",
+            paddingTop:     PAPER_HEADROOM,
+            paddingBottom:  52,
+            paddingLeft:    40,
+            paddingRight:   40,
+            marginLeft:     -40,
+            marginRight:    -40,
+            scrollbarWidth: "none",
+          }}
+        >
+          {projects.map((p, i) => (
+            <FolderItem key={p.href} project={p} index={i} />
+          ))}
+        </div>
       </div>
 
-
-      {/*
-        Horizontal padding gives room for drop-shadow to render without being
-        clipped by the scroll container's implicit overflow boundary.
-      */}
-      <div
-        ref={scrollRef}
-        className="hide-scrollbar"
-        style={{
-          marginLeft: -40,
-          marginRight: -40,
-          display:        "flex",
-          gap:            40,
-          overflowX:      "auto",
-          overflowY:      "visible",
-          paddingTop:     PAPER_HEADROOM,
-          paddingBottom:  52,
-          paddingLeft:    40,
-          paddingRight:   40,
-          scrollbarWidth: "none",
-        }}
-      >
+      {/* ── Mobile: stacked folder cards ── */}
+      <div className="rsp-show-mobile" style={{ display: "none", flexDirection: "column", gap: 16, padding: "16px 0 32px" }}>
         {projects.map((p, i) => (
-          <FolderItem key={p.href} project={p} index={i} />
+          <ProjectCard key={p.href} project={p} index={i} />
         ))}
       </div>
-    </div>
+    </>
   )
 }

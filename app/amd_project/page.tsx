@@ -7,7 +7,7 @@ export default function AmdProject() {
       category="Design System"
       year="2025"
       role="Design System Designer"
-      cover="/amdDSHighlight.png"
+      cover="/AMDCaseStudy.png"
       overview={"When I joined AMD's UX team, the product didn't have a shared design foundation.\n\nDesigners organized files differently, colors were applied inconsistently, and components varied from screen to screen. The team was also preparing for a full software redesign — which meant the inconsistency wasn't just a current problem, it was about to be a much bigger one.\n\nI took on building the design system from the ground up: not as a cleanup effort, but as the structural layer the redesign would be built on top of."}
       specs={[
         { label: "Scope",    value: "Design System" },
@@ -76,15 +76,6 @@ export default function AmdProject() {
           title: "The vibeeee ~",
           images: ["/DSHighlight.png"],
           body:   "Even as the overlay introduces new features, the design system keeps everything consistent and connected. Shared components and patterns make the interface feel cohesive, so the overlay stays lightweight and easy to navigate without adding visual noise.",
-        },
-        {
-          label: "Confidential",
-          title: "There's more to this.",
-          body:   "The overlay feature rework is under NDA and can't be shown here. It's the project the design system was built to support.\n\nIf you'd like to walk through that work, reach out and I'm happy to share more in a conversation.",
-          contacts: [
-            { platform: "Email",    handle: "bryanwinata112@gmail.com", href: "mailto:bryanwinata112@gmail.com" },
-            { platform: "LinkedIn", handle: "linkedin.com/in/gbryanw",  href: "https://linkedin.com/in/gbryanw" },
-          ],
         },
       ]}
     />

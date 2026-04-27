@@ -112,6 +112,34 @@ function CharJump() {
 
 
 
+function CharListening() {
+  return (
+    <svg viewBox="0 0 22 28" style={{ width: 46, height: 52, animation: "tama-groove 0.8s ease-in-out infinite", transformOrigin: "bottom center" }} fill={PX} shapeRendering="crispEdges">
+      {/* headphone band across top */}
+      <rect x="4"  y="0"  width="14" height="1" />
+      <rect x="3"  y="1"  width="2"  height="3" />
+      <rect x="17" y="1"  width="2"  height="3" />
+      {/* headphone cups */}
+      <rect x="1"  y="3"  width="4"  height="4" />
+      <rect x="17" y="3"  width="4"  height="4" />
+      {/* body */}
+      <rect x="7"  y="3"  width="8"  height="2" /><rect x="5"  y="5"  width="12" height="2" />
+      <rect x="3"  y="7"  width="16" height="2" /><rect x="2"  y="9"  width="18" height="8" />
+      <rect x="3"  y="17" width="16" height="2" /><rect x="5"  y="19" width="12" height="2" />
+      <rect x="7"  y="21" width="8"  height="2" />
+      {/* happy squinting eyes */}
+      <rect x="5"  y="10" width="4"  height="3" fill={EYE} /><rect x="13" y="10" width="4"  height="3" fill={EYE} />
+      <rect x="6"  y="12" width="3"  height="1" fill={PX}  /><rect x="14" y="12" width="3"  height="1" fill={PX}  />
+      {/* smile */}
+      <rect x="7"  y="14" width="1"  height="2" fill={PX} />
+      <rect x="14" y="14" width="1"  height="2" fill={PX} />
+      <rect x="8"  y="15" width="6"  height="1" fill={PX} />
+      {/* legs */}
+      <rect x="6"  y="23" width="3"  height="2" /><rect x="13" y="23" width="3" height="2" />
+    </svg>
+  )
+}
+
 /* ── pixel decorations ── */
 function PixelHeart({ style }: { style?: React.CSSProperties }) {
   return (
@@ -349,6 +377,7 @@ export default function TamagotchiWidget() {
           "0 6px 16px rgba(0,0,0,0.22)",
           "inset 14px 16px 30px rgba(255,255,255,0.55)",
           "inset -10px -16px 28px rgba(0,0,0,0.22)",
+          "inset 12px -16px 32px rgba(0,0,0,0.32)",
           "inset 0 2px 1px rgba(255,255,255,0.65)",
         ].join(", "),
         display: "flex", flexDirection: "column", alignItems: "center",
@@ -497,18 +526,28 @@ export default function TamagotchiWidget() {
                 </div>
               )}
 
-              {/* AVAILABILITY (C) */}
+              {/* NOW PLAYING (C) */}
               {screen === "availability" && (
-                <div style={{ display: "flex", height: 96, padding: "6px 7px 2px" }}>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 3, width: "58%" }}>
-                    <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.08em", opacity: 0.55 }}>AVAIL //</span>
+                <div style={{ position: "relative", display: "flex", height: 96, padding: "6px 7px 2px", overflow: "hidden" }}>
+                  {/* floating note */}
+                  <span style={{
+                    position: "absolute", top: 4, right: 34, fontSize: 9,
+                    animation: "tama-note 1.4s ease-out infinite",
+                    pointerEvents: "none",
+                  }}>♪</span>
+                  <span style={{
+                    position: "absolute", top: 10, right: 24, fontSize: 7,
+                    animation: "tama-note 1.4s ease-out infinite 0.7s",
+                    pointerEvents: "none",
+                  }}>♫</span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 3, width: "62%" }}>
+                    <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.08em", opacity: 0.55 }}>NOW PLAYING</span>
                     <div style={{ height: 1, background: `${PX}28` }} />
-                    <Row label="status" value="open >"   />
-                    <Row label="type"   value="FT"       />
-                    <Row label="start"  value="ASAP"     />
+                    <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "-0.01em" }}>Beast of Burden</span>
+                    <span style={{ fontSize: 9, opacity: 0.6 }}>Rolling Stones</span>
                   </div>
                   <div style={{ flex: 1, display: "flex", alignItems: "flex-end", justifyContent: "flex-end" }}>
-                    <CharExcited />
+                    <CharListening />
                   </div>
                 </div>
               )}

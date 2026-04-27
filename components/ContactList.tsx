@@ -2,13 +2,12 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { EnvelopeSimple, GithubLogo, LinkedinLogo, XLogo } from "@phosphor-icons/react"
+import { EnvelopeSimple, LinkedinLogo, XLogo } from "@phosphor-icons/react"
 
 const LINKS = [
-  { Icon: EnvelopeSimple, label: "Email",    handle: "bryanwinata112@gmail.com", href: "mailto:bryanwinata112@gmail.com" },
-  { Icon: GithubLogo,     label: "GitHub",   handle: "@bewe37",                  href: "https://github.com/bewe37"       },
-  { Icon: LinkedinLogo,   label: "LinkedIn", handle: "/in/georgius",             href: "https://linkedin.com/in/georgius"},
-  { Icon: XLogo,          label: "X",        handle: "@gbryanwt",                href: "https://x.com/gbryanwt"          },
+  { Icon: EnvelopeSimple, label: "Email",    handle: "bryanwinata112@gmail.com", href: "mailto:bryanwinata112@gmail.com"      },
+  { Icon: LinkedinLogo,   label: "LinkedIn", handle: "/in/gbryanw",              href: "https://www.linkedin.com/in/gbryanw/" },
+  { Icon: XLogo,          label: "X",        handle: "@gbryanwt",                href: "https://x.com/gbryanwt"               },
 ]
 
 export default function ContactList() {

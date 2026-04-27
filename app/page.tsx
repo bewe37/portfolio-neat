@@ -4,14 +4,13 @@ import ThemeToggle from "@/components/ThemeToggle"
 import HeroTextWithPen from "@/components/HeroTextWithPen"
 import HeaderNav from "@/components/HeaderNav"
 import ProjectFolders, { AMD_PAPERS, AMD_AI_PAPERS, FME_PAPERS } from "@/components/ProjectFolders"
-import MeteorFrame from "@/components/MeteorFrame"
 import MarqueeFooter from "@/components/MarqueeFooter"
 import AboutSection from "@/components/AboutSection"
 import PhotoGallery from "@/components/PhotoGallery"
 
 const PROJECTS = [
   {
-    title: "Conversational AI — AMD Adrenalin",
+    title: "Rethinking the Overlay as a Control Surface",
     category: "Product Design",
     date: "2025",
     description: "Designing a conversational AI assistant embedded in AMD's Adrenalin software for millions of gamers.",
@@ -101,8 +100,6 @@ export default function HomePage() {
             overflow: "visible",
           }}
         >
-          <MeteorFrame />
-
           {/* Profile row */}
           <div
             className="rsp-hero-row"
@@ -158,6 +155,11 @@ export default function HomePage() {
               before="Hey, I'm"
               name="Georgius"
               nameColor="rgb(255,107,48)"
+              nameImage={{ src: "/sqwam.png" }}
+              tooltipWidth={200}
+              tooltipHeight={150}
+              tooltipRadius={8}
+              tooltipOffset={10}
               middle="— Toronto-based product designer, previously at"
               company="AMD"
               companyLink="https://www.amd.com"
@@ -228,10 +230,10 @@ export default function HomePage() {
           </div>
           <div style={{ display: "flex", flexDirection: "column", borderTop: "1px solid var(--divider)" }}>
             {[
-              { company: "AMD",              role: "Design Engineer",        period: "May 2025 – Present",       desc: "Designing and building software experiences for AMD's Adrenalin platform, used by millions of gamers worldwide." },
-              { company: "Safe Software",    role: "Product Designer",       period: "Apr 2024 – Aug 2024",      desc: "Redesigned the annotation workflow in FME, reducing visual clutter while preserving spatial context for data engineers." },
-              { company: "Blueprint AMS",    role: "Product Designer",       period: "Feb 2026 – Present",       desc: "Leading design for a donor management platform built to simplify nonprofit operations at scale." },
-              { company: "Vosyn",            role: "Product Design Intern",  period: "Sep – Dec 2023",           desc: "Contributed to early-stage product design for an AI-driven multilingual media platform, working across UX research and interface design." },
+              { company: "YU Blueprint",    role: "Design Lead",       period: "Feb 2026 – Present",       desc: "Building software to help nonprofit organization track and manage donation programs." },
+              { company: "AMD",              role: "Product Design Intern",        period: "May 2025 – Dec 2025",       desc: "Designing and building software experiences for AMD's Adrenalin platform, used by millions of gamers worldwide." },
+              { company: "Safe Software",    role: "Product Design Intern",       period: "Jan 2024 – Aug 2024",      desc: "Shipped enhance annotation features, redesigned icons, and overhauled the FME Form design system." },
+              { company: "Vosyn",            role: "Product Design Intern (Design Lead)",  period: "Sep – Dec 2023",           desc: "Led a team of 6 designers as primary design lead for an LLM-powered streaming platform." },
             ].map((exp, i, arr) => (
               <div key={i} className="rsp-exp-item" style={{
                 display:             "grid",

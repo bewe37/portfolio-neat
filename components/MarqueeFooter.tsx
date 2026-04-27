@@ -2,24 +2,25 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import Link from "next/link"
 
 function FooterLink({ label, href }: { label: string; href: string }) {
   const [hovered, setHovered] = useState(false)
   return (
-    <Link
+    <a
       href={href}
+      target="_blank"
+      rel="noopener noreferrer"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
         fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 500,
         letterSpacing: "-0.01em", textDecoration: "none",
-        color: hovered ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.5)",
+        color: hovered ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.72)",
         transition: "color 0.15s ease",
       }}
     >
       {label}
-    </Link>
+    </a>
   )
 }
 
@@ -35,7 +36,7 @@ function BackToTop() {
       style={{
         background: "none", border: "none", cursor: "pointer", padding: 0,
         display: "inline-flex", alignItems: "center", gap: 5,
-        color: hovered ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.5)",
+        color: hovered ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.72)",
         fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 500,
         letterSpacing: "-0.01em", transition: "color 0.15s ease",
       }}
@@ -101,15 +102,15 @@ export default function MarqueeFooter() {
         }}>
           <span style={{
             fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 500,
-            color: "rgba(255,255,255,0.3)", letterSpacing: "-0.01em",
+            color: "rgba(255,255,255,0.55)", letterSpacing: "-0.01em",
           }}>
             © {year} Georgius. All rights reserved.
           </span>
 
           <div style={{ display: "flex", alignItems: "center", gap: 20, flexShrink: 0 }}>
             {[
-              { label: "Work",  href: "/" },
-              { label: "About", href: "/about" },
+              { label: "LinkedIn", href: "https://linkedin.com/in/gbryanw" },
+              { label: "X",        href: "https://x.com/gbryanwt" },
             ].map(l => <FooterLink key={l.href} {...l} />)}
             <span style={{ width: 1, height: 12, background: "rgba(255,255,255,0.15)", flexShrink: 0 }} />
             <BackToTop />

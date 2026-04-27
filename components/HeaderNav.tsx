@@ -6,7 +6,6 @@ import {
   EnvelopeSimple,
   XLogo,
   LinkedinLogo,
-  GithubLogo,
 } from "@phosphor-icons/react"
 
 type PhosphorIconComponent = React.ComponentType<{
@@ -23,10 +22,9 @@ interface ContactItem {
 }
 
 const DEFAULT_ITEMS: ContactItem[] = [
-  { Icon: EnvelopeSimple, label: "Email",       link: "mailto:hi@georgius.ca",              newTab: false },
-  { Icon: XLogo,          label: "X / Twitter", link: "https://x.com",                      newTab: true  },
-  { Icon: LinkedinLogo,   label: "LinkedIn",    link: "https://linkedin.com/in/georgius",   newTab: true  },
-  { Icon: GithubLogo,     label: "GitHub",      link: "https://github.com/georgius",        newTab: true  },
+  { Icon: EnvelopeSimple, label: "Email",       link: "mailto:bryanwinata112@gmail.com",       newTab: false },
+  { Icon: XLogo,          label: "X / Twitter", link: "https://x.com/gbryanwt",               newTab: true  },
+  { Icon: LinkedinLogo,   label: "LinkedIn",    link: "https://www.linkedin.com/in/gbryanw/", newTab: true  },
 ]
 
 function MenuItem({ item }: { item: ContactItem }) {
@@ -75,8 +73,8 @@ function MenuItem({ item }: { item: ContactItem }) {
 }
 
 export default function HeaderNav({
-  aboutLabel = "About",
-  aboutLink = "/projects",
+  aboutLabel = "Resume",
+  aboutLink = "https://drive.google.com/file/d/1E8AUWkgri9AAHSLil1fQK9KBzZUQbtnK/view?usp=sharing",
   contactLabel = "Contact",
   items = DEFAULT_ITEMS,
 }: {
@@ -116,6 +114,8 @@ export default function HeaderNav({
         href={aboutLink}
         onMouseEnter={() => setAboutHov(true)}
         onMouseLeave={() => setAboutHov(false)}
+        target="_blank"
+        rel="noopener noreferrer"
         style={{ ...navTextStyle(aboutHov), textDecoration: "none", padding: "4px 0" }}
       >
         {aboutLabel}

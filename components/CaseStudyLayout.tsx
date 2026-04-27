@@ -22,6 +22,7 @@ interface ContentBlock {
   title?: string
   body?: string
   highlight?: boolean
+  note?: string
   objectPosition?: string
 }
 
@@ -286,6 +287,57 @@ function renderContentBlock(block: ContentBlock, bi: number) {
   const allVideos = block.videos ?? []
   const hasMedia  = allImages.length > 0 || allVideos.length > 0
 
+  // Note variant: image on the left, sticky side-note on the right
+  if (block.note && block.image) {
+    return (
+      <motion.div
+        key={bi}
+        initial={{ opacity: 0, y: 14 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={VIEWPORT}
+        transition={{ ...FADE, delay: bi * 0.05 }}
+        style={{ display: "grid", gridTemplateColumns: "1fr 200px", gap: 24, alignItems: "start" }}
+      >
+        <MediaBox src={block.image} />
+        <div style={{
+          position:        "sticky",
+          top:             80,
+          background:      "rgba(255,220,80,0.13)",
+          border:          "1px solid rgba(200,160,0,0.18)",
+          borderRadius:    10,
+          padding:         "14px 16px",
+          display:         "flex",
+          flexDirection:   "column",
+          gap:             6,
+        }}>
+          {block.title && (
+            <span style={{
+              fontFamily:    "var(--font-sans)",
+              fontSize:      10,
+              fontWeight:    700,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase" as const,
+              color:         "var(--c-faint)",
+            }}>
+              {block.title}
+            </span>
+          )}
+          <p style={{
+            fontFamily:    "var(--font-sans)",
+            fontSize:      13,
+            fontWeight:    400,
+            color:         "var(--c-secondary)",
+            lineHeight:    1.7,
+            margin:        0,
+            letterSpacing: "-0.01em",
+          }}>
+            {block.note}
+          </p>
+        </div>
+      </motion.div>
+    )
+  }
+
   return (
     <motion.div
       key={bi}
@@ -300,11 +352,11 @@ function renderContentBlock(block: ContentBlock, bi: number) {
           {block.title && (
             <h3 style={{
               fontFamily:    "var(--font-sans)",
-              fontSize:      17,
+              fontSize:      22,
               fontWeight:    600,
               color:         "var(--c-primary)",
-              letterSpacing: "-0.02em",
-              lineHeight:    1.3,
+              letterSpacing: "-0.025em",
+              lineHeight:    1.2,
               margin:        0,
             }}>
               {block.title}
@@ -313,7 +365,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
           {block.body && (
             <p style={{
               fontFamily:    "var(--font-sans)",
-              fontSize:      15,
+              fontSize:      16,
               fontWeight:    400,
               color:         "var(--c-secondary)",
               letterSpacing: "-0.01em",
@@ -369,56 +421,80 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
                 key={i}
                 onClick={() => setActive(i)}
                 style={{
-                  width:               "100%",
-                  display:             "grid",
-                  gridTemplateColumns: "28px 1fr",
-                  gap:                 "10px 16px",
-                  padding:             "22px 0",
-                  background:          "none",
-                  border:              "none",
-                  borderBottom:        "1px solid var(--divider)",
-                  cursor:              "pointer",
-                  textAlign:           "left",
+                  width:      "100%",
+                  display:    "flex",
+                  flexDirection: "column",
+                  gap:        0,
+                  padding:    "22px 0",
+                  background: "none",
+                  border:     "none",
+                  borderBottom: "1px solid var(--divider)",
+                  cursor:     "pointer",
+                  textAlign:  "left",
                 }}
               >
-                <span style={{
-                  fontFamily:    "var(--font-sans)",
-                  fontSize:      11,
-                  fontWeight:    600,
-                  color:         isActive ? "var(--c-primary)" : "var(--c-faint)",
-                  letterSpacing: "0.06em",
-                  lineHeight:    1.5,
-                  paddingTop:    2,
-                  transition:    "color 0.2s",
-                }}>
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {/* Header row: number + title + chevron */}
+                <div style={{ display: "grid", gridTemplateColumns: "28px 1fr 20px", gap: "0 16px", alignItems: "center" }}>
                   <span style={{
                     fontFamily:    "var(--font-sans)",
-                    fontSize:      15,
+                    fontSize:      11,
                     fontWeight:    600,
-                    color:         isActive ? "var(--c-primary)" : "var(--c-secondary)",
-                    letterSpacing: "-0.015em",
+                    color:         isActive ? "var(--c-primary)" : "var(--c-faint)",
+                    letterSpacing: "0.06em",
+                    lineHeight:    1.5,
+                    transition:    "color 0.2s",
+                    alignSelf:     "start",
+                    paddingTop:    2,
+                  }}>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span style={{
+                    fontFamily:    "var(--font-sans)",
+                    fontSize:      17,
+                    fontWeight:    600,
+                    color:         isActive ? "var(--c-primary)" : "var(--c-dim)",
+                    letterSpacing: "-0.02em",
                     lineHeight:    1.3,
                     transition:    "color 0.2s",
                   }}>
                     {item.title}
                   </span>
-                  {item.body && (
-                    <span style={{
-                      fontFamily:    "var(--font-sans)",
-                      fontSize:      13,
-                      fontWeight:    400,
-                      color:         isActive ? "var(--c-secondary)" : "var(--c-faint)",
-                      lineHeight:    1.75,
-                      letterSpacing: "-0.01em",
-                      transition:    "color 0.25s",
-                    }}>
-                      {item.body}
-                    </span>
-                  )}
+                  <motion.svg
+                    animate={{ rotate: isActive ? 180 : 0 }}
+                    transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                    width="14" height="14" viewBox="0 0 14 14" fill="none"
+                    style={{ flexShrink: 0, opacity: isActive ? 0.7 : 0.3 }}
+                  >
+                    <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                  </motion.svg>
                 </div>
+
+                {/* Collapsible body */}
+                <AnimatePresence initial={false}>
+                  {isActive && item.body && (
+                    <motion.div
+                      key="body"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                      style={{ overflow: "hidden", paddingLeft: 44 }}
+                    >
+                      <span style={{
+                        fontFamily:    "var(--font-sans)",
+                        fontSize:      15,
+                        fontWeight:    400,
+                        color:         "var(--c-secondary)",
+                        lineHeight:    1.75,
+                        letterSpacing: "-0.01em",
+                        display:       "block",
+                        paddingTop:    10,
+                      }}>
+                        {item.body}
+                      </span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </button>
             )
           })}
@@ -526,6 +602,35 @@ function MultiHighlight({ contents, marginTop }: { contents: ContentBlock[]; mar
         {contents.map((block, bi) => renderContentBlock(block, bi))}
       </div>
     </div>
+  )
+}
+
+function ReachOutButton({ label, href }: { label: string; href: string }) {
+  const [hov, setHov] = useState(false)
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        fontFamily:      "var(--font-sans)",
+        fontSize:        14,
+        fontWeight:      600,
+        color:           hov ? "var(--c-primary)" : "var(--c-mid)",
+        letterSpacing:   "-0.01em",
+        textDecoration:  "none",
+        padding:         "10px 22px",
+        borderRadius:    99,
+        border:          `1px solid ${hov ? "var(--border-mid)" : "var(--border-mid)"}`,
+        backgroundColor: hov ? "var(--hover-bg)" : "transparent",
+        transition:      "color 0.15s ease, background-color 0.15s ease",
+        display:         "inline-block",
+      }}
+    >
+      {label}
+    </a>
   )
 }
 
@@ -737,7 +842,7 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
       {sec.body && (
         <p style={{
           fontFamily:    "var(--font-sans)",
-          fontSize:      15,
+          fontSize:      16,
           fontWeight:    400,
           color:         "var(--c-secondary)",
           letterSpacing: "-0.01em",
@@ -946,7 +1051,7 @@ export default function CaseStudyLayout({
           >
             <h1 className="rsp-cs-h1" style={{
               fontFamily:    "var(--font-sans)",
-              fontSize:      "clamp(24px, 2.8vw, 36px)",
+              fontSize:      36,
               fontWeight:    700,
               color:         "var(--c-primary)",
               letterSpacing: "-0.03em",
@@ -1023,7 +1128,7 @@ export default function CaseStudyLayout({
                   transition={{ ...FADE, delay: i * 0.08 }}
                   style={{
                     fontFamily:    "var(--font-sans)",
-                    fontSize:      i === 0 ? "clamp(17px, 2vw, 22px)" : 15,
+                    fontSize:      i === 0 ? 20 : 16,
                     fontWeight:    i === 0 ? 500 : 400,
                     color:         i === 0 ? "var(--c-primary)" : "var(--c-secondary)",
                     letterSpacing: i === 0 ? "-0.02em" : "-0.01em",
@@ -1065,6 +1170,16 @@ export default function CaseStudyLayout({
                   {passwordDesc}
                 </p>
               )}
+              {/* Reach out buttons */}
+              <div style={{ marginTop: 0, marginBottom: 32, display: "flex", gap: 10 }}>
+                {[
+                  { label: "LinkedIn ↗", href: "https://www.linkedin.com/in/gbryanw/" },
+                  { label: "X ↗",        href: "https://x.com/gbryanwt"               },
+                ].map(({ label, href }) => (
+                  <ReachOutButton key={label} label={label} href={href} />
+                ))}
+              </div>
+
               <div style={{ display: "flex", gap: 10, alignItems: "center", maxWidth: 420 }}>
                 <input
                   type="password"
@@ -1108,6 +1223,7 @@ export default function CaseStudyLayout({
                   Incorrect password
                 </p>
               )}
+
             </motion.div>
           )}
 
