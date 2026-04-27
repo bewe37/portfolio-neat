@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { BUDDIES, type BuddyDef } from "@/lib/buddies"
 import { SpriteView } from "@/components/SpriteBuddy"
 import LogoAvatar from "@/components/LogoAvatar"
@@ -519,93 +519,340 @@ function BackBtn({ onClick }: { onClick: () => void }) {
   )
 }
 
+// ── Pixel draw canvas ─────────────────────────────────────────
+const DRAW_PALETTE = [
+  "#000000", "#1D2B53", "#7E2553", "#008751",
+  "#AB5236", "#5F574F", "#C2C3C7", "#FFF1E8",
+  "#FF004D", "#FFA300", "#FFEC27", "#00E436",
+  "#29ADFF", "#83769C", "#FF77A8", "#FFCCAA",
+]
+const DG = 16  // grid size
+const DC = 18  // cell px
+
+function DrawCanvas({ onSave }: { onSave: () => void }) {
+  const [pixels,   setPixels]   = useState<(string | null)[]>(() => Array(DG * DG).fill(null))
+  const [color,    setColor]    = useState(DRAW_PALETTE[8])
+  const [erasing,  setErasing]  = useState(false)
+  const [painting, setPainting] = useState(false)
+  const [history,  setHistory]  = useState<(string | null)[][]>([])
+  const gridRef    = useRef<HTMLDivElement>(null)
+  const previewRef = useRef<HTMLCanvasElement>(null)
+  const hasContent = pixels.some(Boolean)
+
+  useEffect(() => {
+    const cv = previewRef.current; if (!cv) return
+    const ctx = cv.getContext("2d")!
+    ctx.clearRect(0, 0, DG, DG)
+    pixels.forEach((px, i) => {
+      if (!px) return
+      ctx.fillStyle = px
+      ctx.fillRect(i % DG, Math.floor(i / DG), 1, 1)
+    })
+  }, [pixels])
+
+  function applyAt(idx: number) {
+    if (idx < 0 || idx >= DG * DG) return
+    setPixels(prev => {
+      const val = erasing ? null : color
+      if (prev[idx] === val) return prev
+      const next = [...prev]; next[idx] = val; return next
+    })
+  }
+
+  function startPaint(idx: number, e: React.MouseEvent) {
+    e.preventDefault()
+    setHistory(h => [...h.slice(-29), [...pixels]])
+    setPainting(true); applyAt(idx)
+  }
+
+  function handleTouchStart(e: React.TouchEvent) {
+    e.preventDefault()
+    setHistory(h => [...h.slice(-29), [...pixels]])
+    setPainting(true)
+    const t = e.touches[0], rect = gridRef.current!.getBoundingClientRect()
+    applyAt(Math.floor((t.clientY - rect.top) / DC) * DG + Math.floor((t.clientX - rect.left) / DC))
+  }
+
+  function handleTouchMove(e: React.TouchEvent) {
+    e.preventDefault(); if (!painting) return
+    const t = e.touches[0], rect = gridRef.current!.getBoundingClientRect()
+    applyAt(Math.floor((t.clientY - rect.top) / DC) * DG + Math.floor((t.clientX - rect.left) / DC))
+  }
+
+  const undo  = () => { if (!history.length) return; setPixels(history[history.length - 1]); setHistory(h => h.slice(0, -1)) }
+  const clear = () => { if (!hasContent) return; setHistory(h => [...h.slice(-29), [...pixels]]); setPixels(Array(DG * DG).fill(null)) }
+
+  function save() {
+    let topRow = DG
+    pixels.forEach((px, i) => { if (px) { const r = Math.floor(i / DG); if (r < topRow) topRow = r } })
+    const cv = document.createElement("canvas"); cv.width = DG; cv.height = DG
+    const ctx = cv.getContext("2d")!
+    pixels.forEach((px, i) => { if (!px) return; ctx.fillStyle = px; ctx.fillRect(i % DG, Math.floor(i / DG), 1, 1) })
+    localStorage.setItem("customBuddyData", cv.toDataURL("image/png"))
+    localStorage.setItem("customBuddyTop", String(topRow / DG))
+    localStorage.setItem("buddyId", "custom")
+    window.dispatchEvent(new Event("buddySelected"))
+    onSave()
+  }
+
+  const PV = DG * 3
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
+      <div style={{ display: "flex", gap: 24, alignItems: "flex-start" }}>
+
+        {/* Left: grid + tools */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div
+            ref={gridRef}
+            onMouseLeave={() => setPainting(false)}
+            onMouseUp={() => setPainting(false)}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={() => setPainting(false)}
+            style={{
+              display: "grid",
+              gridTemplateColumns: `repeat(${DG}, ${DC}px)`,
+              borderRadius: 10, overflow: "hidden",
+              border: "1px solid var(--border-mid)",
+              userSelect: "none", touchAction: "none",
+              cursor: erasing ? "cell" : "crosshair",
+              backgroundImage: `linear-gradient(45deg,rgba(0,0,0,.06) 25%,transparent 25%),linear-gradient(-45deg,rgba(0,0,0,.06) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,rgba(0,0,0,.06) 75%),linear-gradient(-45deg,transparent 75%,rgba(0,0,0,.06) 75%)`,
+              backgroundSize: `${DC * 2}px ${DC * 2}px`,
+              backgroundPosition: `0 0, 0 ${DC}px, ${DC}px -${DC}px, -${DC}px 0`,
+            }}
+          >
+            {pixels.map((px, i) => (
+              <div key={i}
+                onMouseDown={(e) => startPaint(i, e)}
+                onMouseEnter={() => { if (painting) applyAt(i) }}
+                style={{ width: DC, height: DC, backgroundColor: px ?? "transparent", boxShadow: "inset 0 0 0 0.5px rgba(0,0,0,0.07)" }}
+              />
+            ))}
+          </div>
+
+          {/* Tools below grid */}
+          <div style={{ display: "flex", gap: 6 }}>
+            {([
+              { label: "Erase", active: erasing,  onClick: () => setErasing(e => !e), disabled: false },
+              { label: "Undo",  active: false,     onClick: undo,                      disabled: !history.length },
+              { label: "Clear", active: false,     onClick: clear,                     disabled: !hasContent },
+            ] as const).map(btn => (
+              <button key={btn.label} onClick={btn.onClick} disabled={btn.disabled} style={{
+                flex: 1, padding: "7px 0", borderRadius: 8, border: "1px solid var(--border-mid)",
+                background: btn.active ? "var(--c-primary)" : "transparent",
+                color: btn.disabled ? "var(--c-faint)" : btn.active ? "var(--bg)" : "var(--c-secondary)",
+                fontSize: 10, fontWeight: 700, fontFamily: "var(--font-sans)",
+                letterSpacing: "0.06em", textTransform: "uppercase" as const,
+                cursor: btn.disabled ? "default" : "pointer", transition: "all 0.15s ease",
+              }}>{btn.label}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* Right panel: preview + palette */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 16, minWidth: 148 }}>
+
+          {/* Preview */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <span style={{ fontFamily: "var(--font-sans)", fontSize: 10, fontWeight: 700, color: "var(--c-secondary)", letterSpacing: "0.08em", textTransform: "uppercase" as const }}>Preview</span>
+            <motion.div
+              animate={{ y: [0, -6, 0] }}
+              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+              style={{
+                width: PV + 28, height: PV + 28, borderRadius: 12,
+                border: "1px solid var(--border-mid)", background: "var(--surface)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                backgroundImage: "radial-gradient(var(--dot-color) 1px, transparent 1px)",
+                backgroundSize: "8px 8px",
+              }}
+            >
+              <canvas ref={previewRef} width={DG} height={DG}
+                style={{ width: PV, height: PV, imageRendering: "pixelated", display: "block" }}
+              />
+            </motion.div>
+          </div>
+
+          {/* Palette */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <span style={{ fontFamily: "var(--font-sans)", fontSize: 10, fontWeight: 700, color: "var(--c-secondary)", letterSpacing: "0.08em", textTransform: "uppercase" as const }}>Colors</span>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 32px)", gap: 5 }}>
+              {DRAW_PALETTE.map(c => (
+                <motion.button key={c}
+                  onClick={() => { setColor(c); setErasing(false) }}
+                  whileHover={{ scale: 1.18 }} whileTap={{ scale: 0.88 }}
+                  transition={{ type: "spring", stiffness: 440, damping: 18 }}
+                  style={{
+                    width: 32, height: 32, borderRadius: 8, backgroundColor: c,
+                    border: "none",
+                    outline: color === c && !erasing ? "3px solid var(--c-primary)" : "2px solid transparent",
+                    outlineOffset: 2, cursor: "pointer",
+                    boxShadow: "0 1px 4px rgba(0,0,0,0.22)",
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Save */}
+      <motion.button
+        onClick={save} disabled={!hasContent}
+        animate={{ opacity: hasContent ? 1 : 0.32, y: hasContent ? 0 : 4 }}
+        transition={{ duration: 0.22 }}
+        style={{
+          padding: "11px 32px", borderRadius: 99, border: "none",
+          background: "var(--c-primary)", color: "var(--bg)",
+          fontSize: 14, fontWeight: 700, fontFamily: "var(--font-sans)",
+          cursor: hasContent ? "pointer" : "default", letterSpacing: "-0.01em",
+        }}
+      >
+        Use as companion →
+      </motion.button>
+    </div>
+  )
+}
+
 // ── Companion step ────────────────────────────────────────────
-function CompanionStep({ selected, onSelect, onConfirm, onBack, confirmed }: {
+function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, confirmed }: {
   selected: string | null
   onSelect: (id: string) => void
   onConfirm: () => void
+  onConfirmDraw: () => void
   onBack: () => void
   confirmed: boolean
 }) {
+  const [tab, setTab] = useState<"pick" | "draw">("pick")
+  const pickBtnRef = useRef<HTMLButtonElement>(null)
+  const drawBtnRef = useRef<HTMLButtonElement>(null)
+  const [pillStyle, setPillStyle] = useState({ x: 0, width: 0 })
+
+  useEffect(() => {
+    const ref = tab === "pick" ? pickBtnRef.current : drawBtnRef.current
+    if (ref) setPillStyle({ x: ref.offsetLeft, width: ref.offsetWidth })
+  }, [tab])
+
   return (
     <div style={{
-      display:        "flex",
-      flexDirection:  "column",
-      alignItems:     "center",
-      justifyContent: "center",
-      minHeight:      "100dvh",
-      padding:        "40px 24px",
-      position:       "relative",
-      fontFamily:     "var(--font-sans)",
-      background:     "var(--bg)",
+      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+      minHeight: "100dvh", padding: "40px 24px", position: "relative",
+      fontFamily: "var(--font-sans)", background: "var(--bg)", overflow: "hidden",
     }}>
       <BackBtn onClick={onBack} />
 
-      <h1 style={{
-        fontSize:      clamp(32, 44),
-        fontWeight:    800,
-        color:         "var(--c-primary)",
-        margin:        0,
-        marginBottom:  48,
-        letterSpacing: "-0.03em",
-        textAlign:     "center",
-        opacity:       confirmed ? 0 : 1,
-        transition:    "opacity 0.4s ease",
-      }}>
-        Pick your companion.
-      </h1>
-
-      <div style={{
-        display:        "flex",
-        gap:            32,
-        alignItems:     "flex-start",
-        flexWrap:       "wrap",
-        justifyContent: "center",
-        opacity:        confirmed ? 0 : 1,
-        transition:     "opacity 0.4s ease",
-      }}>
-        {BUDDIES.map((buddy, i) => (
-          <div key={buddy.id}
-            style={{ animation: `buddyCardIn 0.5s cubic-bezier(0.34,1.56,0.64,1) ${i * 0.08}s both` }}
-          >
-            <BuddyCard
-              buddy={buddy}
-              selected={selected === buddy.id}
-              dimmed={selected !== null && selected !== buddy.id}
-              onSelect={() => onSelect(buddy.id)}
+      {/* ── Fixed header: toggle + title ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: confirmed ? 0 : 1, y: confirmed ? 4 : 0 }}
+        transition={{ duration: 0.35 }}
+        style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 28, marginBottom: 36 }}
+      >
+        {/* Sliding pill toggle */}
+        <div style={{ position: "relative", display: "flex", gap: 3, padding: 4, borderRadius: 99, background: "var(--surface)", border: "1px solid var(--border-mid)" }}>
+          {pillStyle.width > 0 && (
+            <motion.span
+              animate={{ x: pillStyle.x, width: pillStyle.width }}
+              transition={{ type: "spring", stiffness: 420, damping: 30 }}
+              style={{
+                position: "absolute", top: 4, bottom: 4, left: 0,
+                borderRadius: 99, background: "var(--bg)",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.09)",
+                pointerEvents: "none",
+              }}
             />
-          </div>
-        ))}
-      </div>
+          )}
+          {(["pick", "draw"] as const).map(t => (
+            <motion.button
+              key={t}
+              ref={t === "pick" ? pickBtnRef : drawBtnRef}
+              onClick={() => setTab(t)}
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              transition={{ type: "spring", stiffness: 420, damping: 18 }}
+              style={{
+                padding: "8px 20px", borderRadius: 99, border: "none",
+                background: "transparent",
+                color: tab === t ? "var(--c-primary)" : "var(--c-secondary)",
+                fontSize: 13, fontWeight: 600, fontFamily: "var(--font-sans)",
+                cursor: "pointer", letterSpacing: "-0.01em",
+                display: "flex", alignItems: "center", gap: 6,
+                position: "relative", zIndex: 1,
+                transition: "color 0.2s ease",
+              }}
+            >
+              {t === "pick" ? "Pick a companion" : (
+                <>
+                  Draw your own
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.5 1.5L10.5 3.5L4 10H2V8L8.5 1.5Z" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </>
+              )}
+            </motion.button>
+          ))}
+        </div>
 
-      <div style={{
-        marginTop:     36,
-        opacity:       selected && !confirmed ? 1 : 0,
-        transform:     selected && !confirmed ? "translateY(0)" : "translateY(6px)",
-        transition:    "opacity 0.3s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1)",
-        pointerEvents: selected ? "auto" : "none",
-        visibility:    selected ? "visible" : "hidden",
-      }}>
-        <button
-          className="btn-shiny"
-          onClick={onConfirm}
-          style={{
-            padding:       "12px 36px",
-            borderRadius:  99,
-            border:        "none",
-            background:    "var(--c-primary)",
-            color:         "var(--bg)",
-            fontSize:      14,
-            fontWeight:    700,
-            fontFamily:    "var(--font-sans)",
-            cursor:        "pointer",
-            letterSpacing: "-0.01em",
-            position:      "relative",
-            overflow:      "hidden",
-          }}
-        >
-          {`Let's go with ${BUDDIES.find(b => b.id === selected)?.name ?? ""} →`}
-        </button>
+        <h1 style={{
+          fontSize: clamp(28, 42), fontWeight: 800, color: "var(--c-primary)",
+          margin: 0, letterSpacing: "-0.03em", textAlign: "center",
+        }}>
+          {tab === "pick" ? "Pick your companion." : "Draw your companion."}
+        </h1>
+      </motion.div>
+
+      {/* ── Tab content — crossfades, no layout shift ── */}
+      <div style={{ position: "relative", width: "100%", display: "flex", justifyContent: "center" }}>
+        <AnimatePresence mode="wait" initial={false}>
+          {tab === "pick" ? (
+            <motion.div
+              key="pick"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] }}
+              style={{ display: "flex", flexDirection: "column", alignItems: "center", opacity: confirmed ? 0 : 1, transition: "opacity 0.4s ease" }}
+            >
+              <div style={{ display: "flex", gap: 32, alignItems: "flex-start", flexWrap: "wrap", justifyContent: "center" }}>
+                {BUDDIES.map((buddy, i) => (
+                  <div key={buddy.id} style={{ animation: `buddyCardIn 0.5s cubic-bezier(0.34,1.56,0.64,1) ${i * 0.08}s both` }}>
+                    <BuddyCard buddy={buddy} selected={selected === buddy.id}
+                      dimmed={selected !== null && selected !== buddy.id}
+                      onSelect={() => onSelect(buddy.id)} />
+                  </div>
+                ))}
+              </div>
+
+              <div style={{
+                marginTop: 36,
+                opacity: selected && !confirmed ? 1 : 0,
+                transform: selected && !confirmed ? "translateY(0)" : "translateY(6px)",
+                transition: "opacity 0.3s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1)",
+                pointerEvents: selected ? "auto" : "none",
+                visibility: selected ? "visible" : "hidden",
+              }}>
+                <button className="btn-shiny" onClick={onConfirm} style={{
+                  padding: "12px 36px", borderRadius: 99, border: "none",
+                  background: "var(--c-primary)", color: "var(--bg)",
+                  fontSize: 14, fontWeight: 700, fontFamily: "var(--font-sans)",
+                  cursor: "pointer", letterSpacing: "-0.01em", position: "relative", overflow: "hidden",
+                }}>
+                  {`Let's go with ${BUDDIES.find(b => b.id === selected)?.name ?? ""} →`}
+                </button>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="draw"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: confirmed ? 0 : 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] }}
+            >
+              <DrawCanvas onSave={onConfirmDraw} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )
@@ -640,6 +887,11 @@ export default function OnboardingPage() {
     setTimeout(() => router.replace("/"), 600)
   }
 
+  function confirmDraw() {
+    setConfirmed(true)
+    setTimeout(() => router.replace("/"), 600)
+  }
+
   function skip() {
     localStorage.setItem("buddyId", "none")
     router.replace("/")
@@ -669,6 +921,7 @@ export default function OnboardingPage() {
           selected={selected}
           onSelect={setSelected}
           onConfirm={confirm}
+          onConfirmDraw={confirmDraw}
           onBack={goBack}
           confirmed={confirmed}
         />

@@ -165,14 +165,14 @@ export default function HomePage() {
               companyLink="https://www.amd.com"
               companyLogoSrc="/amdchip.svg"
               companyLogoSize={54}
-              afterCompany=" & "
+              afterCompany="&"
               secondCompany="Safe Software"
               secondCompanyLink="https://www.safe.com"
               secondCompanyLogoSrc="/safechip.svg"
               secondCompanyLogoSize={80}
               after=". I do the invisible work, turning &ldquo;why is this so confusing&rdquo; into &ldquo;wait, that was easy?&rdquo; Mostly through obsessive detail-tweaking and too much coffee."
               fontSize={17}
-              fontWeight={400}
+              fontWeight={450}
               fontFamily="var(--font-sans)"
               textColor="var(--c-primary)"
               dimmedColor="var(--c-dim)"

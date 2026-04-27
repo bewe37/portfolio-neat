@@ -292,7 +292,7 @@ function InlineLogoChip({ src, alt, link, size = 40 }: { src: string; alt: strin
       style={{ display: "inline-block", verticalAlign: "-4px", margin: "0 7px", cursor: link ? "pointer" : "default", lineHeight: 0 }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={src} alt={alt} draggable={false} style={{ width: size, height: "auto", display: "block", userSelect: "none" }} />
+      <img src={src} alt={alt} draggable={false} style={{ width: size, height: "auto", display: "block", userSelect: "none", border: "1.5px solid var(--border-mid)", borderRadius: 6, padding: 2, boxSizing: "border-box" }} />
     </motion.span>
   )
   if (link) return <a href={link} target="_blank" rel="noopener noreferrer" style={{ display: "inline", textDecoration: "none" }}>{inner}</a>
