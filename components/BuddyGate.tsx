@@ -34,9 +34,11 @@ export default function BuddyGate() {
           pointerEvents: "none",
         }} />
       )}
-      <div className="rsp-hide-mobile">
-        <SpriteBuddy />
-      </div>
+      {pathname !== "/onboarding" && (
+        <div className="rsp-hide-mobile">
+          <SpriteBuddy />
+        </div>
+      )}
     </>
   )
 }
