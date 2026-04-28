@@ -7,6 +7,7 @@ import ProjectFolders, { AMD_PAPERS, AMD_AI_PAPERS, FME_PAPERS } from "@/compone
 import MarqueeFooter from "@/components/MarqueeFooter"
 import AboutSection from "@/components/AboutSection"
 import PhotoGallery from "@/components/PhotoGallery"
+import ParallaxBackground from "@/components/ParallaxBackground"
 
 const PROJECTS = [
   {
@@ -71,19 +72,23 @@ const PROJECTS = [
 
 export default function HomePage() {
   return (
+    <>
+    <ParallaxBackground />
     <div
       style={{
         minHeight: "100dvh",
         display: "flex",
-        justifyContent: "center",
+        flexDirection: "column",
         position: "relative",
         zIndex: 1,
       }}
     >
+
       <main
         style={{
           width: "100%",
           maxWidth: 1280,
+          margin: "0 auto",
           padding: "0 48px",
           display: "flex",
           flexDirection: "column",
@@ -267,9 +272,11 @@ export default function HomePage() {
           <ContactList />
         </section>
 
-        {/* ── Footer ─────────────────────────────────────────────────── */}
-        <MarqueeFooter />
       </main>
+
+      {/* ── Footer ─────────────────────────────────────────────────── */}
+      <MarqueeFooter />
     </div>
+    </>
   )
 }

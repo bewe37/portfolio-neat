@@ -30,133 +30,91 @@ function MeteorCanvas({ spawnRef }: {
     const canvas = canvasRef.current!
     const ctx    = canvas.getContext("2d")!
     const meteors: MeteorData[] = []
-    let raf          = 0
-    let lastTime     = performance.now()
-    let nextSpawnIn  = 0
+    let raf         = 0
+    let lastTime    = performance.now()
+    let nextSpawnIn = 0
 
-    function resize() {
-      canvas.width  = window.innerWidth
-      canvas.height = window.innerHeight
-    }
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight }
     resize()
     window.addEventListener("resize", resize)
 
     function spawn(bright = false, sx?: number, sy?: number) {
       const spd = bright ? 750 : 160 + Math.random() * 220
       meteors.push({
-        x:      sx ?? (0.05 + Math.random() * 0.85) * canvas.width,
-        y:      sy ?? -10  + Math.random() * canvas.height * 0.35,
-        vx:     COS * spd,
-        vy:     SIN * spd,
-        age:    0,
-        life:   bright ? 1.1 : 1.6 + Math.random() * 2.6,
-        tail:   bright ? 240 : 60 + Math.random() * 90,
-        bright,
+        x: sx ?? (0.05 + Math.random() * 0.85) * canvas.width,
+        y: sy ?? -10 + Math.random() * canvas.height * 0.35,
+        vx: COS * spd, vy: SIN * spd,
+        age: 0, life: bright ? 1.1 : 1.6 + Math.random() * 2.6,
+        tail: bright ? 240 : 60 + Math.random() * 90, bright,
       })
     }
 
     spawnRef.current = (x, y) => spawn(true, x, y)
 
-    // Static stars — generated once, reused every frame
     interface Star {
-      x: number; y: number       // fractional position (0–1)
-      ox: number; oy: number     // origin for drift
-      r: number
-      base: number               // base opacity
-      phase: number              // twinkle phase offset
-      speed: number              // twinkle speed
-      driftR: number             // drift radius (px)
-      driftPhase: number         // drift phase
-      driftSpeed: number         // drift speed
+      x: number; y: number; ox: number; oy: number; r: number
+      base: number; phase: number; speed: number
+      driftR: number; driftPhase: number; driftSpeed: number
     }
     const stars: Star[] = Array.from({ length: 90 }, () => {
       const x = Math.random(), y = Math.random()
       return {
         x, y, ox: x, oy: y,
-        r:          0.4 + Math.random() * 1.2,
-        base:       0.18 + Math.random() * 0.48,
-        phase:      Math.random() * Math.PI * 2,
-        speed:      0.3 + Math.random() * 1.2,
-        driftR:     8  + Math.random() * 24,
+        r: 0.4 + Math.random() * 1.2,
+        base: 0.18 + Math.random() * 0.48,
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.3 + Math.random() * 1.2,
+        driftR: 8 + Math.random() * 24,
         driftPhase: Math.random() * Math.PI * 2,
         driftSpeed: 0.04 + Math.random() * 0.08,
       }
     })
 
-    // Sparkles — occasional bright cross-shaped flares on random stars
     interface Sparkle { starIdx: number; age: number; life: number; size: number }
     const sparkles: Sparkle[] = []
     let nextSparkleIn = 1.5 + Math.random() * 2
 
     function spawnSparkle() {
       const idx = Math.floor(Math.random() * stars.length)
-      // Don't stack on an already-sparkling star
       if (sparkles.some(s => s.starIdx === idx)) return
       sparkles.push({ starIdx: idx, age: 0, life: 0.9 + Math.random() * 0.5, size: 6 + Math.random() * 10 })
     }
 
-    // Seed with staggered meteors
-    for (let i = 0; i < 6; i++) {
-      spawn()
-      meteors[i].age = Math.random() * meteors[i].life * 0.6
-    }
+    for (let i = 0; i < 6; i++) { spawn(); meteors[i].age = Math.random() * meteors[i].life * 0.6 }
 
     function frame(now: number) {
       const dt = Math.min((now - lastTime) / 1000, 0.05)
       lastTime = now
-
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-      // Draw stars with drift + varied twinkle
       const t = now / 1000
       for (const s of stars) {
-        const twinkle = Math.sin(t * s.speed + s.phase)
-        // Occasional deep dim: when twinkle dips below -0.7, star nearly vanishes
-        const alpha   = Math.max(0, s.base + twinkle * 0.22)
+        const alpha = Math.max(0, s.base + Math.sin(t * s.speed + s.phase) * 0.22)
         const px = (s.ox * canvas.width)  + Math.cos(t * s.driftSpeed + s.driftPhase) * s.driftR
         const py = (s.oy * canvas.height) + Math.sin(t * s.driftSpeed + s.driftPhase * 1.3) * s.driftR * 0.6
-        ctx.beginPath()
-        ctx.arc(px, py, s.r, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(255,255,255,${alpha})`
-        ctx.fill()
+        ctx.beginPath(); ctx.arc(px, py, s.r, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(255,255,255,${alpha})`; ctx.fill()
       }
 
       nextSpawnIn -= dt
-      if (nextSpawnIn <= 0) {
-        spawn()
-        nextSpawnIn = 1.8 + Math.random() * 3.5
-      }
+      if (nextSpawnIn <= 0) { spawn(); nextSpawnIn = 1.8 + Math.random() * 3.5 }
 
-      // Sparkle timer
       nextSparkleIn -= dt
-      if (nextSparkleIn <= 0) {
-        spawnSparkle()
-        nextSparkleIn = 1.2 + Math.random() * 2.5
-      }
+      if (nextSparkleIn <= 0) { spawnSparkle(); nextSparkleIn = 1.2 + Math.random() * 2.5 }
 
-      // Draw sparkles
       for (let i = sparkles.length - 1; i >= 0; i--) {
-        const sp = sparkles[i]
-        sp.age += dt
+        const sp = sparkles[i]; sp.age += dt
         if (sp.age >= sp.life) { sparkles.splice(i, 1); continue }
-
-        const t2   = sp.age / sp.life
-        // Sharp rise, slow fade
+        const t2 = sp.age / sp.life
         const fade = t2 < 0.2 ? t2 / 0.2 : 1 - ((t2 - 0.2) / 0.8)
-        const s    = stars[sp.starIdx]
-        const px   = (s.ox * canvas.width)  + Math.cos(now / 1000 * s.driftSpeed + s.driftPhase) * s.driftR
-        const py   = (s.oy * canvas.height) + Math.sin(now / 1000 * s.driftSpeed + s.driftPhase * 1.3) * s.driftR * 0.6
-        const sz   = sp.size * fade
-
-        ctx.save()
-        ctx.globalAlpha = fade
-        ctx.strokeStyle = "#fff"
-        ctx.lineWidth   = 1
-
-        // 4-point cross
+        const s = stars[sp.starIdx]
+        const px = (s.ox * canvas.width)  + Math.cos(now / 1000 * s.driftSpeed + s.driftPhase) * s.driftR
+        const py = (s.oy * canvas.height) + Math.sin(now / 1000 * s.driftSpeed + s.driftPhase * 1.3) * s.driftR * 0.6
+        const sz = sp.size * fade
+        ctx.save(); ctx.globalAlpha = fade; ctx.strokeStyle = "#fff"; ctx.lineWidth = 1
         for (let a = 0; a < 4; a++) {
           const angle = (a / 4) * Math.PI
-          const len   = a % 2 === 0 ? sz : sz * 0.55
+          const len = a % 2 === 0 ? sz : sz * 0.55
           ctx.beginPath()
           ctx.moveTo(px + Math.cos(angle) * 1.5, py + Math.sin(angle) * 1.5)
           ctx.lineTo(px + Math.cos(angle) * len,  py + Math.sin(angle) * len)
@@ -164,72 +122,44 @@ function MeteorCanvas({ spawnRef }: {
           ctx.lineTo(px - Math.cos(angle) * len,  py - Math.sin(angle) * len)
           ctx.stroke()
         }
-
-        // Centre glow
         const glow = ctx.createRadialGradient(px, py, 0, px, py, sz * 0.8)
-        glow.addColorStop(0, `rgba(255,245,210,${fade * 0.9})`)
-        glow.addColorStop(1, "rgba(255,245,210,0)")
-        ctx.fillStyle = glow
-        ctx.beginPath()
-        ctx.arc(px, py, sz * 0.8, 0, Math.PI * 2)
-        ctx.fill()
-
+        glow.addColorStop(0, `rgba(255,245,210,${fade * 0.9})`); glow.addColorStop(1, "rgba(255,245,210,0)")
+        ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(px, py, sz * 0.8, 0, Math.PI * 2); ctx.fill()
         ctx.restore()
       }
 
       for (let i = meteors.length - 1; i >= 0; i--) {
-        const m = meteors[i]
-        m.age += dt
+        const m = meteors[i]; m.age += dt
         if (m.age >= m.life) { meteors.splice(i, 1); continue }
-
-        const t    = m.age / m.life
-        const fade = t < 0.08 ? t / 0.08 : t > 0.62 ? 1 - (t - 0.62) / 0.38 : 1
-
-        const hx = m.x + m.vx * m.age
-        const hy = m.y + m.vy * m.age
-        const tx = hx - COS * m.tail
-        const ty = hy - SIN * m.tail
-
+        const t2 = m.age / m.life
+        const fade = t2 < 0.08 ? t2 / 0.08 : t2 > 0.62 ? 1 - (t2 - 0.62) / 0.38 : 1
+        const hx = m.x + m.vx * m.age, hy = m.y + m.vy * m.age
+        const tx = hx - COS * m.tail,  ty = hy - SIN * m.tail
         const g = ctx.createLinearGradient(tx, ty, hx, hy)
         if (m.bright) {
-          g.addColorStop(0,   "rgba(255,200,100,0)")
+          g.addColorStop(0, "rgba(255,200,100,0)")
           g.addColorStop(0.6, `rgba(255,225,150,${0.6 * fade})`)
-          g.addColorStop(1,   `rgba(255,255,235,${fade})`)
+          g.addColorStop(1, `rgba(255,255,235,${fade})`)
         } else {
           g.addColorStop(0, "rgba(255,255,255,0)")
           g.addColorStop(1, `rgba(255,255,255,${0.42 * fade})`)
         }
-
-        ctx.beginPath()
-        ctx.moveTo(tx, ty)
-        ctx.lineTo(hx, hy)
-        ctx.strokeStyle = g
-        ctx.lineWidth   = m.bright ? 2.5 : 1
-        ctx.stroke()
-
+        ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(hx, hy)
+        ctx.strokeStyle = g; ctx.lineWidth = m.bright ? 2.5 : 1; ctx.stroke()
         if (m.bright) {
           const glow = ctx.createRadialGradient(hx, hy, 0, hx, hy, 10)
-          glow.addColorStop(0, `rgba(255,245,200,${fade * 0.9})`)
-          glow.addColorStop(1, "rgba(255,245,200,0)")
-          ctx.beginPath()
-          ctx.arc(hx, hy, 10, 0, Math.PI * 2)
-          ctx.fillStyle = glow
-          ctx.fill()
+          glow.addColorStop(0, `rgba(255,245,200,${fade * 0.9})`); glow.addColorStop(1, "rgba(255,245,200,0)")
+          ctx.beginPath(); ctx.arc(hx, hy, 10, 0, Math.PI * 2); ctx.fillStyle = glow; ctx.fill()
         }
       }
-
       raf = requestAnimationFrame(frame)
     }
 
     raf = requestAnimationFrame(frame)
 
     function onVisibility() {
-      if (document.hidden) {
-        cancelAnimationFrame(raf)
-      } else {
-        lastTime = performance.now()
-        raf = requestAnimationFrame(frame)
-      }
+      if (document.hidden) { cancelAnimationFrame(raf) }
+      else { lastTime = performance.now(); raf = requestAnimationFrame(frame) }
     }
     document.addEventListener("visibilitychange", onVisibility)
 
@@ -242,14 +172,7 @@ function MeteorCanvas({ spawnRef }: {
   }, [spawnRef])
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: "absolute", inset: 0,
-        width: "100%", height: "100%",
-        pointerEvents: "none",
-      }}
-    />
+    <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }} />
   )
 }
 
@@ -330,7 +253,6 @@ function WelcomeStep({ onContinue, onSkip }: { onContinue: () => void; onSkip: (
   const spawnRef = useRef<((x: number, y: number) => void) | null>(null)
 
   function handleClick(e: React.MouseEvent<HTMLDivElement>) {
-    // Don't spawn if clicking a button
     if ((e.target as HTMLElement).closest("button")) return
     spawnRef.current?.(e.clientX, e.clientY)
   }
@@ -485,7 +407,7 @@ function WelcomeStep({ onContinue, onSkip }: { onContinue: () => void; onSkip: (
 }
 
 // ── Close (X) button ──────────────────────────────────────────
-function BackBtn({ onClick }: { onClick: () => void }) {
+function BackBtn({ onClick, dark }: { onClick: () => void; dark?: boolean }) {
   const [hov, setHov] = useState(false)
   return (
     <button
@@ -493,13 +415,19 @@ function BackBtn({ onClick }: { onClick: () => void }) {
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
-        position:   "absolute", top: 24, left: 24,
+        position:   "absolute", top: 24, left: 24, zIndex: 10,
         display:    "inline-flex", alignItems: "center", justifyContent: "center",
         width:      32, height: 32, borderRadius: "50%",
-        background: hov ? "var(--hover-bg)" : "transparent",
-        border:     "1px solid var(--border)",
+        background: dark
+          ? (hov ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.04)")
+          : (hov ? "var(--hover-bg)" : "transparent"),
+        border:     dark
+          ? `1px solid ${hov ? "rgba(255,255,255,0.22)" : "rgba(255,255,255,0.1)"}`
+          : "1px solid var(--border)",
         cursor:     "pointer",
-        color:      hov ? "var(--c-primary)" : "var(--c-secondary)",
+        color:      dark
+          ? (hov ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.45)")
+          : (hov ? "var(--c-primary)" : "var(--c-secondary)"),
         transition: "background 0.15s ease, border-color 0.15s ease, color 0.15s ease",
         padding:    0,
       }}
@@ -522,6 +450,44 @@ const DRAW_PALETTE = [
 const DG = 16  // grid size
 const DC = 18  // cell px
 
+// ── Gallery data ───────────────────────────────────────────────
+const G_ROW_CFG: { dir: "left" | "right"; duration: number }[] = [
+  { dir: "left",  duration: 38 },
+  { dir: "right", duration: 26 },
+  { dir: "left",  duration: 44 },
+  { dir: "right", duration: 22 },
+  { dir: "left",  duration: 32 },
+  { dir: "right", duration: 48 },
+]
+const G_ITEM_SIZE  = 100
+const G_ITEM_GAP   = 14
+const G_ITEMS_HALF = 22
+type GDrawFn = (ctx: CanvasRenderingContext2D) => void
+const G_SAMPLES: GDrawFn[] = [
+  (c) => { c.fillStyle="#FFA300"; c.fillRect(3,4,10,8); c.fillRect(3,2,3,3); c.fillRect(10,2,3,3); c.fillStyle="#00E436"; c.fillRect(5,5,2,3); c.fillRect(9,5,2,3); c.fillStyle="#FF77A8"; c.fillRect(7,8,2,1); c.fillStyle="#FFF1E8"; c.fillRect(1,8,3,1); c.fillRect(12,8,3,1) },
+  (c) => { c.fillStyle="#29ADFF"; c.fillRect(3,5,9,5); c.fillStyle="#1D2B53"; c.fillRect(10,4,2,2); c.fillStyle="#FFEC27"; c.fillRect(12,5,2,1); c.fillStyle="#FFF1E8"; c.fillRect(11,4,1,1); c.fillStyle="#83769C"; c.fillRect(5,8,3,2); c.fillStyle="#FFA300"; c.fillRect(4,10,1,2); c.fillRect(7,10,1,2) },
+  (c) => { c.fillStyle="#FFEC27"; c.fillRect(6,6,4,4); c.fillStyle="#FF77A8"; c.fillRect(5,3,2,3); c.fillRect(9,3,2,3); c.fillRect(3,5,3,2); c.fillRect(10,5,3,2); c.fillRect(5,10,2,3); c.fillRect(9,10,2,3); c.fillRect(3,9,3,2); c.fillRect(10,9,3,2); c.fillStyle="#008751"; c.fillRect(7,13,2,3); c.fillRect(5,14,2,1); c.fillRect(9,12,2,1) },
+  (c) => { c.fillStyle="#83769C"; c.fillRect(3,6,9,4); c.fillRect(1,5,3,6); c.fillStyle="#FF77A8"; c.fillRect(11,6,3,4); c.fillStyle="#FFF1E8"; c.fillRect(12,7,1,1); c.fillStyle="#C2C3C7"; c.fillRect(5,7,1,2); c.fillRect(7,7,1,2); c.fillRect(9,7,1,2); c.fillStyle="#5F574F"; c.fillRect(3,5,2,1); c.fillRect(3,9,2,1) },
+  (c) => { c.fillStyle="#C2C3C7"; c.fillRect(4,2,8,10); c.fillRect(3,4,1,7); c.fillRect(12,4,1,7); c.fillRect(3,11,2,2); c.fillRect(7,11,2,2); c.fillRect(11,11,2,2); c.fillStyle="#1D2B53"; c.fillRect(5,5,3,4); c.fillRect(9,5,3,4); c.fillStyle="#FFF1E8"; c.fillRect(6,6,1,1); c.fillRect(10,6,1,1) },
+  (c) => { c.fillStyle="#FF004D"; c.fillRect(4,3,8,7); c.fillRect(3,5,1,5); c.fillRect(12,5,1,5); c.fillStyle="#FFF1E8"; c.fillRect(5,4,3,3); c.fillRect(9,5,2,2); c.fillStyle="#FFCCAA"; c.fillRect(5,10,6,5); c.fillStyle="#FFF1E8"; c.fillRect(4,12,1,1); c.fillRect(11,12,1,1) },
+  (c) => { c.fillStyle="#FF004D"; c.fillRect(2,4,4,5); c.fillRect(10,4,4,5); c.fillRect(1,7,14,5); c.fillRect(3,11,10,2); c.fillRect(5,12,6,2); c.fillRect(7,13,2,2); c.fillStyle="#FF77A8"; c.fillRect(3,5,2,2); c.fillRect(11,5,2,2) },
+  (c) => { c.fillStyle="#5F574F"; c.fillRect(3,3,10,10); c.fillRect(2,5,1,6); c.fillRect(13,5,1,6); c.fillStyle="#29ADFF"; c.fillRect(5,5,3,3); c.fillRect(9,5,3,3); c.fillStyle="#FFEC27"; c.fillRect(6,6,1,1); c.fillRect(10,6,1,1); c.fillStyle="#C2C3C7"; c.fillRect(5,10,6,2); c.fillStyle="#AB5236"; c.fillRect(6,2,1,1); c.fillRect(10,2,1,1) },
+  (c) => { c.fillStyle="#008751"; c.fillRect(5,2,6,4); c.fillRect(4,5,8,4); c.fillRect(3,8,10,4); c.fillStyle="#00E436"; c.fillRect(6,3,2,3); c.fillRect(5,6,2,2); c.fillStyle="#AB5236"; c.fillRect(6,12,4,4); c.fillStyle="#5F574F"; c.fillRect(5,14,1,2) },
+  (c) => { c.fillStyle="#00E436"; c.fillRect(5,4,6,8); c.fillRect(4,5,1,6); c.fillRect(11,5,1,6); c.fillRect(6,3,4,1); c.fillStyle="#29ADFF"; c.fillRect(5,6,3,3); c.fillRect(8,6,3,3); c.fillStyle="#FFF1E8"; c.fillRect(5,7,2,1); c.fillRect(8,7,2,1); c.fillStyle="#008751"; c.fillRect(6,10,4,1); c.fillRect(5,11,1,3); c.fillRect(10,11,1,3); c.fillRect(6,12,2,4); c.fillRect(8,12,2,4) },
+  (c) => { c.fillStyle="#FFEC27"; c.fillRect(7,1,2,5); c.fillRect(7,10,2,5); c.fillRect(1,7,5,2); c.fillRect(10,7,5,2); c.fillRect(3,3,2,2); c.fillRect(11,3,2,2); c.fillRect(3,11,2,2); c.fillRect(11,11,2,2); c.fillRect(5,5,6,6); c.fillStyle="#FFA300"; c.fillRect(6,6,4,4); c.fillStyle="#FFF1E8"; c.fillRect(6,5,2,2) },
+  (c) => { c.fillStyle="#FFEC27"; c.fillRect(4,4,8,8); c.fillRect(7,1,2,3); c.fillRect(7,12,2,3); c.fillRect(1,7,3,2); c.fillRect(12,7,3,2); c.fillRect(2,2,2,2); c.fillRect(12,2,2,2); c.fillRect(2,12,2,2); c.fillRect(12,12,2,2); c.fillStyle="#5F574F"; c.fillRect(6,6,2,2); c.fillRect(9,6,2,2); c.fillStyle="#FFF1E8"; c.fillRect(6,5,1,1); c.fillRect(9,5,1,1); c.fillStyle="#AB5236"; c.fillRect(6,10,4,1) },
+  (c) => { c.fillStyle="#C2C3C7"; c.fillRect(4,5,8,7); c.fillRect(5,4,6,1); c.fillRect(3,6,1,5); c.fillRect(12,6,1,5); c.fillRect(5,2,2,4); c.fillRect(9,2,2,4); c.fillStyle="#FF77A8"; c.fillRect(5,3,2,2); c.fillRect(9,3,2,2); c.fillStyle="#5F574F"; c.fillRect(6,7,2,2); c.fillRect(9,7,2,2); c.fillStyle="#FF77A8"; c.fillRect(7,9,2,2); c.fillStyle="#FFF1E8"; c.fillRect(6,6,1,1); c.fillRect(9,6,1,1); c.fillStyle="#C2C3C7"; c.fillRect(3,11,3,2); c.fillRect(10,11,3,2) },
+  (c) => { c.fillStyle="#7E2553"; c.fillRect(4,5,8,7); c.fillRect(3,6,1,5); c.fillRect(12,6,1,5); c.fillRect(3,3,3,3); c.fillRect(10,3,3,3); c.fillStyle="#FF004D"; c.fillRect(4,4,2,2); c.fillRect(10,4,2,2); c.fillStyle="#FFEC27"; c.fillRect(5,7,2,2); c.fillRect(9,7,2,2); c.fillStyle="#5F574F"; c.fillRect(5,6,1,1); c.fillRect(10,6,1,1); c.fillStyle="#FF004D"; c.fillRect(6,10,4,1); c.fillStyle="#FFA300"; c.fillRect(4,11,2,4); c.fillRect(10,11,2,4) },
+  (c) => { c.fillStyle="#7E2553"; c.fillRect(6,1,4,6); c.fillRect(5,3,6,4); c.fillRect(4,5,8,3); c.fillRect(3,7,10,2); c.fillRect(2,9,12,3); c.fillStyle="#FFEC27"; c.fillRect(7,3,2,1); c.fillStyle="#FFF1E8"; c.fillRect(7,3,1,1); c.fillRect(8,4,1,1); c.fillStyle="#FF77A8"; c.fillRect(5,10,6,2); c.fillStyle="#FFCCAA"; c.fillRect(6,12,4,4); c.fillStyle="#5F574F"; c.fillRect(6,13,1,2); c.fillRect(9,13,1,2) },
+]
+function buildGalleryRow(pool: string[], rowIdx: number): string[] {
+  const offset  = (rowIdx * 4) % pool.length
+  const shifted = [...pool.slice(offset), ...pool.slice(0, offset)]
+  const half: string[] = []
+  while (half.length < G_ITEMS_HALF) half.push(...shifted)
+  return [...half.slice(0, G_ITEMS_HALF), ...half.slice(0, G_ITEMS_HALF)]
+}
+
 function DrawCanvas({ onSave }: { onSave: () => void }) {
   const [pixels,   setPixels]   = useState<(string | null)[]>(() => Array(DG * DG).fill(null))
   const [color,    setColor]    = useState(DRAW_PALETTE[8])
@@ -530,6 +496,28 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
   const [history,  setHistory]  = useState<(string | null)[][]>([])
   const gridRef    = useRef<HTMLDivElement>(null)
   const previewRef = useRef<HTMLCanvasElement>(null)
+
+  // Load existing drawing from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("customBuddyData")
+    if (!saved) return
+    const img = new Image()
+    img.onload = () => {
+      const cv = document.createElement("canvas")
+      cv.width = DG; cv.height = DG
+      const ctx = cv.getContext("2d")!
+      ctx.drawImage(img, 0, 0, DG, DG)
+      const data = ctx.getImageData(0, 0, DG, DG).data
+      const loaded: (string | null)[] = Array(DG * DG).fill(null)
+      for (let i = 0; i < DG * DG; i++) {
+        const r = data[i * 4], g = data[i * 4 + 1], b = data[i * 4 + 2], a = data[i * 4 + 3]
+        if (a < 10) continue
+        loaded[i] = `#${r.toString(16).padStart(2,"0")}${g.toString(16).padStart(2,"0")}${b.toString(16).padStart(2,"0")}`
+      }
+      setPixels(loaded)
+    }
+    img.src = saved
+  }, [])
   const hasContent = pixels.some(Boolean)
 
   useEffect(() => {
@@ -581,10 +569,17 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
     const cv = document.createElement("canvas"); cv.width = DG; cv.height = DG
     const ctx = cv.getContext("2d")!
     pixels.forEach((px, i) => { if (!px) return; ctx.fillStyle = px; ctx.fillRect(i % DG, Math.floor(i / DG), 1, 1) })
-    localStorage.setItem("customBuddyData", cv.toDataURL("image/png"))
+    const dataUrl = cv.toDataURL("image/png")
+    localStorage.setItem("customBuddyData", dataUrl)
     localStorage.setItem("customBuddyTop", String(topRow / DG))
     localStorage.setItem("buddyId", "custom")
     window.dispatchEvent(new Event("buddySelected"))
+    // Share with other visitors — fire and forget
+    fetch("/api/companions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url: dataUrl }),
+    }).catch(() => {})
     onSave()
   }
 
@@ -677,10 +672,11 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
                   transition={{ type: "spring", stiffness: 440, damping: 18 }}
                   style={{
                     width: 32, height: 32, borderRadius: 8, backgroundColor: c,
-                    border: "none",
-                    outline: color === c && !erasing ? "3px solid var(--c-primary)" : "2px solid transparent",
-                    outlineOffset: 2, cursor: "pointer",
-                    boxShadow: "0 1px 4px rgba(0,0,0,0.22)",
+                    border: "none", outline: "none", cursor: "pointer",
+                    boxShadow: color === c && !erasing
+                      ? "0 0 0 2px #fff, 0 0 0 4px var(--c-primary)"
+                      : "0 1px 4px rgba(0,0,0,0.22)",
+                    transition: "box-shadow 0.15s ease",
                   }}
                 />
               ))}
@@ -692,6 +688,7 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
       {/* Save */}
       <motion.button
         onClick={save} disabled={!hasContent}
+        className="btn-shiny"
         animate={{ opacity: hasContent ? 1 : 0.32, y: hasContent ? 0 : 4 }}
         transition={{ duration: 0.22 }}
         style={{
@@ -699,6 +696,7 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
           background: "var(--c-primary)", color: "var(--bg)",
           fontSize: 14, fontWeight: 700, fontFamily: "var(--font-sans)",
           cursor: hasContent ? "pointer" : "default", letterSpacing: "-0.01em",
+          position: "relative", overflow: "hidden",
         }}
       >
         Use as companion →
@@ -708,146 +706,275 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
 }
 
 // ── Companion step ────────────────────────────────────────────
-function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, confirmed, initialTab = "pick" }: {
+function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, onClose, confirmed, initialTab = "pick" }: {
   selected: string | null
   onSelect: (id: string) => void
   onConfirm: () => void
   onConfirmDraw: () => void
   onBack: () => void
+  onClose: () => void
   confirmed: boolean
   initialTab?: "pick" | "draw"
 }) {
-  const [tab, setTab] = useState<"pick" | "draw">(initialTab)
-  const pickBtnRef = useRef<HTMLButtonElement>(null)
-  const drawBtnRef = useRef<HTMLButtonElement>(null)
+  const [tab, setTab] = useState<"pick" | "draw" | "gallery">(initialTab)
+  const [galleryPool, setGalleryPool] = useState<string[]>([])
+  const pickBtnRef   = useRef<HTMLButtonElement>(null)
+  const drawBtnRef   = useRef<HTMLButtonElement>(null)
+  const seeAllBtnRef = useRef<HTMLButtonElement>(null)
   const [pillStyle, setPillStyle] = useState({ x: 0, width: 0 })
 
   useEffect(() => {
-    const ref = tab === "pick" ? pickBtnRef.current : drawBtnRef.current
+    const ref = tab === "pick" ? pickBtnRef.current
+              : tab === "draw" ? drawBtnRef.current
+              : seeAllBtnRef.current
     if (ref) setPillStyle({ x: ref.offsetLeft, width: ref.offsetWidth })
   }, [tab])
+
+  useEffect(() => {
+    if (tab !== "gallery" || galleryPool.length > 0) return
+
+    const samples = G_SAMPLES.map(fn => {
+      const cv = document.createElement("canvas")
+      cv.width = 16; cv.height = 16
+      fn(cv.getContext("2d")!)
+      return cv.toDataURL()
+    })
+    const custom = localStorage.getItem("customBuddyData")
+
+    function buildPool(real: string[]) {
+      const base = real.length > 0 ? [...real, ...samples] : samples
+      if (custom) {
+        const mixed: string[] = []
+        base.forEach((s, i) => { mixed.push(s); if (i % 4 === 3) mixed.push(custom) })
+        setGalleryPool(mixed)
+      } else {
+        setGalleryPool(base)
+      }
+    }
+
+    fetch("/api/companions")
+      .then(r => r.json())
+      .then((d: { companions?: string[] }) => buildPool(d.companions ?? []))
+      .catch(() => buildPool([]))
+  }, [tab, galleryPool.length])
+
+  const isGallery = tab === "gallery"
 
   return (
     <div style={{
       display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start",
       minHeight: "100dvh", padding: "88px 24px 48px", position: "relative",
-      fontFamily: "var(--font-sans)", background: "var(--bg)", overflowY: "auto",
+      fontFamily: "var(--font-sans)",
+      background: isGallery ? "#18181b" : "var(--bg)",
+      transition: "background 0.55s cubic-bezier(0.22,1,0.36,1)",
+      overflowY: isGallery ? "hidden" : "auto",
+      overflowX: "hidden",
     }}>
-      <BackBtn onClick={onBack} />
+      <BackBtn onClick={isGallery ? onClose : onBack} dark={isGallery} />
 
-      {/* ── Fixed header: toggle + title ── */}
+      {/* ── Toggle + title ── */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: confirmed ? 0 : 1, y: confirmed ? 4 : 0 }}
         transition={{ duration: 0.35 }}
-        style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 28, marginBottom: 36 }}
+        style={{
+          display: "flex", flexDirection: "column", alignItems: "center",
+          gap: 28, marginBottom: isGallery ? 0 : 36,
+          position: "relative", zIndex: 2,
+        }}
       >
         {/* Sliding pill toggle */}
-        <div style={{ position: "relative", display: "flex", gap: 3, padding: 4, borderRadius: 99, background: "var(--surface)", border: "1px solid var(--border-mid)" }}>
+        <div style={{
+          position: "relative", display: "flex", gap: 3, padding: 4, borderRadius: 99,
+          background:  isGallery ? "rgba(255,255,255,0.06)" : "var(--surface)",
+          border:      isGallery ? "1px solid rgba(255,255,255,0.1)" : "1px solid var(--border-mid)",
+          transition:  "background 0.55s ease, border-color 0.55s ease",
+        }}>
           {pillStyle.width > 0 && (
             <motion.span
               animate={{ x: pillStyle.x, width: pillStyle.width }}
               transition={{ type: "spring", stiffness: 420, damping: 30 }}
               style={{
-                position: "absolute", top: 4, bottom: 4, left: 0,
-                borderRadius: 99, background: "var(--bg)",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.09)",
+                position:   "absolute", top: 4, bottom: 4, left: 0,
+                borderRadius: 99,
+                background:  isGallery ? "rgba(255,255,255,0.14)" : "var(--bg)",
+                boxShadow:   isGallery ? "none" : "0 2px 8px rgba(0,0,0,0.09)",
                 pointerEvents: "none",
+                transition:  "background 0.55s ease",
               }}
             />
           )}
+
           {(["pick", "draw"] as const).map(t => (
             <motion.button
               key={t}
               ref={t === "pick" ? pickBtnRef : drawBtnRef}
               onClick={() => setTab(t)}
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-              transition={{ type: "spring", stiffness: 420, damping: 18 }}
               style={{
                 padding: "8px 20px", borderRadius: 99, border: "none",
                 background: "transparent",
-                color: tab === t ? "var(--c-primary)" : "var(--c-secondary)",
+                color: isGallery
+                  ? "rgba(255,255,255,0.4)"
+                  : (tab === t ? "var(--c-primary)" : "var(--c-secondary)"),
                 fontSize: 13, fontWeight: 600, fontFamily: "var(--font-sans)",
                 cursor: "pointer", letterSpacing: "-0.01em",
                 display: "flex", alignItems: "center", gap: 6,
                 position: "relative", zIndex: 1,
-                transition: "color 0.2s ease",
+                transition: "color 0.3s ease",
               }}
             >
-              {t === "pick" ? "Pick a companion" : (
+              {t === "pick" ? (
+                <>
+                  Pick a companion
+                  <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                    <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" strokeWidth="1.3"/>
+                    <circle cx="4.8" cy="5.6" r="0.75" fill="currentColor"/>
+                    <circle cx="8.2" cy="5.6" r="0.75" fill="currentColor"/>
+                    <path d="M4.2 8C4.2 8 5 9.3 6.5 9.3C8 9.3 8.8 8 8.8 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+                  </svg>
+                </>
+              ) : (
                 <>
                   Draw your own
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                     <path d="M8.5 1.5L10.5 3.5L4 10H2V8L8.5 1.5Z" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </>
               )}
             </motion.button>
           ))}
+
+          {/* See all — opens gallery inline */}
+          <motion.button
+            ref={seeAllBtnRef}
+            onClick={() => setTab("gallery")}
+            style={{
+              padding: "8px 20px", borderRadius: 99, border: "none",
+              background: "transparent",
+              color: isGallery ? "rgba(255,255,255,0.9)" : "var(--c-secondary)",
+              fontSize: 13, fontWeight: 600, fontFamily: "var(--font-sans)",
+              cursor: "pointer", letterSpacing: "-0.01em",
+              display: "flex", alignItems: "center", gap: 6,
+              position: "relative", zIndex: 1,
+              transition: "color 0.3s ease",
+            }}
+          >
+            See all
+            <svg width="16" height="10" viewBox="0 0 16 10" fill="none">
+              <ellipse cx="4.5" cy="5" rx="3.5" ry="4" stroke="currentColor" strokeWidth="1.3"/>
+              <circle cx="5.5" cy="5" r="1.4" fill="currentColor"/>
+              <ellipse cx="11.5" cy="5" rx="3.5" ry="4" stroke="currentColor" strokeWidth="1.3"/>
+              <circle cx="12.5" cy="5" r="1.4" fill="currentColor"/>
+            </svg>
+          </motion.button>
         </div>
 
-        <h1 style={{
-          fontSize: clamp(28, 42), fontWeight: 800, color: "var(--c-primary)",
-          margin: 0, letterSpacing: "-0.03em", textAlign: "center",
-        }}>
-          {tab === "pick" ? "Pick your companion." : "Draw your companion."}
-        </h1>
+        {!isGallery && (
+          <h1 style={{
+            fontSize: clamp(28, 42), fontWeight: 800, color: "var(--c-primary)",
+            margin: 0, letterSpacing: "-0.03em", textAlign: "center",
+          }}>
+            {tab === "pick" ? "Pick your companion." : "Draw your companion."}
+          </h1>
+        )}
       </motion.div>
 
-      {/* ── Tab content — crossfades, no layout shift ── */}
-      <div style={{ position: "relative", width: "100%", display: "flex", justifyContent: "center" }}>
-        <AnimatePresence mode="wait" initial={false}>
-          {tab === "pick" ? (
-            <motion.div
-              key="pick"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: confirmed ? 0 : 1, y: confirmed ? -8 : 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
-              style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+      {/* ── Gallery overlay ── */}
+      {isGallery && (
+        <div style={{
+          position: "absolute", inset: 0, zIndex: 0,
+          display: "flex", flexDirection: "column", justifyContent: "center",
+          gap: G_ITEM_GAP, overflow: "hidden",
+          paddingTop: 80,
+        }}>
+          <div style={{
+            position: "absolute", inset: 0, pointerEvents: "none",
+            background: "radial-gradient(ellipse 80% 60% at 50% 50%, transparent 30%, rgba(0,0,0,0.5) 100%)",
+          }} />
+          {galleryPool.length > 0 && G_ROW_CFG.map(({ dir, duration }, rowIdx) => (
+            <div
+              key={rowIdx}
+              style={{
+                overflow: "hidden", flexShrink: 0,
+                animation: `rowFadeIn 0.65s cubic-bezier(0.22,1,0.36,1) ${rowIdx * 0.07}s both`,
+              }}
             >
-              <div style={{ display: "flex", gap: 32, alignItems: "flex-start", flexWrap: "wrap", justifyContent: "center" }}>
-                {BUDDIES.map((buddy, i) => (
-                  <div key={buddy.id} style={{ animation: `buddyCardIn 0.5s cubic-bezier(0.34,1.56,0.64,1) ${i * 0.08}s both` }}>
-                    <BuddyCard buddy={buddy} selected={selected === buddy.id}
-                      dimmed={selected !== null && selected !== buddy.id}
-                      onSelect={() => onSelect(buddy.id)} />
+              <div style={{
+                display: "flex", gap: G_ITEM_GAP, width: "fit-content",
+                animation: `g-scroll-${dir} ${duration}s linear infinite`,
+              }}>
+                {buildGalleryRow(galleryPool, rowIdx).map((url, i) => (
+                  <div key={i} style={{
+                    width: G_ITEM_SIZE, height: G_ITEM_SIZE, flexShrink: 0,
+                    padding: 9, borderRadius: 5, background: "#f0ece4",
+                    boxShadow: "0 4px 18px rgba(0,0,0,0.6), 0 1px 4px rgba(0,0,0,0.4)",
+                  }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={url} alt="" draggable={false}
+                      style={{ width: "100%", height: "100%", display: "block", imageRendering: "pixelated" }} />
                   </div>
                 ))}
               </div>
+            </div>
+          ))}
+        </div>
+      )}
 
-              <div style={{
-                marginTop: 36,
-                opacity: selected && !confirmed ? 1 : 0,
-                transform: selected && !confirmed ? "translateY(0)" : "translateY(6px)",
-                transition: "opacity 0.3s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1)",
-                pointerEvents: selected ? "auto" : "none",
-                visibility: selected ? "visible" : "hidden",
-              }}>
-                <button className="btn-shiny" onClick={onConfirm} style={{
-                  padding: "12px 36px", borderRadius: 99, border: "none",
-                  background: "var(--c-primary)", color: "var(--bg)",
-                  fontSize: 14, fontWeight: 700, fontFamily: "var(--font-sans)",
-                  cursor: "pointer", letterSpacing: "-0.01em", position: "relative", overflow: "hidden",
+      {/* ── Tab content — crossfades, no layout shift ── */}
+      {!isGallery && (
+        <div style={{ position: "relative", width: "100%", display: "flex", justifyContent: "center" }}>
+          <AnimatePresence mode="wait" initial={false}>
+            {tab === "pick" ? (
+              <motion.div
+                key="pick"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: confirmed ? 0 : 1, y: confirmed ? -8 : 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
+                style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+              >
+                <div style={{ display: "flex", gap: 32, alignItems: "flex-start", flexWrap: "wrap", justifyContent: "center" }}>
+                  {BUDDIES.map((buddy, i) => (
+                    <div key={buddy.id} style={{ animation: `buddyCardIn 0.5s cubic-bezier(0.34,1.56,0.64,1) ${i * 0.08}s both` }}>
+                      <BuddyCard buddy={buddy} selected={selected === buddy.id}
+                        dimmed={selected !== null && selected !== buddy.id}
+                        onSelect={() => onSelect(buddy.id)} />
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{
+                  marginTop: 36,
+                  opacity: selected && !confirmed ? 1 : 0,
+                  transform: selected && !confirmed ? "translateY(0)" : "translateY(6px)",
+                  transition: "opacity 0.3s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1)",
+                  pointerEvents: selected ? "auto" : "none",
+                  visibility: selected ? "visible" : "hidden",
                 }}>
-                  {`Let's go with ${BUDDIES.find(b => b.id === selected)?.name ?? ""} →`}
-                </button>
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="draw"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: confirmed ? 0 : 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] }}
-            >
-              <DrawCanvas onSave={onConfirmDraw} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+                  <button className="btn-shiny" onClick={onConfirm} style={{
+                    padding: "12px 36px", borderRadius: 99, border: "none",
+                    background: "var(--c-primary)", color: "var(--bg)",
+                    fontSize: 14, fontWeight: 700, fontFamily: "var(--font-sans)",
+                    cursor: "pointer", letterSpacing: "-0.01em", position: "relative", overflow: "hidden",
+                  }}>
+                    {`Let's go with ${BUDDIES.find(b => b.id === selected)?.name ?? ""} →`}
+                  </button>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="draw"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: confirmed ? 0 : 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] }}
+              >
+                <DrawCanvas onSave={onConfirmDraw} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
     </div>
   )
 }
@@ -869,21 +996,26 @@ function OnboardingPage() {
   const [confirmed, setConfirmed] = useState(false)
   const [mounted,   setMounted]   = useState(false)
   const [revealing, setRevealing] = useState(false)
+  const [leaving,   setLeaving]   = useState(false)
 
   useEffect(() => {
     setMounted(true)
-    // Only redirect if this is a fresh first-visit (not editing/drawing)
     if (!skipWelcome && localStorage.getItem("buddyId")) router.replace("/")
   }, [router, skipWelcome])
 
   function goToStep1() { setRevealing(true) }
 
+  function closeAll() {
+    setLeaving(true)
+    setTimeout(() => router.replace("/"), 160)
+  }
+
   function goBack() {
+    setLeaving(true)
     if (skipWelcome) {
-      router.replace("/")
+      setTimeout(() => router.replace("/"), 160)
     } else {
-      setStep(0)
-      setRevealing(false)
+      setTimeout(() => { setLeaving(false); setStep(0); setRevealing(false) }, 160)
     }
   }
 
@@ -922,8 +1054,14 @@ function OnboardingPage() {
           zIndex:    15,
           clipPath:  step === 1 ? "none" : revealing ? undefined : "circle(0% at 50% 50%)",
           animation: revealing ? "circleOpen 1.3s cubic-bezier(0.22,1,0.36,1) forwards" : undefined,
+          opacity:   leaving ? 0 : 1,
+          transition: "opacity 0.15s ease",
+          pointerEvents: leaving ? "none" : undefined,
         }}
-        onAnimationEnd={revealing ? () => { setRevealing(false); setStep(1) } : undefined}
+        onAnimationEnd={(e: React.AnimationEvent<HTMLDivElement>) => {
+          if (e.target !== e.currentTarget) return
+          if (revealing) { setRevealing(false); setStep(1) }
+        }}
       >
         <CompanionStep
           selected={selected}
@@ -931,6 +1069,7 @@ function OnboardingPage() {
           onConfirm={confirm}
           onConfirmDraw={confirmDraw}
           onBack={goBack}
+          onClose={closeAll}
           confirmed={confirmed}
           initialTab={drawMode ? "draw" : "pick"}
         />
@@ -976,9 +1115,22 @@ function OnboardingPage() {
           from { clip-path: circle(0%   at 50% 50%); }
           to   { clip-path: circle(150% at 50% 50%); }
         }
+
         @keyframes buddyCardIn {
           from { opacity: 0; transform: translateY(24px) scale(0.94); }
           to   { opacity: 1; transform: translateY(0)    scale(1); }
+        }
+        @keyframes g-scroll-left {
+          from { transform: translateX(0); }
+          to   { transform: translateX(-50%); }
+        }
+        @keyframes g-scroll-right {
+          from { transform: translateX(-50%); }
+          to   { transform: translateX(0); }
+        }
+        @keyframes rowFadeIn {
+          from { opacity: 0; transform: translateY(16px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
         .btn-dark-fill {
           background: linear-gradient(to top, rgb(255,107,48) 50%, #f4f4f5 50%);
