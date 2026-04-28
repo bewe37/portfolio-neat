@@ -7,7 +7,6 @@ import ProjectFolders, { AMD_PAPERS, AMD_AI_PAPERS, FME_PAPERS } from "@/compone
 import MarqueeFooter from "@/components/MarqueeFooter"
 import AboutSection from "@/components/AboutSection"
 import PhotoGallery from "@/components/PhotoGallery"
-import ParallaxBackground from "@/components/ParallaxBackground"
 
 const PROJECTS = [
   {
@@ -72,8 +71,6 @@ const PROJECTS = [
 
 export default function HomePage() {
   return (
-    <>
-    <ParallaxBackground />
     <div
       style={{
         minHeight: "100dvh",
@@ -277,6 +274,5 @@ export default function HomePage() {
       {/* ── Footer ─────────────────────────────────────────────────── */}
       <MarqueeFooter />
     </div>
-    </>
   )
 }
