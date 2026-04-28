@@ -852,10 +852,12 @@ function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, c
   )
 }
 
+import { Suspense } from "react"
+
 export const dynamic = "force-dynamic"
 
 // ── Page ──────────────────────────────────────────────────────
-export default function OnboardingPage() {
+function OnboardingPage() {
   const router       = useRouter()
   const searchParams = useSearchParams()
   const drawMode     = searchParams.get("draw") === "1"
@@ -1015,4 +1017,12 @@ function clamp(min: number, max: number): number {
   return typeof window !== "undefined"
     ? Math.min(max, Math.max(min, window.innerWidth * 0.04))
     : max
+}
+
+export default function Page() {
+  return (
+    <Suspense>
+      <OnboardingPage />
+    </Suspense>
+  )
 }
