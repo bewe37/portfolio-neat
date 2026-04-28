@@ -44,34 +44,57 @@ export default function AmdAiProject() {
         },
         {
           label: "Context",
-          title: "The overlay used to do more.",
-          body:  "Two versions ago, the AMD Software overlay gave users direct access to the controls they needed most, all without leaving their session. It was compact and fast, built around the reality that users don't stop mid-game to dig through a settings panel. Over major updates, that got stripped back to metrics only, and everything else moved into the full application.",
-          image: "/OldOverlay.png",
+          title: "A new direction for AMD Software.",
+          body:  "For a product used by millions of gamers and creators, AMD Software had a problem: it was hard to use. Years of incremental updates had left behind a dense, technically overwhelming interface that frustrated casual and advanced users alike. Rather than patching issues one by one, the team committed to a full-scale redesign, rebuilding the experience around how users actually work. The redesign split the experience into two layers: a lightweight overlay for in-session use, and a full application for deeper control. Nowhere was the need for change more visible than the overlay.",
+          contents: [
+            {
+              highlight: true,
+              title: "In-Session Overlay",
+              body: "A lightweight surface that stays on top of any application, designed for quick access and immediate control — without breaking focus or switching windows.",
+            },
+            {
+              highlight: true,
+              title: "Full Application",
+              body: "The complete configuration layer. For deeper settings, longer workflows, and anything that requires time, context, and comparison.",
+            },
+          ],
+        },
+        {
+          label: "A Step Back",
+          title: "The overlay then and now.",
+          body:  "Two versions ago, the overlay gave users direct access to the controls they needed most. Compact, fast, and built around the reality that users don't stop mid-session to dig through a settings panel. Over successive updates, controls were gradually removed in favor of a cleaner, metrics-focused display. By the current version, it had been reduced to a read-only dashboard, useful for monitoring, but no longer a tool for doing.",
+          images: ["/OldOverlay.png", "/MetricsIssue.png"],
         },
         {
           label: "Problem Space",
+          body:  "With controls stripped from the overlay, users had no way to act mid-session. Any adjustment meant leaving what they were doing, opening the full app, and navigating through panels to find the right setting. Enough friction to just not bother. To understand the full scope, the team ran moderated usability sessions with 6 users. Three friction points surfaced consistently.",
           contents: [
             {
               title: "Read-only metrics, no controls.",
-              body:  "What replaced it was an overlay stripped down to just displaying system information. Useful to glance at, but nothing more. Any actual change still meant closing the overlay, opening the full application, and navigating through panels to find the right setting. For users mid-session, that's enough friction to just not bother.",
-              image: "/MetricsIssue.png",
+              body:  "Users moved through multiple panels before reaching common settings, adding unnecessary steps to actions that should be immediate.",
+              image: "/NavigationIssues.png",
             },
             {
               title: "Settings only experts could parse.",
               body:  "This wasn't a new problem. Even the original overlay used terminology that casual users struggled to parse. But as more features moved into the full application, settings became more numerous and granular, making it harder to know what each option did or how it would affect your system without prior technical knowledge.",
               image: "/Problem Space 4.png",
             },
+            {
+              title: "Information overload.",
+              body:  "Too much competing for attention at once. Charts, toggles, metrics, and settings competing for attention, making it hard to identify what actually matters.",
+              image: "/InformationOverload.png",
+            },
           ],
         },
         {
           label: "The Goals",
           title: "Redefining what the overlay should do.",
-          body: "The overlay had lost its purpose as an action surface. Two goals shaped the redesign direction.",
+          body: "The usability sessions made one thing clear: the overlay wasn't just missing features, it was missing its purpose. It's the only part of AMD Software users reach for mid-session, when they need a quick answer or a fast adjustment without breaking focus. Fixing the full application wouldn't solve that. The overlay needed to be rethought on its own terms. Two goals shaped the direction:",
           contents: [
             {
               highlight: true,
               title: "01",
-              body: "Restore the quick controls users lost — let them act on their system without ever leaving the session.",
+              body: "Restore the quick controls users lost. Let them act on their system without ever leaving the session.",
             },
             {
               highlight: true,
