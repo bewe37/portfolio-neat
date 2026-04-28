@@ -7,8 +7,10 @@ const kv = new Redis({
 })
 
 const KEY    = "companions:v1"
-const MAX    = 1000         // keep the 1000 most recent drawings — change freely, each 16×16 PNG is ~200 bytes
-const RL_TTL = 60 * 60 * 24 // one submission per IP per 24 h
+const MAX    = 1000         // keep the 1000 most recent drawings
+const RL_KEY = (ip: string, slot: number) => `rl:companion:${ip}:${slot}`
+const RL_MAX = 5            // max submissions per IP per 24 h
+const RL_TTL = 60 * 60 * 24
 
 export async function GET() {
   try {
@@ -30,16 +32,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Too large" }, { status: 400 })
     }
 
-    // One submission per IP per 24 h
-    const ip  = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown"
-    const rlKey = `rl:companion:${ip}`
-    if (await kv.get(rlKey)) {
+    // Max 5 submissions per IP per 24 h
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown"
+    let slot = 0
+    while (slot < RL_MAX && await kv.get(RL_KEY(ip, slot))) slot++
+    if (slot >= RL_MAX) {
       return NextResponse.json({ error: "Rate limited" }, { status: 429 })
     }
 
     await kv.lpush(KEY, url)
     await kv.ltrim(KEY, 0, MAX - 1)
-    await kv.set(rlKey, 1, { ex: RL_TTL })
+    await kv.set(RL_KEY(ip, slot), 1, { ex: RL_TTL })
 
     return NextResponse.json({ ok: true })
   } catch {
