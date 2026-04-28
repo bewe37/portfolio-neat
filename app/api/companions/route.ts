@@ -9,7 +9,7 @@ const kv = new Redis({
 const KEY    = "companions:v1"
 const MAX    = 1000         // keep the 1000 most recent drawings
 const RL_KEY = (ip: string, slot: number) => `rl:companion:${ip}:${slot}`
-const RL_MAX = 5            // max submissions per IP per 24 h
+const RL_MAX = 100          // max submissions per IP per 24 h
 const RL_TTL = 60 * 60 * 24
 
 export async function GET() {

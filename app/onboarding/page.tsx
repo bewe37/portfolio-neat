@@ -885,7 +885,7 @@ function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, o
           position: "absolute", inset: 0, zIndex: 0,
           display: "flex", flexDirection: "column", justifyContent: "center",
           gap: G_ITEM_GAP, overflow: "hidden",
-          paddingTop: 80,
+          paddingTop: "clamp(120px, 18vh, 160px)",
         }}>
           <div style={{
             position: "absolute", inset: 0, pointerEvents: "none",
@@ -1007,15 +1007,15 @@ function OnboardingPage() {
 
   function closeAll() {
     setLeaving(true)
-    setTimeout(() => router.replace("/"), 160)
+    setTimeout(() => router.replace("/"), 240)
   }
 
   function goBack() {
     setLeaving(true)
     if (skipWelcome) {
-      setTimeout(() => router.replace("/"), 160)
+      setTimeout(() => router.replace("/"), 240)
     } else {
-      setTimeout(() => { setLeaving(false); setStep(0); setRevealing(false) }, 160)
+      setTimeout(() => { setLeaving(false); setStep(0); setRevealing(false) }, 240)
     }
   }
 
@@ -1045,6 +1045,9 @@ function OnboardingPage() {
       overflow:   "hidden",
       position:   "relative",
       background: step === 0 ? "#18181b" : "var(--bg)",
+      opacity:    leaving ? 0 : 1,
+      transition: leaving ? "opacity 0.22s ease" : undefined,
+      pointerEvents: leaving ? "none" : undefined,
     }}>
       {/* Companion step — circle clip reveals it (or shown immediately in edit/draw mode) */}
       <div
@@ -1054,9 +1057,6 @@ function OnboardingPage() {
           zIndex:    15,
           clipPath:  step === 1 ? "none" : revealing ? undefined : "circle(0% at 50% 50%)",
           animation: revealing ? "circleOpen 1.3s cubic-bezier(0.22,1,0.36,1) forwards" : undefined,
-          opacity:   leaving ? 0 : 1,
-          transition: "opacity 0.15s ease",
-          pointerEvents: leaving ? "none" : undefined,
         }}
         onAnimationEnd={(e: React.AnimationEvent<HTMLDivElement>) => {
           if (e.target !== e.currentTarget) return
