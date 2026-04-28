@@ -852,6 +852,8 @@ function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, c
   )
 }
 
+export const dynamic = "force-dynamic"
+
 // ── Page ──────────────────────────────────────────────────────
 export default function OnboardingPage() {
   const router       = useRouter()
