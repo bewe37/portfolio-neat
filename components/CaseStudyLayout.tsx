@@ -1164,9 +1164,7 @@ export default function CaseStudyLayout({
         </main>
       </div>
     </div>
-    <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 48px" }}>
-      <MarqueeFooter />
-    </div>
+    <MarqueeFooter />
     </>
   )
 }

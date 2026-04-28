@@ -54,7 +54,7 @@ export default function MarqueeFooter() {
   const year = new Date().getFullYear()
 
   return (
-    <footer style={{ position: "relative", width: "100%", minHeight: 260, overflow: "hidden", marginTop: 32, borderRadius: 16 }}>
+    <footer style={{ position: "relative", width: "100%", minHeight: 260, overflow: "hidden", marginTop: 32 }}>
 
       {/* Scene background */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
