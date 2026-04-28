@@ -64,6 +64,7 @@ const PROJECTS = [
     href: "/",
     folder: "/avocado.svg",
     comingSoon: true,
+    hideMobile: true,
   },
 ]
 

@@ -209,8 +209,10 @@ export default function HeaderNav({
         </motion.div>
       </span>
 
-      {/* Companion */}
-      <CompanionNavBtn />
+      {/* Companion — desktop only */}
+      <span className="rsp-hide-mobile">
+        <CompanionNavBtn />
+      </span>
     </nav>
   )
 }

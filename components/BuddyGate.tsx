@@ -34,7 +34,9 @@ export default function BuddyGate() {
           pointerEvents: "none",
         }} />
       )}
-      <SpriteBuddy />
+      <div className="rsp-hide-mobile">
+        <SpriteBuddy />
+      </div>
     </>
   )
 }

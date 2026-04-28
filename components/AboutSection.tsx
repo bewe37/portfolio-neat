@@ -35,7 +35,7 @@ export default function AboutSection() {
           </div>
         </div>
 
-        <div className="rsp-tama" style={{ flexShrink: 0 }}>
+        <div className="rsp-tama rsp-tama-top" style={{ flexShrink: 0 }}>
           <TamagotchiWidget />
         </div>
       </div>

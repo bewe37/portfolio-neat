@@ -26,7 +26,7 @@ export default function AmdAiProject() {
             {
               title: "AMD Chat",
               body:  "Describe what's wrong in plain language — \"my game is stuttering,\" \"fan is too loud\" — and the AI surfaces a one-tap fix backed by your live hardware data.",
-              videos: ["/DemoAmdNew.mp4"],
+              videos: ["/DemoAMDNew.mp4"],
             },
             {
               title: "In-Game Mode",

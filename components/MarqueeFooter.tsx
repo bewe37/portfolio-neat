@@ -64,7 +64,7 @@ export default function MarqueeFooter() {
       position:  "relative",
       left:      "50%",
       transform: "translateX(-50%)",
-      minHeight: 320,
+      minHeight: 260,
       marginTop: 32,
     }}>
       {/* Image layer — expands from content-width to full viewport */}
@@ -98,7 +98,7 @@ export default function MarqueeFooter() {
         display:        "flex",
         flexDirection:  "column",
         justifyContent: "space-between",
-        padding:        "44px 48px",
+        padding:        "80px 8px",
         gap:            20,
       }}>
         <p style={{

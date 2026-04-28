@@ -304,5 +304,21 @@ a {
   /* Case study: collapse sidebar grid + show mobile back button */
   .rsp-cs-grid       { display: block !important; padding: 0 20px !important; }
   .rsp-toc-sidebar   { display: none !important; }
-  .rsp-back-mobile   { display: block !important; }
+  .rsp-back-mobile   { display: flex !important; }
+
+  /* Scale project folders down on mobile for breathing room */
+  .rsp-project-card-bg {
+    padding-top: 90px !important;
+  }
+  .rsp-folder-stage {
+    transform: scale(0.80) !important;
+    transform-origin: top center;
+    margin-bottom: -70px !important;
+  }
+
+  /* Show arrow indicator on mobile folder cards */
+  .rsp-folder-arrow { display: flex !important; }
+
+  /* Extra spacing between about-me text and tamagotchi on mobile */
+  .rsp-tama-top { margin-top: 52px !important; }
 }

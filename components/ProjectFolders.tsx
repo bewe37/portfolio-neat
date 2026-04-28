@@ -21,6 +21,7 @@ interface Project {
   rotation?: number
   folderTransform?: string
   comingSoon?: boolean
+  hideMobile?: boolean
 }
 
 interface PlainPaper {
@@ -426,7 +427,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       style={{ width: "100%" }}
     >
       <Link href={project.href} style={{ textDecoration: "none", display: "block" }}>
-        <div style={{
+        <div className="rsp-project-card-bg" style={{
           borderRadius:    20,
           backgroundColor: "var(--surface)",
           backgroundImage: "radial-gradient(circle, var(--dot-color) 1px, transparent 1px)",
@@ -438,7 +439,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
           paddingBottom:   32,
           width:           "100%",
         }}>
-          <div style={{ position: "relative", width: CW, height: CH, filter: "drop-shadow(0 4px 14px rgba(0,0,0,0.13))" }}>
+          <div className="rsp-folder-stage" style={{ position: "relative", width: CW, height: CH, filter: "drop-shadow(0 4px 14px rgba(0,0,0,0.13))" }}>
             <MobilePapers project={project} />
             <div style={{ position: "absolute", bottom: 0, left: "50%", width: FOLDER_H, height: FOLDER_W, transform: "translateX(-50%)", zIndex: 3 }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -461,9 +462,16 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
             </div>
           </div>
         </div>
-        <div style={{ padding: "12px 4px 4px" }}>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: 11, fontWeight: 600, color: "var(--c-faint)", letterSpacing: "-0.01em", margin: "0 0 4px" }}>{project.category}</p>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 600, color: "var(--c-mid)", letterSpacing: "-0.02em", lineHeight: 1.35, margin: 0 }}>{project.title}</p>
+        <div style={{ padding: "12px 4px 4px", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+          <div>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: 11, fontWeight: 600, color: "var(--c-faint)", letterSpacing: "-0.01em", margin: "0 0 4px" }}>{project.category}</p>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 600, color: "var(--c-mid)", letterSpacing: "-0.02em", lineHeight: 1.35, margin: 0 }}>{project.title}</p>
+          </div>
+          <div className="rsp-folder-arrow" style={{ display: "none", alignItems: "center", justifyContent: "center", width: 28, height: 28, borderRadius: "50%", border: "1px solid var(--border-mid)", flexShrink: 0, marginBottom: 2 }}>
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path d="M2 5h6M5.5 2.5L8 5l-2.5 2.5" stroke="var(--c-mid)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
         </div>
       </Link>
     </motion.div>
@@ -516,8 +524,8 @@ export default function ProjectFolders({ projects }: { projects: Project[] }) {
       </div>
 
       {/* ── Mobile: stacked folder cards ── */}
-      <div className="rsp-show-mobile" style={{ display: "none", flexDirection: "column", gap: 16, padding: "16px 0 32px" }}>
-        {projects.map((p, i) => (
+      <div className="rsp-show-mobile" style={{ display: "none", flexDirection: "column", gap: 10, padding: "24px 0 28px" }}>
+        {projects.filter(p => !p.hideMobile).map((p, i) => (
           <ProjectCard key={p.href} project={p} index={i} />
         ))}
       </div>
