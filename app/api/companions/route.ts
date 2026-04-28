@@ -49,3 +49,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Server error" }, { status: 500 })
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const secret = req.headers.get("x-admin-secret")
+    if (!secret || secret !== process.env.ADMIN_SECRET) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+    const { url } = await req.json() as { url?: string }
+    if (typeof url !== "string") return NextResponse.json({ error: "Invalid" }, { status: 400 })
+    await kv.lrem(KEY, 0, url)
+    return NextResponse.json({ ok: true })
+  } catch {
+    return NextResponse.json({ error: "Server error" }, { status: 500 })
+  }
+}
