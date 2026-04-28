@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { useState, useRef, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import MarqueeFooter from "@/components/MarqueeFooter"
 
 interface Spec       { label: string; value: string | string[] }
 interface Contact    { platform: string; handle: string; href: string }
@@ -930,6 +931,7 @@ export default function CaseStudyLayout({
   }
 
   return (
+    <>
     <div style={{ minHeight: "100dvh", display: "flex", justifyContent: "center" }}>
       <div
         className="rsp-cs-grid"
@@ -1162,5 +1164,9 @@ export default function CaseStudyLayout({
         </main>
       </div>
     </div>
+    <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 48px" }}>
+      <MarqueeFooter />
+    </div>
+    </>
   )
 }
