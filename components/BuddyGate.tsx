@@ -10,7 +10,7 @@ export default function BuddyGate() {
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    if (pathname === "/onboarding") {
+    if (pathname === "/onboarding" || pathname.startsWith("/admin")) {
       setReady(true)
       return
     }
