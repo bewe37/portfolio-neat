@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useState, useRef, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import MarqueeFooter from "@/components/MarqueeFooter"
 
@@ -66,9 +67,6 @@ interface Props {
 const FADE     = { duration: 0.55, ease: [0.16, 1, 0.3, 1] as const }
 const VIEWPORT = { once: true, margin: "-48px" }
 
-function secId(label: string) {
-  return "sec-" + label.toLowerCase().replace(/\W+/g, "-").replace(/^-|-$/g, "")
-}
 
 function SectionLabel({ text }: { text: string }) {
   return (
@@ -169,7 +167,7 @@ function StatCallout({ stat }: { stat: StatBlock }) {
         {stat.label}
       </p>
       {stat.body && (
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 400, color: "var(--c-secondary)", margin: "6px 0 0", lineHeight: 1.7 }}>
+        <p style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 400, color: "var(--c-body)", margin: "6px 0 0", lineHeight: 1.7 }}>
           {stat.body}
         </p>
       )}
@@ -209,7 +207,7 @@ function Cards({ cards }: { cards: CardItem[] }) {
             fontFamily:    "var(--font-sans)",
             fontSize:      14,
             fontWeight:    400,
-            color:         "var(--c-secondary)",
+            color:         "var(--c-body)",
             margin:        0,
             lineHeight:    1.7,
             letterSpacing: "-0.01em",
@@ -271,7 +269,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
             fontFamily:    "var(--font-sans)",
             fontSize:      isNumbered ? 22 : 15,
             fontWeight:    400,
-            color:         isNumbered ? "var(--c-primary)" : "var(--c-secondary)",
+            color:         isNumbered ? "var(--c-primary)" : "var(--c-body)",
             margin:        (!isNumbered && block.title) ? "16px auto 0" : 0,
             lineHeight:    isNumbered ? 1.55 : 1.7,
             letterSpacing: isNumbered ? "-0.025em" : "0",
@@ -368,7 +366,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
               fontFamily:    "var(--font-sans)",
               fontSize:      16,
               fontWeight:    400,
-              color:         "var(--c-secondary)",
+              color:         "var(--c-body)",
               letterSpacing: "-0.01em",
               lineHeight:    1.85,
               margin:        0,
@@ -609,6 +607,16 @@ function MultiHighlight({ contents, marginTop }: { contents: ContentBlock[]; mar
 
 function BackButton({ href }: { href: string }) {
   const [hovered, setHovered] = useState(false)
+  const router = useRouter()
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") router.push(href)
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [href, router])
+
   return (
     <Link
       href={href}
@@ -775,7 +783,7 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
           fontFamily:    "var(--font-sans)",
           fontSize:      16,
           fontWeight:    400,
-          color:         "var(--c-secondary)",
+          color:         "var(--c-body)",
           letterSpacing: "-0.01em",
           lineHeight:    1.85,
           margin:        `0 0 ${hasTopMedia || sec.cards || sec.bento ? 32 : 0}px`,
@@ -904,8 +912,8 @@ export default function CaseStudyLayout({
 
   const tocItems = [
     { label: "Overview", id: "sec-overview" },
-    ...sections.map(s => ({ label: s.label, id: secId(s.label) })),
-    ...(unlocked && lockedSections ? lockedSections.map(s => ({ label: s.label, id: secId(s.label) })) : []),
+    ...sections.map((s, si) => ({ label: s.label, id: `sec-s${si}` })),
+    ...(unlocked && lockedSections ? lockedSections.map((s, si) => ({ label: s.label, id: `sec-l${si}` })) : []),
   ]
 
   useEffect(() => {
@@ -1098,7 +1106,7 @@ export default function CaseStudyLayout({
 
           {/* Sections */}
           {sections.map((sec, si) => (
-            <SectionBlock key={si} sec={sec} id={secId(sec.label)} />
+            <SectionBlock key={si} sec={sec} id={`sec-s${si}`} />
           ))}
 
           {/* Password gate */}
@@ -1183,7 +1191,7 @@ export default function CaseStudyLayout({
 
           {/* Locked sections */}
           {password && unlocked && lockedSections?.map((sec, si) => (
-            <SectionBlock key={`locked-${si}`} sec={sec} id={secId(sec.label)} />
+            <SectionBlock key={`locked-${si}`} sec={sec} id={`sec-l${si}`} />
           ))}
 
         </main>
