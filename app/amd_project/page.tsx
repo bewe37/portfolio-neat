@@ -1,7 +1,9 @@
 import CaseStudyLayout from "@/components/CaseStudyLayout"
+import MarqueeFooter from "@/components/MarqueeFooter"
 
 export default function AmdProject() {
   return (
+    <>
     <CaseStudyLayout
       title="The Design System That Kept AMD's Team Aligned"
       category="Design System"
@@ -79,5 +81,7 @@ export default function AmdProject() {
         },
       ]}
     />
+    <MarqueeFooter />
+    </>
   )
 }

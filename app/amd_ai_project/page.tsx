@@ -1,7 +1,10 @@
 import CaseStudyLayout from "@/components/CaseStudyLayout"
+import MarqueeFooter from "@/components/MarqueeFooter"
 
 export default function AmdAiProject() {
   return (
+    <>
+
     <CaseStudyLayout
       title="Rethinking the Overlay as a Control Surface"
       category="Product Design"
@@ -155,5 +158,7 @@ export default function AmdAiProject() {
         },
       ]}
     />
+    <MarqueeFooter />
+    </>
   )
 }

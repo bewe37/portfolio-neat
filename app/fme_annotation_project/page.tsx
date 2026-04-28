@@ -1,7 +1,9 @@
 import CaseStudyLayout from "@/components/CaseStudyLayout"
+import MarqueeFooter from "@/components/MarqueeFooter"
 
 export default function FmeProject() {
   return (
+    <>
     <CaseStudyLayout
       title="Reducing Clutter Without Losing Context"
       category="Product Design"
@@ -113,5 +115,7 @@ export default function FmeProject() {
         },
       ]}
     />
+    <MarqueeFooter />
+    </>
   )
 }

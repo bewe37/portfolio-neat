@@ -1,7 +1,9 @@
 import CaseStudyLayout from "@/components/CaseStudyLayout"
+import MarqueeFooter from "@/components/MarqueeFooter"
 
 export default function BlueprintProject() {
   return (
+    <>
     <CaseStudyLayout
       title="Simplifying Donation Tracking at Scale"
       category="Product Design"
@@ -22,5 +24,7 @@ export default function BlueprintProject() {
         },
       ]}
     />
+    <MarqueeFooter />
+    </>
   )
 }

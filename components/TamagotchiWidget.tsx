@@ -516,7 +516,6 @@ export default function TamagotchiWidget() {
               {/* LOCATION (B) */}
               {screen === "location" && (
                 <div style={{ position: "relative", display: "flex", height: 96, padding: "4px 7px 2px" }}>
-                  <div style={{ position: "absolute", inset: 0, background: SKY_TINTS[period], pointerEvents: "none", borderRadius: 6 }} />
                   <CityScene period={period} />
                   <div style={{ width: "50%", display: "flex", flexDirection: "column", justifyContent: "flex-end", alignItems: "flex-end", paddingBottom: 3, gap: 3 }}>
                     <span style={{ fontSize: 11, fontWeight: 700 }}>Toronto</span>
