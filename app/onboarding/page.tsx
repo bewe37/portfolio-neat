@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { BUDDIES, type BuddyDef } from "@/lib/buddies"
 import { SpriteView } from "@/components/SpriteBuddy"
@@ -484,7 +484,7 @@ function WelcomeStep({ onContinue, onSkip }: { onContinue: () => void; onSkip: (
   )
 }
 
-// ── Back button ───────────────────────────────────────────────
+// ── Close (X) button ──────────────────────────────────────────
 function BackBtn({ onClick }: { onClick: () => void }) {
   const [hov, setHov] = useState(false)
   return (
@@ -493,28 +493,21 @@ function BackBtn({ onClick }: { onClick: () => void }) {
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
-        position:      "absolute", top: 28, left: 28,
-        display:       "inline-flex", alignItems: "center", gap: 6,
-        background:    "none", border: "none", cursor: "pointer",
-        fontFamily:    "var(--font-sans)",
-        fontSize:      11, fontWeight: 600,
-        letterSpacing: "0.08em",
-        textTransform: "uppercase",
-        color:         hov ? "rgb(255,107,48)" : "var(--c-secondary)",
-        transition:    "color 0.18s ease",
-        padding:       "4px 0",
+        position:   "absolute", top: 24, left: 24,
+        display:    "inline-flex", alignItems: "center", justifyContent: "center",
+        width:      32, height: 32, borderRadius: "50%",
+        background: hov ? "var(--hover-bg)" : "transparent",
+        border:     "1px solid var(--border)",
+        cursor:     "pointer",
+        color:      hov ? "var(--c-primary)" : "var(--c-secondary)",
+        transition: "background 0.15s ease, border-color 0.15s ease, color 0.15s ease",
+        padding:    0,
       }}
+      aria-label="Close"
     >
-      <motion.span
-        animate={{ x: hov ? -3 : 0 }}
-        transition={{ duration: 0.18, ease: "easeOut" }}
-        style={{ display: "inline-flex" }}
-      >
-        <svg width="7" height="11" viewBox="0 0 7 11" fill="none">
-          <path d="M6 1L2 5.5L6 10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      </motion.span>
-      Back
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      </svg>
     </button>
   )
 }
@@ -715,15 +708,16 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
 }
 
 // ── Companion step ────────────────────────────────────────────
-function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, confirmed }: {
+function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, confirmed, initialTab = "pick" }: {
   selected: string | null
   onSelect: (id: string) => void
   onConfirm: () => void
   onConfirmDraw: () => void
   onBack: () => void
   confirmed: boolean
+  initialTab?: "pick" | "draw"
 }) {
-  const [tab, setTab] = useState<"pick" | "draw">("pick")
+  const [tab, setTab] = useState<"pick" | "draw">(initialTab)
   const pickBtnRef = useRef<HTMLButtonElement>(null)
   const drawBtnRef = useRef<HTMLButtonElement>(null)
   const [pillStyle, setPillStyle] = useState({ x: 0, width: 0 })
@@ -735,9 +729,9 @@ function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, c
 
   return (
     <div style={{
-      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-      minHeight: "100dvh", padding: "40px 24px", position: "relative",
-      fontFamily: "var(--font-sans)", background: "var(--bg)", overflow: "hidden",
+      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start",
+      minHeight: "100dvh", padding: "88px 24px 48px", position: "relative",
+      fontFamily: "var(--font-sans)", background: "var(--bg)", overflowY: "auto",
     }}>
       <BackBtn onClick={onBack} />
 
@@ -808,10 +802,10 @@ function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, c
             <motion.div
               key="pick"
               initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
+              animate={{ opacity: confirmed ? 0 : 1, y: confirmed ? -8 : 0 }}
               exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] }}
-              style={{ display: "flex", flexDirection: "column", alignItems: "center", opacity: confirmed ? 0 : 1, transition: "opacity 0.4s ease" }}
+              transition={{ duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
+              style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
             >
               <div style={{ display: "flex", gap: 32, alignItems: "flex-start", flexWrap: "wrap", justifyContent: "center" }}>
                 {BUDDIES.map((buddy, i) => (
@@ -860,8 +854,13 @@ function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, c
 
 // ── Page ──────────────────────────────────────────────────────
 export default function OnboardingPage() {
-  const router = useRouter()
-  const [step,      setStep]      = useState<0 | 1>(0)
+  const router       = useRouter()
+  const searchParams = useSearchParams()
+  const drawMode     = searchParams.get("draw") === "1"
+  const editMode     = searchParams.get("edit") === "1"
+  const skipWelcome  = drawMode || editMode
+
+  const [step,      setStep]      = useState<0 | 1>(skipWelcome ? 1 : 0)
   const [selected,  setSelected]  = useState<string | null>(null)
   const [confirmed, setConfirmed] = useState(false)
   const [mounted,   setMounted]   = useState(false)
@@ -869,14 +868,19 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     setMounted(true)
-    if (localStorage.getItem("buddyId")) router.replace("/")
-  }, [router])
+    // Only redirect if this is a fresh first-visit (not editing/drawing)
+    if (!skipWelcome && localStorage.getItem("buddyId")) router.replace("/")
+  }, [router, skipWelcome])
 
   function goToStep1() { setRevealing(true) }
 
   function goBack() {
-    setStep(0)
-    setRevealing(false)
+    if (skipWelcome) {
+      router.replace("/")
+    } else {
+      setStep(0)
+      setRevealing(false)
+    }
   }
 
   function confirm() {
@@ -906,7 +910,7 @@ export default function OnboardingPage() {
       position:   "relative",
       background: step === 0 ? "#18181b" : "var(--bg)",
     }}>
-      {/* Companion step — circle clip reveals it directly */}
+      {/* Companion step — circle clip reveals it (or shown immediately in edit/draw mode) */}
       <div
         style={{
           position:  "fixed",
@@ -924,11 +928,12 @@ export default function OnboardingPage() {
           onConfirmDraw={confirmDraw}
           onBack={goBack}
           confirmed={confirmed}
+          initialTab={drawMode ? "draw" : "pick"}
         />
       </div>
 
-      {/* Dark welcome overlay */}
-      {step === 0 && (
+      {/* Dark welcome overlay — hidden in edit/draw mode */}
+      {step === 0 && !skipWelcome && (
         <div style={{ position: "fixed", inset: 0, zIndex: 10 }}>
           <WelcomeStep onContinue={goToStep1} onSkip={skip} />
         </div>

@@ -4,7 +4,7 @@ import ShadowBg from "@/components/ShadowBg"
 import BuddyGate from "@/components/BuddyGate"
 
 export const metadata: Metadata = {
-  title: "Georgius — Product Designer",
+  title: "Georgius Bryan",
   description: "Design engineer at AMD based in Toronto.",
 }
 

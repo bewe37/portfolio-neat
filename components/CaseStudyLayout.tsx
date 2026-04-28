@@ -605,68 +605,30 @@ function MultiHighlight({ contents, marginTop }: { contents: ContentBlock[]; mar
   )
 }
 
-function ReachOutButton({ label, href }: { label: string; href: string }) {
-  const [hov, setHov] = useState(false)
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
-        fontFamily:      "var(--font-sans)",
-        fontSize:        14,
-        fontWeight:      600,
-        color:           hov ? "var(--c-primary)" : "var(--c-mid)",
-        letterSpacing:   "-0.01em",
-        textDecoration:  "none",
-        padding:         "10px 22px",
-        borderRadius:    99,
-        border:          `1px solid ${hov ? "var(--border-mid)" : "var(--border-mid)"}`,
-        backgroundColor: hov ? "var(--hover-bg)" : "transparent",
-        transition:      "color 0.15s ease, background-color 0.15s ease",
-        display:         "inline-block",
-      }}
-    >
-      {label}
-    </a>
-  )
-}
 
 function BackButton({ href }: { href: string }) {
   const [hovered, setHovered] = useState(false)
   return (
-    <div style={{ padding: "32px 0 40px" }}>
-      <Link
-        href={href}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        style={{
-          display:        "inline-flex",
-          alignItems:     "center",
-          gap:            7,
-          fontFamily:     "var(--font-sans)",
-          fontSize:       13,
-          fontWeight:     600,
-          textDecoration: "none",
-          letterSpacing:  "-0.01em",
-          color:          hovered ? "rgb(255,107,48)" : "var(--c-secondary)",
-          transition:     "color 0.18s ease",
-        }}
-      >
-        <motion.span
-          animate={{ x: hovered ? -3 : 0 }}
-          transition={{ duration: 0.18, ease: "easeOut" }}
-          style={{ display: "inline-flex" }}
-        >
-          <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden>
-            <path d="M7 1.5L3 5.5L7 9.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </motion.span>
-        Back
-      </Link>
-    </div>
+    <Link
+      href={href}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      aria-label="Close"
+      style={{
+        position:   "fixed", top: 24, left: 24, zIndex: 200,
+        display:    "inline-flex", alignItems: "center", justifyContent: "center",
+        width:      32, height: 32, borderRadius: "50%",
+        background: hovered ? "var(--hover-bg)" : "transparent",
+        border:     "1px solid var(--border)",
+        color:      hovered ? "var(--c-primary)" : "var(--c-secondary)",
+        textDecoration: "none",
+        transition: "background 0.15s ease, border-color 0.15s ease, color 0.15s ease",
+      }}
+    >
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      </svg>
+    </Link>
   )
 }
 
@@ -736,47 +698,15 @@ function NoodleAnimation() {
   )
 }
 
-function TableOfContents({ backHref, items, activeId }: {
+function TableOfContents({ backHref: _backHref, items, activeId }: {
   backHref: string
   items: Array<{ label: string; id: string }>
   activeId: string
 }) {
-  const [backHov, setBackHov] = useState(false)
-  const [hovId,   setHovId]   = useState<string | null>(null)
+  const [hovId, setHovId] = useState<string | null>(null)
 
   return (
     <div style={{ display: "flex", flexDirection: "column", paddingTop: 56 }}>
-      <Link
-        href={backHref}
-        onMouseEnter={() => setBackHov(true)}
-        onMouseLeave={() => setBackHov(false)}
-        style={{
-          display:        "inline-flex",
-          alignItems:     "center",
-          gap:            6,
-          textDecoration: "none",
-          marginBottom:   40,
-          fontFamily:     "var(--font-sans)",
-          fontSize:       10,
-          fontWeight:     600,
-          letterSpacing:  "0.08em",
-          textTransform:  "uppercase" as const,
-          color:          backHov ? "rgb(255,107,48)" : "var(--c-secondary)",
-          transition:     "color 0.18s ease",
-        }}
-      >
-        <motion.span
-          animate={{ x: backHov ? -3 : 0 }}
-          transition={{ duration: 0.18, ease: "easeOut" }}
-          style={{ display: "inline-flex" }}
-        >
-          <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden>
-            <path d="M7 1.5L3 5.5L7 9.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </motion.span>
-        Back
-      </Link>
-
       <nav style={{ display: "flex", flexDirection: "column", gap: 1 }}>
         {items.map(({ label, id }) => {
           const isActive = activeId === id
@@ -1037,10 +967,7 @@ export default function CaseStudyLayout({
         {/* Main content */}
         <main className="rsp-pb" style={{ width: "100%", paddingTop: 56, paddingBottom: 120, minWidth: 0 }}>
 
-          {/* Mobile-only back button */}
-          <div className="rsp-back-mobile" style={{ display: "none" }}>
-            <BackButton href={backHref} />
-          </div>
+          <BackButton href={backHref} />
 
           {/* Title */}
           <motion.div
@@ -1170,17 +1097,14 @@ export default function CaseStudyLayout({
                   {passwordDesc}
                 </p>
               )}
-              {/* Reach out buttons */}
-              <div style={{ marginTop: 0, marginBottom: 32, display: "flex", gap: 10 }}>
-                {[
-                  { label: "LinkedIn ↗", href: "https://www.linkedin.com/in/gbryanw/" },
-                  { label: "X ↗",        href: "https://x.com/gbryanwt"               },
-                ].map(({ label, href }) => (
-                  <ReachOutButton key={label} label={label} href={href} />
-                ))}
-              </div>
-
-              <div style={{ display: "flex", gap: 10, alignItems: "center", maxWidth: 420 }}>
+              <div style={{
+                display: "flex", gap: 0, alignItems: "stretch", maxWidth: 380,
+                border: `1px solid ${pwError ? "rgb(220,60,50)" : "var(--border)"}`,
+                borderRadius: 12, overflow: "hidden",
+                backgroundColor: "var(--surface)",
+                transition: "border-color 0.2s",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+              }}>
                 <input
                   type="password"
                   value={pwInput}
@@ -1189,31 +1113,34 @@ export default function CaseStudyLayout({
                   placeholder="Enter password"
                   style={{
                     flex:            1,
-                    padding:         "11px 14px",
-                    borderRadius:    10,
-                    border:          `1px solid ${pwError ? "rgb(220,60,50)" : "var(--border-mid)"}`,
-                    backgroundColor: "var(--surface)",
+                    padding:         "13px 16px",
+                    border:          "none",
+                    backgroundColor: "transparent",
                     fontFamily:      "var(--font-sans)",
                     fontSize:        14,
                     color:           "var(--c-primary)",
                     outline:         "none",
-                    transition:      "border-color 0.2s",
+                    minWidth:        0,
                   }}
                 />
                 <button
                   onClick={tryUnlock}
                   style={{
-                    padding:         "11px 22px",
-                    borderRadius:    10,
+                    padding:         "13px 20px",
                     cursor:          "pointer",
-                    border:          "1px solid var(--border-mid)",
-                    backgroundColor: "var(--hover-bg)",
+                    border:          "none",
+                    borderLeft:      "1px solid var(--border)",
+                    backgroundColor: "transparent",
                     fontFamily:      "var(--font-sans)",
                     fontSize:        13,
                     fontWeight:      600,
-                    color:           "var(--c-mid)",
+                    letterSpacing:   "-0.01em",
+                    color:           "var(--c-primary)",
                     flexShrink:      0,
+                    transition:      "background 0.15s ease",
                   }}
+                  onMouseEnter={e => (e.currentTarget.style.background = "var(--hover-bg)")}
+                  onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
                 >
                   Unlock
                 </button>

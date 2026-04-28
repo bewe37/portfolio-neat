@@ -1,13 +1,50 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { motion, useAnimate } from "framer-motion"
+import { motion, useAnimate, AnimatePresence } from "framer-motion"
+import { useRouter } from "next/navigation"
 import { getBuddy, BUDDIES, type BuddyDef, type AnimDef } from "@/lib/buddies"
 
 const SCALE        = 3
 const MAIN_RIGHT   = 16
-const BUDDY_W      = 32 * SCALE
-const SUMMON_RIGHT = MAIN_RIGHT + BUDDY_W + 16
+
+// ── Frame validity detection ──────────────────────────────────
+// Caches which frame indices in a given animation row have visible pixels.
+// Key: "src:row:totalFrames:tileW:tileH"
+const frameCache = new Map<string, number[]>()
+
+function detectValidFrames(
+  src: string, row: number, frames: number,
+  tileW: number, tileH: number, sheetW: number, sheetH: number,
+): Promise<number[]> {
+  const key = `${src}:${row}:${frames}:${tileW}:${tileH}`
+  if (frameCache.has(key)) return Promise.resolve(frameCache.get(key)!)
+
+  return new Promise(resolve => {
+    const fallback = Array.from({ length: frames }, (_, i) => i)
+    const img = new Image()
+    img.onload = () => {
+      try {
+        const cv = document.createElement("canvas")
+        cv.width = sheetW; cv.height = sheetH
+        const ctx = cv.getContext("2d")!
+        ctx.drawImage(img, 0, 0)
+        const valid: number[] = []
+        for (let f = 0; f < frames; f++) {
+          const d = ctx.getImageData(f * tileW, row * tileH, tileW, tileH).data
+          for (let i = 3; i < d.length; i += 4) {
+            if (d[i] > 8) { valid.push(f); break }
+          }
+        }
+        const result = valid.length ? valid : fallback
+        frameCache.set(key, result)
+        resolve(result)
+      } catch { resolve(fallback) }
+    }
+    img.onerror = () => resolve(fallback)
+    img.src = src
+  })
+}
 
 // ── Dialog lines ──────────────────────────────────────────────
 const DIALOG: Record<string, string[]> = {
@@ -35,6 +72,30 @@ const DIALOG: Record<string, string[]> = {
     "*ignores you*",
     "fine.",
   ],
+  hermitcrab: [
+    "Don't mind me.",
+    "I brought my house.",
+    "Just passing through.",
+    "Cozy in here.",
+    "Shell check: passed.",
+    "I need more space. Just kidding.",
+  ],
+  jellyfish: [
+    "I have no brain. Thriving.",
+    "Just vibing.",
+    "90% water. Relatable.",
+    "Floating is my cardio.",
+    "No thoughts, only drift.",
+    "✦ glow ✦",
+  ],
+  raven: [
+    "I know things.",
+    "Fascinating.",
+    "*tilts head*",
+    "Nevermore.",
+    "I was watching.",
+    "Curious.",
+  ],
 }
 
 // ── Reusable sprite renderer ──────────────────────────────────
@@ -43,22 +104,41 @@ function SpriteView({
 }: {
   buddy: BuddyDef; animKey: string; scale?: number; flip?: boolean
 }) {
-  const divRef = useRef<HTMLDivElement>(null)
+  const divRef       = useRef<HTMLDivElement>(null)
+  const validRef     = useRef<number[]>([])          // valid frame indices once detected
+  const idxRef       = useRef(0)                     // current position in validRef
   const w = buddy.tileW * scale
   const h = buddy.tileH * scale
+
+  const anim: AnimDef = buddy.anims[animKey] ?? buddy.anims[buddy.idleAnim]
+
+  // Detect valid frames once per anim; result lands in validRef
+  useEffect(() => {
+    validRef.current = []
+    idxRef.current   = 0
+    detectValidFrames(buddy.src, anim.row, anim.frames, buddy.tileW, buddy.tileH, buddy.sheetW, buddy.sheetH)
+      .then(frames => { validRef.current = frames; idxRef.current = 0 })
+  }, [buddy.src, anim.row, anim.frames, buddy.tileW, buddy.tileH, buddy.sheetW, buddy.sheetH])
 
   useEffect(() => {
     const el = divRef.current
     if (!el) return
-    const anim: AnimDef = buddy.anims[animKey] ?? buddy.anims[buddy.idleAnim]
-    let frame = 0
+    idxRef.current = 0
     el.style.backgroundPosition = `0px -${anim.row * h}px`
     const id = setInterval(() => {
-      frame = (frame + 1) % anim.frames
-      el.style.backgroundPosition = `-${frame * w}px -${anim.row * h}px`
+      const valid = validRef.current
+      if (valid.length) {
+        idxRef.current = (idxRef.current + 1) % valid.length
+        const f = valid[idxRef.current]
+        el.style.backgroundPosition = `-${f * w}px -${anim.row * h}px`
+      } else {
+        // Detection pending — advance raw but only within declared frame count
+        idxRef.current = (idxRef.current + 1) % anim.frames
+        el.style.backgroundPosition = `-${idxRef.current * w}px -${anim.row * h}px`
+      }
     }, 1000 / anim.fps)
     return () => clearInterval(id)
-  }, [animKey, buddy, w, h])
+  }, [animKey, buddy, w, h, anim.row, anim.fps, anim.frames])
 
   return (
     <div
@@ -91,7 +171,7 @@ const SPARKS = [
 
 function PetHand({ onDone }: { onDone: () => void }) {
   return (
-    <div style={{ position: "absolute", bottom: "70%", right: 10, width: 0, height: 0, pointerEvents: "none", zIndex: 75 }}>
+    <div style={{ position: "absolute", bottom: "102%", right: "83%", width: 0, height: 0, pointerEvents: "none", zIndex: 75 }}>
       {SPARKS.map((s, i) => {
         const rad = (s.angle * Math.PI) / 180
         const tx  = Math.cos(rad) * s.dist
@@ -113,17 +193,55 @@ function PetHand({ onDone }: { onDone: () => void }) {
   )
 }
 
-// ── Speech bubble ─────────────────────────────────────────────
-function SpeechBubble({ text, bottomOffset }: { text: string; bottomOffset?: number }) {
+// ── Speech bubble (inline, for flex-column companion wrappers) ─
+function SpeechBubble({ text }: { text: string }) {
   return (
     <div style={{
-      position:      "absolute",
-      bottom:        bottomOffset !== undefined ? bottomOffset : "calc(100% - 24px)",
-      right:         0,
+      position:      "relative",
       background:    "var(--bg)",
       border:        "1px solid var(--border)",
       borderRadius:  10,
-      padding:       "12px 16px 10px",
+      padding:       "8px 12px",
+      fontSize:      12,
+      fontFamily:    "var(--font-sans)",
+      fontWeight:    500,
+      color:         "var(--c-primary)",
+      whiteSpace:    "nowrap",
+      boxShadow:     "0 4px 18px rgba(0,0,0,0.10)",
+      animation:     "bubbleIn 0.22s cubic-bezier(0.34,1.56,0.64,1) both",
+      pointerEvents: "none",
+      zIndex:        70,
+    }}>
+      {text}
+      {/* caret pointing bottom-right toward companion */}
+      <div style={{
+        position:    "absolute",
+        bottom:      -5,
+        right:       14,
+        transform:   "rotate(45deg)",
+        width:       8,
+        height:      8,
+        background:  "var(--bg)",
+        border:      "1px solid var(--border)",
+        borderTop:   "none",
+        borderLeft:  "none",
+      }} />
+    </div>
+  )
+}
+
+// ── Speech bubble (absolute, for custom buddy with head offset) ─
+function SpeechBubbleAbs({ text, bottom }: { text: string; bottom: number }) {
+  return (
+    <div style={{
+      position:      "absolute",
+      bottom,
+      left:          "50%",
+      transform:     "translateX(-50%)",
+      background:    "var(--bg)",
+      border:        "1px solid var(--border)",
+      borderRadius:  10,
+      padding:       "8px 12px",
       fontSize:      12,
       fontFamily:    "var(--font-sans)",
       fontWeight:    500,
@@ -138,115 +256,107 @@ function SpeechBubble({ text, bottomOffset }: { text: string; bottomOffset?: num
       <div style={{
         position:   "absolute",
         bottom:     -5,
-        right:      18,
-        width:      9,
-        height:     9,
+        left:       "50%",
+        transform:  "translateX(-50%) rotate(45deg)",
+        width:      8,
+        height:     8,
         background: "var(--bg)",
         border:     "1px solid var(--border)",
         borderTop:  "none",
         borderLeft: "none",
-        transform:  "rotate(45deg)",
       }} />
     </div>
   )
 }
 
-// ── Summoned creature ─────────────────────────────────────────
-function SummonedBuddy({ buddy }: { buddy: BuddyDef }) {
-  const divRef      = useRef<HTMLDivElement>(null)
-  const animRef     = useRef(buddy.idleAnim)
-  const flipRef     = useRef(false)
-  const [speech, setSpeech] = useState<string | null>(null)
-  const [petId,  setPetId]  = useState<number | null>(null)
-  const petCount    = useRef(0)
-  const speechTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
-  const lineRef     = useRef(0)
+// ── Companion editor modal ────────────────────────────────────
+function CompanionEditModal({ currentId, onClose }: { currentId: string | null; onClose: () => void }) {
+  const router = useRouter()
 
-  // Behaviour pool
-  useEffect(() => {
-    let tid: ReturnType<typeof setTimeout>
-    function next() {
-      const picked = buddy.pool[Math.floor(Math.random() * buddy.pool.length)]
-      animRef.current = picked
-      flipRef.current = ["walk", "run", "trot"].includes(picked) && Math.random() < 0.5
-      tid = setTimeout(next, 2000 + Math.random() * 4000)
-    }
-    tid = setTimeout(next, 800 + Math.random() * 1200)
-    return () => clearTimeout(tid)
-  }, [buddy])
-
-  // Sprite frame ticker + flip
-  useEffect(() => {
-    const el = divRef.current
-    if (!el) return
-    const safeEl = el
-    const w = buddy.tileW * SCALE
-    const h = buddy.tileH * SCALE
-    let lastAnim = ""
-    let iid: ReturnType<typeof setInterval> | undefined
-
-    function startAnim() {
-      const key     = animRef.current
-      const animDef = buddy.anims[key] ?? buddy.anims[buddy.idleAnim]
-      clearInterval(iid)
-      let frame = 0
-      safeEl.style.backgroundPosition = `0px -${animDef.row * h}px`
-      safeEl.style.transform = flipRef.current ? "scaleX(-1)" : "none"
-      lastAnim = key
-      iid = setInterval(() => {
-        if (animRef.current !== lastAnim) { startAnim(); return }
-        frame = (frame + 1) % animDef.frames
-        safeEl.style.backgroundPosition = `-${frame * w}px -${animDef.row * h}px`
-        safeEl.style.transform = flipRef.current ? "scaleX(-1)" : "none"
-      }, 1000 / animDef.fps)
-    }
-    startAnim()
-    return () => clearInterval(iid)
-  }, [buddy])
-
-  function handleClick() {
-    petCount.current++
-    setPetId(petCount.current)
-    const lines = DIALOG[buddy.id] ?? ["..."]
-    clearTimeout(speechTimer.current)
-    setSpeech(lines[lineRef.current % lines.length])
-    lineRef.current++
-    speechTimer.current = setTimeout(() => setSpeech(null), 2500)
+  function selectBuddy(id: string) {
+    localStorage.setItem("buddyId", id)
+    window.dispatchEvent(new Event("buddySelected"))
+    onClose()
   }
 
-  const w = buddy.tileW * SCALE
-  const h = buddy.tileH * SCALE
-
   return (
-    <div
-      onClick={handleClick}
-      style={{
-        position:   "fixed",
-        bottom:     12,
-        right:      SUMMON_RIGHT,
-        zIndex:     58,
-        cursor:     "pointer",
-        lineHeight: 0,
-        animation:  "summonSlideUp 0.45s cubic-bezier(0.34,1.56,0.64,1) both",
-      }}
-    >
-      <div style={{ position: "relative", lineHeight: 0 }}>
-        {speech && <SpeechBubble text={speech} />}
-        {petId !== null && <PetHand key={petId} onDone={() => setPetId(null)} />}
-        <div
-          ref={divRef}
+    <>
+      <motion.div
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+        onClick={onClose}
+        style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", backdropFilter: "blur(6px)", zIndex: 200 }}
+      />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, x: "-50%", y: "calc(-50% + 14px)" }}
+        animate={{ opacity: 1, scale: 1, x: "-50%", y: "-50%" }}
+        exit={{ opacity: 0, scale: 0.9, x: "-50%", y: "calc(-50% + 14px)" }}
+        transition={{ type: "spring", stiffness: 380, damping: 28 }}
+        style={{
+          position: "fixed", top: "50%", left: "50%", zIndex: 201,
+          background: "var(--bg)", border: "1px solid var(--border-mid)",
+          borderRadius: 20, padding: 24, width: 300,
+          boxShadow: "0 24px 64px rgba(0,0,0,0.18)",
+        }}
+      >
+        <p style={{ margin: "0 0 14px", fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 700, color: "var(--c-primary)", letterSpacing: "-0.02em" }}>
+          Switch companion
+        </p>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, marginBottom: 10 }}>
+          {BUDDIES.map(b => {
+            const idle    = b.anims[b.idleAnim]
+            // Normalize all previews to a fixed 56px wide so any tile size fits
+            const scale   = 56 / b.tileW
+            const pw      = 56
+            const ph      = Math.round(b.tileH * scale)
+            const active  = currentId === b.id
+            return (
+              <motion.button
+                key={b.id}
+                onClick={() => selectBuddy(b.id)}
+                whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
+                transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                style={{
+                  border: active ? "2px solid var(--c-primary)" : "1.5px solid var(--border-mid)",
+                  borderRadius: 12, background: active ? "var(--surface)" : "transparent",
+                  cursor: "pointer", padding: "12px 4px 10px",
+                  display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
+                }}
+              >
+                <div style={{
+                  width: pw, height: ph,
+                  backgroundImage: `url('${b.src}')`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundSize: `${Math.round(b.sheetW * scale)}px ${Math.round(b.sheetH * scale)}px`,
+                  backgroundPosition: `0px -${Math.round(idle.row * ph)}px`,
+                  imageRendering: "pixelated",
+                }} />
+                <span style={{ fontFamily: "var(--font-sans)", fontSize: 10, fontWeight: 500, color: "var(--c-secondary)" }}>
+                  {b.name}
+                </span>
+              </motion.button>
+            )
+          })}
+        </div>
+
+        <motion.button
+          onClick={() => { onClose(); router.push("/onboarding?draw=1") }}
+          whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
           style={{
-            width:              w,
-            height:             h,
-            backgroundImage:    `url('${buddy.src}')`,
-            backgroundRepeat:   "no-repeat",
-            backgroundSize:     `${buddy.sheetW * SCALE}px ${buddy.sheetH * SCALE}px`,
-            backgroundPosition: "0px 0px",
-            imageRendering:     "pixelated",
+            width: "100%", padding: "10px 12px", borderRadius: 12, cursor: "pointer",
+            border: currentId === "custom" ? "2px solid var(--c-primary)" : "1.5px solid var(--border-mid)",
+            background: currentId === "custom" ? "var(--surface)" : "transparent",
+            fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 600,
+            color: "var(--c-primary)", display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
           }}
-        />
-      </div>
-    </div>
+        >
+          <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+            <path d="M8.5 1.5L10.5 3.5L4 10H2V8L8.5 1.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Draw your own
+        </motion.button>
+      </motion.div>
+    </>
   )
 }
 
@@ -283,18 +393,19 @@ function CustomBuddy() {
       let x = 0
 
       while (!cancelled) {
-        // Measure every step so resizes are respected.
-        // The container sits at right:MAIN_RIGHT. translateX moves it left (positive) or right (negative).
-        // Left limit: container's natural left edge - padding so it never clips left edge.
-        // Right limit: keep at least 8px of the companion visible on the right edge.
-        const rect    = imgRef.current!.getBoundingClientRect()
-        const naturalLeft  = rect.left - x          // left edge ignoring current transform
-        const maxLeft  = Math.max(0, naturalLeft - 8)  // how far left we can go
-        const maxRight = Math.min(8, window.innerWidth - rect.right + x - 8) // how far right
+        // In CSS/Framer Motion: positive x = RIGHT (off screen), negative x = LEFT (into screen).
+        // Companion is anchored at right:MAIN_RIGHT (16px from right edge).
+        // maxRightward: how far right we allow (keep ≥8px from right viewport edge)
+        // maxLeftward:  how far left we allow (keep ≥16px from left viewport edge)
+        const maxRightward = Math.max(0, MAIN_RIGHT - 8)
+        const maxLeftward  = Math.max(0, Math.min(160, window.innerWidth - 96 - MAIN_RIGHT - 16))
 
-        const nextX = Math.max(-maxRight, Math.min(maxLeft, (Math.random() - 0.5) * Math.min(maxLeft + maxRight, 160)))
-        const dist  = Math.abs(nextX - x)
-        const dur   = 0.5 + (dist / 100) * 1.0 + Math.random() * 0.4
+        // Uniform random in [-maxLeftward, +maxRightward]
+        const nextX = Math.max(-maxLeftward, Math.min(maxRightward,
+          -maxLeftward + Math.random() * (maxLeftward + maxRightward)
+        ))
+        const dist = Math.abs(nextX - x)
+        const dur  = 0.5 + (dist / 100) * 1.0 + Math.random() * 0.4
 
         if (Math.random() < 0.22) {
           const midX = (x + nextX) / 2
@@ -330,12 +441,15 @@ function CustomBuddy() {
   const bubbleBottom = Math.round((1 - topFraction) * 96) + 6
 
   return (
-    <div onClick={handleClick} style={{ position: "fixed", bottom: 12, right: MAIN_RIGHT, zIndex: 60, cursor: "pointer", lineHeight: 0 }}>
+    <div
+      ref={imgRef}
+      onClick={handleClick}
+      style={{ position: "fixed", bottom: 12, right: MAIN_RIGHT, zIndex: 60, cursor: "pointer", lineHeight: 0 }}
+    >
       <div style={{ position: "relative", lineHeight: 0 }}>
-        {speech && <SpeechBubble text={speech} bottomOffset={bubbleBottom} />}
+        {speech && <SpeechBubbleAbs text={speech} bottom={bubbleBottom} />}
         {petId !== null && <PetHand key={petId} onDone={() => setPetId(null)} />}
         <img
-          ref={imgRef}
           src={src} alt="Your companion" draggable={false}
           style={{ width: 96, height: 96, imageRendering: "pixelated", display: "block" }}
         />
@@ -348,15 +462,14 @@ function CustomBuddy() {
 export default function SpriteBuddy() {
   const [buddy,    setBuddy]    = useState<BuddyDef | null>(null)
   const [isCustom, setIsCustom] = useState(false)
+  const [editing,  setEditing]  = useState(false)
   const [speech,   setSpeech]   = useState<string | null>(null)
-  const [summoned, setSummoned] = useState<{ id: number; buddy: BuddyDef } | null>(null)
   const [petId,    setPetId]    = useState<number | null>(null)
   const petCount    = useRef(0)
 
   const divRef      = useRef<HTMLDivElement>(null)
   const animRef     = useRef<string>("")
   const flipRef     = useRef(false)
-  const clickCount  = useRef(0)
   const lineIndex   = useRef(0)
   const speechTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
@@ -376,6 +489,12 @@ export default function SpriteBuddy() {
     return () => window.removeEventListener("buddySelected", load)
   }, [])
 
+  useEffect(() => {
+    const open = () => setEditing(true)
+    window.addEventListener("openCompanionEditor", open)
+    return () => window.removeEventListener("openCompanionEditor", open)
+  }, [])
+
   // Behaviour pool
   useEffect(() => {
     if (!buddy) return
@@ -390,29 +509,48 @@ export default function SpriteBuddy() {
     return () => clearTimeout(tid)
   }, [buddy])
 
+  // Pre-detect valid frames for all animations when buddy changes
+  const validFramesMap = useRef<Record<string, number[]>>({})
+  useEffect(() => {
+    if (!buddy) return
+    validFramesMap.current = {}
+    for (const [key, animDef] of Object.entries(buddy.anims)) {
+      detectValidFrames(buddy.src, animDef.row, animDef.frames, buddy.tileW, buddy.tileH, buddy.sheetW, buddy.sheetH)
+        .then(frames => { validFramesMap.current[key] = frames })
+    }
+  }, [buddy])
+
   // Sprite frame ticker + flip
   useEffect(() => {
     if (!buddy) return
     const el = divRef.current
     if (!el) return
     const safeEl = el
-    const w = buddy.tileW * SCALE
-    const h = buddy.tileH * SCALE
+    const buddyScale = buddy.displayScale ?? SCALE
+    const w = buddy.tileW * buddyScale
+    const h = buddy.tileH * buddyScale
     let lastAnim = ""
     let iid: ReturnType<typeof setInterval> | undefined
+    let frameIdx = 0   // index into validFrames (not raw frame number)
 
     function startAnim() {
       const key     = animRef.current || buddy!.idleAnim
       const animDef = buddy!.anims[key] ?? buddy!.anims[buddy!.idleAnim]
       clearInterval(iid)
-      let frame = 0
+      frameIdx = 0
       safeEl.style.backgroundPosition = `0px -${animDef.row * h}px`
       safeEl.style.transform = flipRef.current ? "scaleX(-1)" : "none"
       lastAnim = key
       iid = setInterval(() => {
         if (animRef.current !== lastAnim) { startAnim(); return }
-        frame = (frame + 1) % animDef.frames
-        safeEl.style.backgroundPosition = `-${frame * w}px -${animDef.row * h}px`
+        const valid = validFramesMap.current[key]
+        if (valid?.length) {
+          frameIdx = (frameIdx + 1) % valid.length
+          safeEl.style.backgroundPosition = `-${valid[frameIdx] * w}px -${animDef.row * h}px`
+        } else {
+          frameIdx = (frameIdx + 1) % animDef.frames
+          safeEl.style.backgroundPosition = `-${frameIdx * w}px -${animDef.row * h}px`
+        }
         safeEl.style.transform = flipRef.current ? "scaleX(-1)" : "none"
       }, 1000 / animDef.fps)
     }
@@ -431,20 +569,12 @@ export default function SpriteBuddy() {
     setSpeech(lines[lineIndex.current % lines.length])
     lineIndex.current++
     speechTimer.current = setTimeout(() => setSpeech(null), 2500)
-
-    clickCount.current++
-    if (clickCount.current === 3 && summoned === null) {
-      const pick = BUDDIES.filter(b => b.id !== buddy.id)[
-        Math.floor(Math.random() * (BUDDIES.length - 1))
-      ]
-      if (pick) setSummoned({ id: Date.now(), buddy: pick })
-    }
   }
 
   const keyframes = `
     @keyframes bubbleIn {
       from { opacity: 0; transform: scale(0.85) translateY(4px); transform-origin: bottom right; }
-      to   { opacity: 1; transform: scale(1)    translateY(0);   transform-origin: bottom right; }
+      to   { opacity: 1; transform: scale(1)    translateY(0px); transform-origin: bottom right; }
     }
     @keyframes summonSlideUp {
       from { opacity: 0; transform: translateY(24px); }
@@ -453,29 +583,46 @@ export default function SpriteBuddy() {
 
   `
 
-  if (isCustom) return <><CustomBuddy /><style>{keyframes}</style></>
+  const currentId = isCustom ? "custom" : (buddy?.id ?? null)
+
+  if (isCustom) return (
+    <>
+      <AnimatePresence>
+        {editing && <CompanionEditModal currentId={currentId} onClose={() => setEditing(false)} />}
+      </AnimatePresence>
+      <CustomBuddy />
+      <style>{keyframes}</style>
+    </>
+  )
+
   if (!buddy) return null
 
-  const w = buddy.tileW * SCALE
-  const h = buddy.tileH * SCALE
+  const buddyScale = buddy.displayScale ?? SCALE
+  const w = buddy.tileW * buddyScale
+  const h = buddy.tileH * buddyScale
 
   return (
     <>
-      {summoned && <SummonedBuddy key={summoned.id} buddy={summoned.buddy} />}
+      <AnimatePresence>
+        {editing && <CompanionEditModal currentId={currentId} onClose={() => setEditing(false)} />}
+      </AnimatePresence>
+
+      {/* Bubble: sits upper-left of companion, tail points bottom-right toward it */}
+      {speech && (
+        <div style={{
+          position: "fixed", bottom: 12 + h * 0.65,
+          right: MAIN_RIGHT + w - 36,
+          pointerEvents: "none", zIndex: 70,
+        }}>
+          <SpeechBubble text={speech} />
+        </div>
+      )}
 
       <div
         onClick={handleClick}
-        style={{
-          position:   "fixed",
-          bottom:     12,
-          right:      MAIN_RIGHT,
-          zIndex:     60,
-          cursor:     "pointer",
-          lineHeight: 0,
-        }}
+        style={{ position: "fixed", bottom: 12, right: MAIN_RIGHT, zIndex: 60, cursor: "pointer", lineHeight: 0 }}
       >
         <div style={{ position: "relative", lineHeight: 0 }}>
-          {speech && <SpeechBubble text={speech} />}
           {petId !== null && <PetHand key={petId} onDone={() => setPetId(null)} />}
           <div
             ref={divRef}
@@ -484,7 +631,7 @@ export default function SpriteBuddy() {
               height:             h,
               backgroundImage:    `url('${buddy.src}')`,
               backgroundRepeat:   "no-repeat",
-              backgroundSize:     `${buddy.sheetW * SCALE}px ${buddy.sheetH * SCALE}px`,
+              backgroundSize:     `${buddy.sheetW * buddyScale}px ${buddy.sheetH * buddyScale}px`,
               backgroundPosition: "0px 0px",
               imageRendering:     "pixelated",
             }}

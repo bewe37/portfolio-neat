@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect, useCallback } from "react"
+import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import {
   EnvelopeSimple,
@@ -72,9 +73,29 @@ function MenuItem({ item }: { item: ContactItem }) {
   )
 }
 
+function CompanionNavBtn() {
+  const [hov, setHov] = useState(false)
+  const router = useRouter()
+  return (
+    <button
+      onClick={() => router.push("/onboarding?edit=1")}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500,
+        letterSpacing: "-0.01em", color: hov ? "rgb(255,107,48)" : "var(--c-dim)",
+        transition: "color 0.15s ease", background: "none", border: "none",
+        cursor: "pointer", padding: "4px 0", whiteSpace: "nowrap",
+      }}
+    >
+      My Companion
+    </button>
+  )
+}
+
 export default function HeaderNav({
   aboutLabel = "Resume",
-  aboutLink = "https://drive.google.com/file/d/1E8AUWkgri9AAHSLil1fQK9KBzZUQbtnK/view?usp=sharing",
+  aboutLink = "https://drive.google.com/file/d/183_FgYoQBjhv5QLawsPr_fUt_K5gf6hi/view",
   contactLabel = "Contact",
   items = DEFAULT_ITEMS,
 }: {
@@ -187,6 +208,9 @@ export default function HeaderNav({
           </div>
         </motion.div>
       </span>
+
+      {/* Companion */}
+      <CompanionNavBtn />
     </nav>
   )
 }

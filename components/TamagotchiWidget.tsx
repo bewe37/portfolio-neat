@@ -556,7 +556,7 @@ export default function TamagotchiWidget() {
               <div style={{
                 borderTop: `1px solid rgba(42,61,31,0.16)`,
                 display: "flex", justifyContent: "center", alignItems: "center",
-                padding: "3px 7px", background: "rgba(0,0,0,0.04)",
+                padding: "3px 7px",
                 fontSize: 9, letterSpacing: "0.07em",
               }}>
                 {time}
