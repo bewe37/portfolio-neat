@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { motion } from "framer-motion"
+import { useState, useRef } from "react"
+import { motion, useInView } from "framer-motion"
 
 function FooterLink({ label, href }: { label: string; href: string }) {
   const [hovered, setHovered] = useState(false)
@@ -51,36 +51,56 @@ function BackToTop() {
 }
 
 export default function MarqueeFooter() {
-  const year = new Date().getFullYear()
+  const year   = new Date().getFullYear()
+  const ref    = useRef(null)
+  const inView = useInView(ref, { once: true, amount: 0.25 })
+
+  const ease = [0.16, 1, 0.3, 1] as const
+  const dur  = 0.9
 
   return (
-    <footer style={{ position: "relative", width: "100%", minHeight: 260, overflow: "hidden", marginTop: 32 }}>
+    <div ref={ref} style={{
+      width:     "100vw",
+      position:  "relative",
+      left:      "50%",
+      transform: "translateX(-50%)",
+      minHeight: 320,
+      marginTop: 32,
+    }}>
+      {/* Image layer — expands from content-width to full viewport */}
+      <motion.div
+        initial={{ left: 48, right: 48, borderRadius: 16 }}
+        animate={{
+          left:         inView ? 0 : 48,
+          right:        inView ? 0 : 48,
+          borderRadius: inView ? 0 : 16,
+        }}
+        transition={{ duration: dur, ease }}
+        style={{ position: "absolute", top: 0, bottom: 0, overflow: "hidden" }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/Scene.png" alt="" style={{
+          position: "absolute", inset: 0,
+          width: "100%", height: "100%",
+          objectFit: "cover", objectPosition: "center",
+          pointerEvents: "none",
+        }} />
+        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.38)" }} />
+      </motion.div>
 
-      {/* Scene background */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/Scene.png" alt="" style={{
-        position: "absolute", inset: 0,
-        width: "100%", height: "100%",
-        objectFit: "cover", objectPosition: "center",
-        pointerEvents: "none",
-      }} />
-
-      {/* Overlay — lightened so image breathes more */}
-      <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.38)" }} />
-
-      {/* Content */}
+      {/* Content — always constrained to content width */}
       <div className="rsp-footer-inner" style={{
         position:       "relative",
         zIndex:         1,
-        height:         "100%",
         minHeight:      260,
+        maxWidth:       1200,
+        margin:         "0 auto",
         display:        "flex",
         flexDirection:  "column",
         justifyContent: "space-between",
-        padding:        "44px 40px",
+        padding:        "44px 48px",
         gap:            20,
       }}>
-        {/* Quote */}
         <p style={{
           fontFamily:    "var(--font-sans)",
           fontSize:      "clamp(18px, 3vw, 28px)",
@@ -95,7 +115,6 @@ export default function MarqueeFooter() {
           "The art challenges the technology, and the technology inspires the art."
         </p>
 
-        {/* Bottom row */}
         <div className="rsp-footer-bottom" style={{
           display: "flex", alignItems: "center",
           justifyContent: "space-between", gap: 24,
@@ -117,6 +136,6 @@ export default function MarqueeFooter() {
           </div>
         </div>
       </div>
-    </footer>
+    </div>
   )
 }

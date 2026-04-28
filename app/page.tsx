@@ -83,7 +83,7 @@ export default function HomePage() {
         style={{
           width: "100%",
           maxWidth: 1280,
-          padding: "0 48px 48px",
+          padding: "0 48px",
           display: "flex",
           flexDirection: "column",
         }}
