@@ -121,7 +121,7 @@ body {
   color: var(--c-primary);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-
+  overflow-x: hidden;
 }
 
 a {
@@ -279,6 +279,7 @@ a {
   /* Project folder: swap carousel for card list */
   .rsp-hide-mobile { display: none !important; }
   .rsp-show-mobile { display: flex !important; flex-direction: column !important; }
+  .rsp-show-mobile-grid { display: grid !important; }
 
   /* Accordion: swap to mobile carousel */
   .rsp-accordion-desktop { display: none !important; }
@@ -321,4 +322,11 @@ a {
 
   /* Extra spacing between about-me text and tamagotchi on mobile */
   .rsp-tama-top { margin-top: 52px !important; }
+
+  /* Sticky note: un-stick and un-rotate when stacked below image */
+  .rsp-stack > div[style*="sticky"] {
+    position: relative !important;
+    top: auto !important;
+    transform: none !important;
+  }
 }

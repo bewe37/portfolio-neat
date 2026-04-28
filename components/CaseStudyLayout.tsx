@@ -286,7 +286,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
   const allVideos = block.videos ?? []
   const hasMedia  = allImages.length > 0 || allVideos.length > 0
 
-  // Note variant: image on the left, sticky side-note on the right
+  // Note variant: image on the left, sticky side-note on the right (below on mobile)
   if (block.note && block.image) {
     return (
       <motion.div
@@ -295,43 +295,54 @@ function renderContentBlock(block: ContentBlock, bi: number) {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={VIEWPORT}
         transition={{ ...FADE, delay: bi * 0.05 }}
-        style={{ display: "grid", gridTemplateColumns: "1fr 200px", gap: 24, alignItems: "start" }}
+        className="rsp-stack"
+        style={{ display: "grid", gridTemplateColumns: "1fr 212px", gap: 24, alignItems: "start" }}
       >
         <MediaBox src={block.image} />
+
+        {/* Sticky note */}
         <div style={{
-          position:        "sticky",
-          top:             80,
-          background:      "rgba(255,220,80,0.13)",
-          border:          "1px solid rgba(200,160,0,0.18)",
-          borderRadius:    10,
-          padding:         "14px 16px",
-          display:         "flex",
-          flexDirection:   "column",
-          gap:             6,
+          position:      "sticky",
+          top:           80,
+          background:    "rgba(252,240,140,0.55)",
+          border:        "1px solid rgba(200,170,0,0.22)",
+          borderRadius:  12,
+          overflow:      "hidden",
+          boxShadow:     "0 4px 18px rgba(160,130,0,0.10), 0 1px 4px rgba(0,0,0,0.06)",
+          transform:     "rotate(-0.6deg)",
         }}>
-          {block.title && (
-            <span style={{
+          {/* Tape strip at top */}
+          <div style={{
+            height:     6,
+            background: "rgba(240,210,0,0.35)",
+            borderBottom: "1px solid rgba(200,170,0,0.18)",
+          }} />
+
+          <div style={{ padding: "14px 16px 18px", display: "flex", flexDirection: "column", gap: 8 }}>
+            {block.title && (
+              <span style={{
+                fontFamily:    "'Departure Mono', monospace",
+                fontSize:      9,
+                fontWeight:    700,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase" as const,
+                color:         "rgba(120,95,0,0.65)",
+              }}>
+                {block.title}
+              </span>
+            )}
+            <p style={{
               fontFamily:    "var(--font-sans)",
-              fontSize:      10,
-              fontWeight:    700,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase" as const,
-              color:         "var(--c-faint)",
+              fontSize:      13,
+              fontWeight:    500,
+              color:         "rgba(60,45,0,0.82)",
+              lineHeight:    1.75,
+              margin:        0,
+              letterSpacing: "-0.01em",
             }}>
-              {block.title}
-            </span>
-          )}
-          <p style={{
-            fontFamily:    "var(--font-sans)",
-            fontSize:      13,
-            fontWeight:    400,
-            color:         "var(--c-secondary)",
-            lineHeight:    1.7,
-            margin:        0,
-            letterSpacing: "-0.01em",
-          }}>
-            {block.note}
-          </p>
+              {block.note}
+            </p>
+          </div>
         </div>
       </motion.div>
     )
