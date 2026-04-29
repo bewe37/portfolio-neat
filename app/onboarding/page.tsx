@@ -190,17 +190,15 @@ function WelcomeStep({ onContinue, onSkip }: { onContinue: () => void; onSkip: (
   const spawnRef = useRef<((x: number, y: number) => void) | null>(null)
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
-  const [sampleUrls, setSampleUrls] = useState<string[]>([])
-
-  useEffect(() => {
-    const urls = G_SAMPLES.map(fn => {
+  const [sampleUrls] = useState<string[]>(() => {
+    if (typeof window === "undefined") return []
+    return G_SAMPLES.map(fn => {
       const cv = document.createElement("canvas")
       cv.width = 16; cv.height = 16
       fn(cv.getContext("2d")!)
       return cv.toDataURL()
     })
-    setSampleUrls(urls)
-  }, [])
+  })
 
   function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
     const rect = e.currentTarget.getBoundingClientRect()

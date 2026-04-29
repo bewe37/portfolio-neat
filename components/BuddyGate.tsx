@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useLayoutEffect, useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import SpriteBuddy from "@/components/SpriteBuddy"
 
@@ -9,7 +9,7 @@ export default function BuddyGate() {
   const pathname = usePathname()
   const [ready, setReady] = useState(false)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (pathname === "/onboarding" || pathname.startsWith("/admin")) {
       setReady(true)
       return
