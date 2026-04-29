@@ -3,6 +3,7 @@ import ContactList from "@/components/ContactList"
 import ThemeToggle from "@/components/ThemeToggle"
 import HeroTextWithPen from "@/components/HeroTextWithPen"
 import HeaderNav from "@/components/HeaderNav"
+import MobileMenu from "@/components/MobileMenu"
 import ProjectFolders, { AMD_PAPERS, AMD_AI_PAPERS, FME_PAPERS } from "@/components/ProjectFolders"
 import MarqueeFooter from "@/components/MarqueeFooter"
 import AboutSection from "@/components/AboutSection"
@@ -146,10 +147,11 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div style={{ paddingTop: 4, display: "flex", alignItems: "center", gap: 8 }}>
+            <span className="rsp-hide-mobile" style={{ display: "inline-flex", alignItems: "center", gap: 8, paddingTop: 4 }}>
               <HeaderNav aboutLink="/projects" />
               <ThemeToggle />
-            </div>
+            </span>
+            <MobileMenu />
           </div>
 
           {/* Bio */}

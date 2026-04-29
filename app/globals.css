@@ -240,6 +240,9 @@ a {
   100% { left: 110%; opacity: 0; }
 }
 
+/* Mobile hamburger — hidden on desktop */
+.rsp-hamburger { display: none; }
+
 /* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 768px) {
   /* Padding */
@@ -280,6 +283,9 @@ a {
   .rsp-hide-mobile { display: none !important; }
   .rsp-show-mobile { display: flex !important; flex-direction: column !important; }
   .rsp-show-mobile-grid { display: grid !important; }
+
+  /* Mobile hamburger menu button */
+  .rsp-hamburger { display: flex !important; }
 
   /* Accordion: swap to mobile carousel */
   .rsp-accordion-desktop { display: none !important; }
