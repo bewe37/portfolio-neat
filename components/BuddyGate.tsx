@@ -14,10 +14,15 @@ export default function BuddyGate() {
       setReady(true)
       return
     }
+    // Skip onboarding entirely on mobile
+    const isMobile = window.matchMedia("(max-width: 768px)").matches
+    if (isMobile) {
+      setReady(true)
+      return
+    }
     const saved = localStorage.getItem("buddyId")
     if (!saved) {
       router.replace("/onboarding")
-      // keep overlay blocking until onboarding mounts
     } else {
       setReady(true)
     }
