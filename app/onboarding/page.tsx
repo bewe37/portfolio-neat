@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from "framer-motion"
 import { BUDDIES, type BuddyDef } from "@/lib/buddies"
 import { SpriteView } from "@/components/SpriteBuddy"
 import LogoAvatar from "@/components/LogoAvatar"
@@ -11,130 +11,69 @@ const SCALE = 4
 
 // ── Meteor canvas ─────────────────────────────────────────────
 interface MeteorData {
-  x: number; y: number
-  vx: number; vy: number
-  age: number; life: number
-  tail: number; bright: boolean
+  x: number; y: number; vx: number; vy: number
+  age: number; life: number; tail: number; bright: boolean
 }
+const M_ANGLE = 32 * Math.PI / 180
+const M_COS   = Math.cos(M_ANGLE)
+const M_SIN   = Math.sin(M_ANGLE)
 
-const ANGLE = 32 * Math.PI / 180
-const COS   = Math.cos(ANGLE)
-const SIN   = Math.sin(ANGLE)
-
-function MeteorCanvas({ spawnRef }: {
-  spawnRef: React.RefObject<((x: number, y: number) => void) | null>
-}) {
+function MeteorCanvas({ spawnRef }: { spawnRef: React.RefObject<((x: number, y: number) => void) | null> }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-
   useEffect(() => {
     const canvas = canvasRef.current!
     const ctx    = canvas.getContext("2d")!
     const meteors: MeteorData[] = []
-    let raf         = 0
-    let lastTime    = performance.now()
-    let nextSpawnIn = 0
+    let raf = 0, lastTime = performance.now(), nextSpawnIn = 0
 
-    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight }
+    function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight }
     resize()
-    window.addEventListener("resize", resize)
+    const ro = new ResizeObserver(resize)
+    ro.observe(canvas)
 
     function spawn(bright = false, sx?: number, sy?: number) {
       const spd = bright ? 750 : 160 + Math.random() * 220
       meteors.push({
         x: sx ?? (0.05 + Math.random() * 0.85) * canvas.width,
         y: sy ?? -10 + Math.random() * canvas.height * 0.35,
-        vx: COS * spd, vy: SIN * spd,
+        vx: M_COS * spd, vy: M_SIN * spd,
         age: 0, life: bright ? 1.1 : 1.6 + Math.random() * 2.6,
         tail: bright ? 240 : 60 + Math.random() * 90, bright,
       })
     }
-
     spawnRef.current = (x, y) => spawn(true, x, y)
 
-    interface Star {
-      x: number; y: number; ox: number; oy: number; r: number
-      base: number; phase: number; speed: number
-      driftR: number; driftPhase: number; driftSpeed: number
-    }
-    const stars: Star[] = Array.from({ length: 90 }, () => {
-      const x = Math.random(), y = Math.random()
-      return {
-        x, y, ox: x, oy: y,
-        r: 0.4 + Math.random() * 1.2,
-        base: 0.18 + Math.random() * 0.48,
-        phase: Math.random() * Math.PI * 2,
-        speed: 0.3 + Math.random() * 1.2,
-        driftR: 8 + Math.random() * 24,
-        driftPhase: Math.random() * Math.PI * 2,
-        driftSpeed: 0.04 + Math.random() * 0.08,
-      }
-    })
+    interface Star { x: number; y: number; r: number; base: number; phase: number; speed: number; driftR: number; driftPhase: number; driftSpeed: number }
+    const stars: Star[] = Array.from({ length: 90 }, () => ({
+      x: Math.random(), y: Math.random(),
+      r: 0.4 + Math.random() * 1.2, base: 0.18 + Math.random() * 0.48,
+      phase: Math.random() * Math.PI * 2, speed: 0.3 + Math.random() * 1.2,
+      driftR: 8 + Math.random() * 24, driftPhase: Math.random() * Math.PI * 2,
+      driftSpeed: 0.04 + Math.random() * 0.08,
+    }))
 
-    interface Sparkle { starIdx: number; age: number; life: number; size: number }
-    const sparkles: Sparkle[] = []
-    let nextSparkleIn = 1.5 + Math.random() * 2
-
-    function spawnSparkle() {
-      const idx = Math.floor(Math.random() * stars.length)
-      if (sparkles.some(s => s.starIdx === idx)) return
-      sparkles.push({ starIdx: idx, age: 0, life: 0.9 + Math.random() * 0.5, size: 6 + Math.random() * 10 })
-    }
-
-    for (let i = 0; i < 6; i++) { spawn(); meteors[i].age = Math.random() * meteors[i].life * 0.6 }
+    for (let i = 0; i < 5; i++) { spawn(); meteors[i].age = Math.random() * meteors[i].life * 0.6 }
 
     function frame(now: number) {
-      const dt = Math.min((now - lastTime) / 1000, 0.05)
-      lastTime = now
+      const dt = Math.min((now - lastTime) / 1000, 0.05); lastTime = now
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-
       const t = now / 1000
       for (const s of stars) {
         const alpha = Math.max(0, s.base + Math.sin(t * s.speed + s.phase) * 0.22)
-        const px = (s.ox * canvas.width)  + Math.cos(t * s.driftSpeed + s.driftPhase) * s.driftR
-        const py = (s.oy * canvas.height) + Math.sin(t * s.driftSpeed + s.driftPhase * 1.3) * s.driftR * 0.6
+        const px = s.x * canvas.width  + Math.cos(t * s.driftSpeed + s.driftPhase) * s.driftR
+        const py = s.y * canvas.height + Math.sin(t * s.driftSpeed + s.driftPhase * 1.3) * s.driftR * 0.6
         ctx.beginPath(); ctx.arc(px, py, s.r, 0, Math.PI * 2)
         ctx.fillStyle = `rgba(255,255,255,${alpha})`; ctx.fill()
       }
-
       nextSpawnIn -= dt
       if (nextSpawnIn <= 0) { spawn(); nextSpawnIn = 1.8 + Math.random() * 3.5 }
-
-      nextSparkleIn -= dt
-      if (nextSparkleIn <= 0) { spawnSparkle(); nextSparkleIn = 1.2 + Math.random() * 2.5 }
-
-      for (let i = sparkles.length - 1; i >= 0; i--) {
-        const sp = sparkles[i]; sp.age += dt
-        if (sp.age >= sp.life) { sparkles.splice(i, 1); continue }
-        const t2 = sp.age / sp.life
-        const fade = t2 < 0.2 ? t2 / 0.2 : 1 - ((t2 - 0.2) / 0.8)
-        const s = stars[sp.starIdx]
-        const px = (s.ox * canvas.width)  + Math.cos(now / 1000 * s.driftSpeed + s.driftPhase) * s.driftR
-        const py = (s.oy * canvas.height) + Math.sin(now / 1000 * s.driftSpeed + s.driftPhase * 1.3) * s.driftR * 0.6
-        const sz = sp.size * fade
-        ctx.save(); ctx.globalAlpha = fade; ctx.strokeStyle = "#fff"; ctx.lineWidth = 1
-        for (let a = 0; a < 4; a++) {
-          const angle = (a / 4) * Math.PI
-          const len = a % 2 === 0 ? sz : sz * 0.55
-          ctx.beginPath()
-          ctx.moveTo(px + Math.cos(angle) * 1.5, py + Math.sin(angle) * 1.5)
-          ctx.lineTo(px + Math.cos(angle) * len,  py + Math.sin(angle) * len)
-          ctx.moveTo(px - Math.cos(angle) * 1.5, py - Math.sin(angle) * 1.5)
-          ctx.lineTo(px - Math.cos(angle) * len,  py - Math.sin(angle) * len)
-          ctx.stroke()
-        }
-        const glow = ctx.createRadialGradient(px, py, 0, px, py, sz * 0.8)
-        glow.addColorStop(0, `rgba(255,245,210,${fade * 0.9})`); glow.addColorStop(1, "rgba(255,245,210,0)")
-        ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(px, py, sz * 0.8, 0, Math.PI * 2); ctx.fill()
-        ctx.restore()
-      }
-
       for (let i = meteors.length - 1; i >= 0; i--) {
         const m = meteors[i]; m.age += dt
         if (m.age >= m.life) { meteors.splice(i, 1); continue }
         const t2 = m.age / m.life
         const fade = t2 < 0.08 ? t2 / 0.08 : t2 > 0.62 ? 1 - (t2 - 0.62) / 0.38 : 1
         const hx = m.x + m.vx * m.age, hy = m.y + m.vy * m.age
-        const tx = hx - COS * m.tail,  ty = hy - SIN * m.tail
+        const tx = hx - M_COS * m.tail, ty = hy - M_SIN * m.tail
         const g = ctx.createLinearGradient(tx, ty, hx, hy)
         if (m.bright) {
           g.addColorStop(0, "rgba(255,200,100,0)")
@@ -154,26 +93,13 @@ function MeteorCanvas({ spawnRef }: {
       }
       raf = requestAnimationFrame(frame)
     }
-
     raf = requestAnimationFrame(frame)
-
-    function onVisibility() {
-      if (document.hidden) { cancelAnimationFrame(raf) }
-      else { lastTime = performance.now(); raf = requestAnimationFrame(frame) }
-    }
-    document.addEventListener("visibilitychange", onVisibility)
-
-    return () => {
-      cancelAnimationFrame(raf)
-      window.removeEventListener("resize", resize)
-      document.removeEventListener("visibilitychange", onVisibility)
-      spawnRef.current = null
-    }
+    function onVis() { if (document.hidden) cancelAnimationFrame(raf); else { lastTime = performance.now(); raf = requestAnimationFrame(frame) } }
+    document.addEventListener("visibilitychange", onVis)
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); document.removeEventListener("visibilitychange", onVis); spawnRef.current = null }
   }, [spawnRef])
 
-  return (
-    <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }} />
-  )
+  return <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }} />
 }
 
 // ── Buddy card ────────────────────────────────────────────────
@@ -249,158 +175,192 @@ function BuddyCard({ buddy, selected, dimmed, onSelect }: {
 }
 
 // ── Welcome step ──────────────────────────────────────────────
+const W_COL_GAP = 8
+const W_COL_CFG = [
+  { dur: 22, dir: "up",   offset: 0  },
+  { dur: 16, dir: "down", offset: 4  },
+  { dur: 27, dir: "up",   offset: 9  },
+  { dur: 19, dir: "down", offset: 2  },
+  { dur: 24, dir: "up",   offset: 7  },
+  { dur: 17, dir: "down", offset: 11 },
+  { dur: 29, dir: "up",   offset: 5  },
+] as const
+
 function WelcomeStep({ onContinue, onSkip }: { onContinue: () => void; onSkip: () => void }) {
   const spawnRef = useRef<((x: number, y: number) => void) | null>(null)
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+  const [sampleUrls, setSampleUrls] = useState<string[]>([])
 
-  function handleClick(e: React.MouseEvent<HTMLDivElement>) {
+  useEffect(() => {
+    const urls = G_SAMPLES.map(fn => {
+      const cv = document.createElement("canvas")
+      cv.width = 16; cv.height = 16
+      fn(cv.getContext("2d")!)
+      return cv.toDataURL()
+    })
+    setSampleUrls(urls)
+  }, [])
+
+  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    const rect = e.currentTarget.getBoundingClientRect()
+    mouseX.set((e.clientX - rect.left) / rect.width - 0.5)
+    mouseY.set((e.clientY - rect.top)  / rect.height - 0.5)
+  }
+
+  function handleLeftClick(e: React.MouseEvent<HTMLDivElement>) {
     if ((e.target as HTMLElement).closest("button")) return
     spawnRef.current?.(e.clientX, e.clientY)
   }
 
+  const springCfg = { stiffness: 38, damping: 18, mass: 1 }
+  const panelX = useSpring(useTransform(mouseX, [-0.5, 0.5], [-10, 10]), springCfg)
+  const panelY = useSpring(useTransform(mouseY, [-0.5, 0.5], [-6,   6]), springCfg)
+
+  function colItems(offset: number): string[] {
+    if (sampleUrls.length === 0) return []
+    const n = sampleUrls.length
+    const base = Array.from({ length: 14 }, (_, i) => sampleUrls[(i + offset) % n])
+    return [...base, ...base]
+  }
+
   return (
     <div
-      onClick={handleClick}
-      style={{
-        display:        "flex",
-        flexDirection:  "column",
-        alignItems:     "center",
-        justifyContent: "center",
-        minHeight:      "100dvh",
-        padding:        "40px 24px",
-        position:       "relative",
-        fontFamily:     "var(--font-sans)",
-        background:     "#18181b",
-        overflow:       "hidden",
-        cursor:         "default",
-      }}
+      onMouseMove={handleMouseMove}
+      style={{ display: "flex", minHeight: "100dvh", fontFamily: "var(--font-sans)", background: "#0e0d0c", overflow: "hidden" }}
     >
-      <MeteorCanvas spawnRef={spawnRef} />
+      {/* ── Left: meteor + editorial text ── */}
+      <div
+        onClick={handleLeftClick}
+        style={{
+          width: "48%", flexShrink: 0,
+          display: "flex", flexDirection: "column", justifyContent: "center",
+          padding: "64px 80px",
+          borderRight: "1px solid rgba(255,255,255,0.06)",
+          position: "relative", zIndex: 2,
+          overflow: "hidden", cursor: "default",
+        }}
+      >
+        <MeteorCanvas spawnRef={spawnRef} />
+        {/* Top/bottom fades so stars don't bleed into edges */}
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 80, background: "linear-gradient(to bottom, #0e0d0c, transparent)", pointerEvents: "none", zIndex: 1 }} />
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 80, background: "linear-gradient(to top, #0e0d0c, transparent)", pointerEvents: "none", zIndex: 1 }} />
 
-      {/* Edge fades */}
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 100, background: "linear-gradient(to bottom, #18181b, transparent)", pointerEvents: "none", zIndex: 1 }} />
-      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 100, background: "linear-gradient(to top, #18181b, transparent)", pointerEvents: "none", zIndex: 1 }} />
+        {/* Content sits above canvas */}
+        <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "column" }}>
+          <div style={{ animation: "fadeUp 0.55s 0.05s cubic-bezier(0.22,1,0.36,1) both", marginBottom: 40 }}>
+            <motion.div
+              initial={{ y: 0, rotate: -4 }}
+              animate={{ y: -10, rotate: 4 }}
+              transition={{
+                y:      { duration: 3.2, repeat: Infinity, repeatType: "reverse", ease: [0.37, 0, 0.63, 1], delay: 0.6 },
+                rotate: { duration: 4.5, repeat: Infinity, repeatType: "reverse", ease: [0.37, 0, 0.63, 1], delay: 0.2 },
+              }}
+              style={{ display: "inline-block" }}
+            >
+              <LogoAvatar />
+            </motion.div>
+          </div>
 
-      {/* Footer */}
-      <div style={{
-        position:    "absolute", bottom: 28, left: 32,
-        zIndex:      2,
-        fontFamily:  "'Departure Mono', monospace",
-        fontSize:    11,
-        color:       "rgba(244,244,245,0.55)",
-        letterSpacing: "0.04em",
-        lineHeight:  1.5,
-        animation:   "fadeUp 0.55s 0.45s cubic-bezier(0.22,1,0.36,1) both",
-        userSelect:  "none",
-      }}>
-        Georgius Bryan<br />
-        <span style={{ color: "rgba(244,244,245,0.32)" }}>Portfolio — 2025</span>
+          <div style={{ animation: "fadeUp 0.55s 0.14s cubic-bezier(0.22,1,0.36,1) both", marginBottom: 20 }}>
+            <h1 style={{
+              fontSize: "clamp(38px, 3.8vw, 62px)", fontWeight: 800,
+              color: "#f4f4f5", margin: 0, letterSpacing: "-0.04em", lineHeight: 1.06,
+            }}>
+              Hey,<br /><span className="shiny-text">I'm Georgius</span>.
+            </h1>
+          </div>
+
+          <div style={{ animation: "fadeUp 0.55s 0.22s cubic-bezier(0.22,1,0.36,1) both", marginBottom: 40 }}>
+            <p style={{
+              fontSize: 15, fontWeight: 450, color: "rgba(244,244,245,0.52)",
+              margin: 0, lineHeight: 1.65, maxWidth: 400,
+            }}>
+              Every good portfolio needs a companion. Pick one and they'll keep you company as you browse.
+            </p>
+          </div>
+
+          <div style={{ display: "flex", gap: 10, animation: "fadeUp 0.55s 0.30s cubic-bezier(0.22,1,0.36,1) both", marginBottom: 48 }}>
+            <button className="btn-dark-fill" onClick={onContinue} style={{
+              padding: "12px 28px", borderRadius: 99, border: "none",
+              fontSize: 14, fontWeight: 600, fontFamily: "var(--font-sans)",
+              cursor: "pointer", letterSpacing: "-0.01em", position: "relative", overflow: "hidden",
+            }}>
+              Pick a companion →
+            </button>
+            <button onClick={onSkip} style={{
+              padding: "12px 20px", borderRadius: 99,
+              border: "1px solid rgba(244,244,245,0.12)", background: "rgba(255,255,255,0.04)",
+              color: "rgba(244,244,245,0.38)", fontSize: 14, fontWeight: 500,
+              fontFamily: "var(--font-sans)", cursor: "pointer", letterSpacing: "-0.01em",
+              transition: "color 0.15s ease, border-color 0.15s ease, background 0.15s ease",
+            }}
+              onMouseEnter={e => { e.currentTarget.style.color = "rgba(244,244,245,0.80)"; e.currentTarget.style.borderColor = "rgba(244,244,245,0.28)"; e.currentTarget.style.background = "rgba(255,255,255,0.07)" }}
+              onMouseLeave={e => { e.currentTarget.style.color = "rgba(244,244,245,0.38)"; e.currentTarget.style.borderColor = "rgba(244,244,245,0.12)"; e.currentTarget.style.background = "rgba(255,255,255,0.04)" }}
+            >
+              Skip
+            </button>
+          </div>
+
+        </div>
+
+        {/* Bottom-left footer */}
+        <div style={{
+          position: "absolute", bottom: 28, left: 52, zIndex: 2,
+          animation: "fadeUp 0.55s 0.40s cubic-bezier(0.22,1,0.36,1) both",
+          fontFamily: "'Departure Mono', monospace", fontSize: 10,
+          color: "rgba(244,244,245,0.30)", letterSpacing: "0.06em", lineHeight: 1.6, userSelect: "none",
+        }}>
+          Georgius Bryan<br />
+          <span style={{ color: "rgba(244,244,245,0.18)" }}>Portfolio — 2026</span>
+        </div>
       </div>
 
-      <div style={{
-        display:       "flex",
-        flexDirection: "column",
-        alignItems:    "center",
-        gap:           28,
-        maxWidth:      480,
-        textAlign:     "center",
-        position:      "relative",
-        zIndex:        2,
-      }}>
-        <div style={{ animation: "fadeUp 0.55s 0.05s cubic-bezier(0.22,1,0.36,1) both" }}>
-          <motion.div
-            initial={{ y: 0, rotate: -6 }}
-            animate={{ y: -14, rotate: 6 }}
-            transition={{
-              y:      { duration: 3.0, repeat: Infinity, repeatType: "reverse", ease: [0.37, 0, 0.63, 1], delay: 0.6 },
-              rotate: { duration: 4.2, repeat: Infinity, repeatType: "reverse", ease: [0.37, 0, 0.63, 1], delay: 0.2 },
-            }}
-          >
-            <LogoAvatar />
-          </motion.div>
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <h1
-            style={{
-              fontSize:      clamp(36, 54),
-              fontWeight:    800,
-              color:         "#f4f4f5",
-              margin:        0,
-              letterSpacing: "-0.04em",
-              lineHeight:    1.08,
-              cursor:        "default",
-              animation:     "fadeUp 0.55s 0.14s cubic-bezier(0.22,1,0.36,1) both",
-            }}
-          >
-            Hey, I'm <span className="shiny-text">Georgius</span>.
-          </h1>
-
-          <p style={{
-            fontSize:   17,
-            fontWeight: 500,
-            color:      "rgba(244,244,245,0.65)",
-            margin:     "0 auto",
-            lineHeight: 1.55,
-            maxWidth:   360,
-            textAlign:  "center",
-            animation:  "fadeUp 0.55s 0.22s cubic-bezier(0.22,1,0.36,1) both",
-          }}>
-            Every good portfolio needs a companion. Pick one and they'll keep you company.
-          </p>
-        </div>
-
+      {/* ── Right: vertical scrolling companion columns ── */}
+      <div style={{ flex: 1, position: "relative", overflow: "hidden" }}>
+        {/* Grain */}
         <div style={{
-          display:   "flex",
-          gap:       10,
-          animation: "fadeUp 0.55s 0.3s cubic-bezier(0.22,1,0.36,1) both",
+          position: "absolute", inset: 0, zIndex: 1, pointerEvents: "none", opacity: 0.40,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")`,
+          backgroundSize: "180px 180px", mixBlendMode: "overlay",
+        }} />
+        {/* Edge fades */}
+        <div style={{ position: "absolute", top: 0, left: 0, bottom: 0, width: 70, zIndex: 5, pointerEvents: "none", background: "linear-gradient(to right, #0e0d0c, transparent)" }} />
+        <div style={{ position: "absolute", top: 0, right: 0, bottom: 0, width: 50, zIndex: 5, pointerEvents: "none", background: "linear-gradient(to left, #0e0d0c, transparent)" }} />
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 100, zIndex: 5, pointerEvents: "none", background: "linear-gradient(to bottom, #0e0d0c, transparent)" }} />
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 100, zIndex: 5, pointerEvents: "none", background: "linear-gradient(to top, #0e0d0c, transparent)" }} />
+
+        {/* Mouse-drift + columns filling the full width */}
+        <motion.div style={{
+          x: panelX, y: panelY,
+          display: "flex", gap: W_COL_GAP,
+          position: "absolute", inset: 0,
         }}>
-          <button
-            className="btn-dark-fill"
-            onClick={onContinue}
-            style={{
-              padding:       "12px 32px",
-              borderRadius:  99,
-              border:        "none",
-              fontSize:      14,
-              fontWeight:    600,
-              fontFamily:    "var(--font-sans)",
-              cursor:        "pointer",
-              letterSpacing: "-0.01em",
-              position:      "relative",
-              overflow:      "hidden",
-            }}
-          >
-            Pick a companion →
-          </button>
-          <button
-            onClick={onSkip}
-            style={{
-              padding:       "12px 22px",
-              borderRadius:  99,
-              border:        "1px solid rgba(244,244,245,0.15)",
-              background:    "rgba(255,255,255,0.04)",
-              color:         "rgba(244,244,245,0.45)",
-              fontSize:      14,
-              fontWeight:    500,
-              fontFamily:    "var(--font-sans)",
-              cursor:        "pointer",
-              letterSpacing: "-0.01em",
-              transition:    "color 0.15s ease, border-color 0.15s ease, background 0.15s ease",
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.color        = "rgba(244,244,245,0.85)"
-              e.currentTarget.style.borderColor  = "rgba(244,244,245,0.35)"
-              e.currentTarget.style.background   = "rgba(255,255,255,0.08)"
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.color        = "rgba(244,244,245,0.45)"
-              e.currentTarget.style.borderColor  = "rgba(244,244,245,0.15)"
-              e.currentTarget.style.background   = "rgba(255,255,255,0.04)"
-            }}
-          >
-            Skip
-          </button>
-        </div>
+          {W_COL_CFG.map((col, ci) => {
+            const items = colItems(col.offset)
+            return (
+              <div key={ci} style={{ flex: 1, overflow: "hidden", height: "100%" }}>
+                <div style={{
+                  display: "flex", flexDirection: "column", gap: W_COL_GAP,
+                  willChange: "transform",
+                  animation: `w-scroll-${col.dir} ${col.dur}s linear infinite`,
+                }}>
+                  {items.map((url, j) => (
+                    <div key={j} style={{
+                      width: "100%", aspectRatio: "1", flexShrink: 0,
+                      background: "#f0ece4", borderRadius: 10, padding: "11%",
+                      boxShadow: "0 6px 20px rgba(0,0,0,0.55), 0 1px 4px rgba(0,0,0,0.35)",
+                    }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={url} alt="" draggable={false}
+                        style={{ width: "100%", height: "100%", display: "block", imageRendering: "pixelated" }} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          })}
+        </motion.div>
       </div>
     </div>
   )
@@ -1034,7 +994,8 @@ function OnboardingPage() {
 
   function skip() {
     localStorage.setItem("buddyId", "none")
-    router.replace("/")
+    setLeaving(true)
+    setTimeout(() => router.replace("/"), 240)
   }
 
   if (!mounted) return null
@@ -1044,7 +1005,7 @@ function OnboardingPage() {
       minHeight:  "100dvh",
       overflow:   "hidden",
       position:   "relative",
-      background: step === 0 ? "#18181b" : "var(--bg)",
+      background: step === 0 ? "#0e0d0c" : "var(--bg)",
       opacity:    leaving ? 0 : 1,
       transition: leaving ? "opacity 0.22s ease" : undefined,
       pointerEvents: leaving ? "none" : undefined,
@@ -1127,6 +1088,14 @@ function OnboardingPage() {
         @keyframes g-scroll-right {
           from { transform: translateX(-50%); }
           to   { transform: translateX(0); }
+        }
+        @keyframes w-scroll-up {
+          from { transform: translateY(0); }
+          to   { transform: translateY(-50%); }
+        }
+        @keyframes w-scroll-down {
+          from { transform: translateY(-50%); }
+          to   { transform: translateY(0); }
         }
         @keyframes rowFadeIn {
           from { opacity: 0; transform: translateY(16px); }
