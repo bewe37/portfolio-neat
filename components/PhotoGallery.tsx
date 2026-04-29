@@ -6,7 +6,7 @@ import { motion, useMotionValue, AnimatePresence } from "framer-motion"
 interface Photo { src: string; label?: string }
 
 const PHOTOS: Photo[] = [
-  { src: "/nyc.jpg",         label: "New York"      },
+  { src: "/nyc.jpg",         label: "Employees Only - NYC"      },
   { src: "/austria.jpg",     label: "Austria"       },
   { src: "/korea.jpg",       label: "Korea"         },
   { src: "/paris.jpg",       label: "Paris"         },

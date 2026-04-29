@@ -96,7 +96,7 @@ export default function ProjectCard({ title, category, href, image }: ProjectCar
           <span
             style={{
               fontFamily: "var(--font-sans)",
-              fontSize: 19,
+              fontSize: 12,
               fontWeight: 500,
               color: "rgba(0,0,0,0.3)",
               letterSpacing: "-0.01em",
