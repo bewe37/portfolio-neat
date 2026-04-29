@@ -260,7 +260,7 @@ a {
   .rsp-cs-h1     { font-size: 22px !important; line-height: 1.2 !important; margin-bottom: 24px !important; }
 
   /* Hero profile row */
-  .rsp-hero-row  { gap: 12px !important; }
+  .rsp-hero-row  { gap: 12px !important; align-items: center !important; z-index: 1001 !important; }
 
   /* Experience grid: stack columns */
   .rsp-exp-row   { grid-template-columns: 1fr !important; gap: 4px !important; padding: 16px 0 !important; }

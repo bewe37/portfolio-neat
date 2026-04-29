@@ -59,17 +59,13 @@ export default function MobileMenu() {
 
   return (
     <>
-      {/* Hamburger / X button — fixed top-right, shown on mobile only via .rsp-hamburger */}
+      {/* Hamburger / X button — inline flex item in header row, shown on mobile only via .rsp-hamburger */}
       <button
         onClick={() => setOpen(o => !o)}
         aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
         className="rsp-hamburger"
         style={{
-          position: "fixed",
-          top: 20,
-          right: 20,
-          zIndex: 1001,
           background: "none",
           border: "none",
           cursor: "pointer",
@@ -78,6 +74,7 @@ export default function MobileMenu() {
           gap: 5,
           alignItems: "center",
           justifyContent: "center",
+          flexShrink: 0,
         }}
       >
         <span ref={bar1} style={barStyle} />
@@ -121,10 +118,10 @@ export default function MobileMenu() {
                 zIndex: 1000,
                 background: "var(--bg)",
                 borderBottom: "1px solid var(--border)",
-                paddingTop: 68,
+                paddingTop: 80,
                 paddingLeft: 20,
                 paddingRight: 20,
-                paddingBottom: 32,
+                paddingBottom: 36,
               }}
             >
               {NAV_ITEMS.map(({ label, href, newTab }, i) => (

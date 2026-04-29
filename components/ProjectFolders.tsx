@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef } from "react"
-import { motion } from "framer-motion"
+import { motion, useScroll, useTransform } from "framer-motion"
 import Link from "next/link"
 
 interface Project {
@@ -417,9 +417,13 @@ function MobilePapers({ project }: { project: Project }) {
 
 function ProjectCard({ project, index }: { project: Project; index: number }) {
   const folderSrc = project.folder ?? "/chequereds.svg"
+  const cardRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({ target: cardRef, offset: ["start end", "end start"] })
+  const arrowX = useTransform(scrollYProgress, [0, 0.35, 0.65, 1], [-10, 0, 0, 10])
 
   return (
     <motion.div
+      ref={cardRef}
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-32px" }}
@@ -467,11 +471,14 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
             <p style={{ fontFamily: "var(--font-sans)", fontSize: 11, fontWeight: 600, color: "var(--c-faint)", letterSpacing: "-0.01em", margin: "0 0 4px" }}>{project.category}</p>
             <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 600, color: "var(--c-mid)", letterSpacing: "-0.02em", lineHeight: 1.35, margin: 0 }}>{project.title}</p>
           </div>
-          <div className="rsp-folder-arrow" style={{ display: "none", alignItems: "center", justifyContent: "center", width: 28, height: 28, borderRadius: "50%", border: "1px solid var(--border-mid)", flexShrink: 0, marginBottom: 2 }}>
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-              <path d="M2 5h6M5.5 2.5L8 5l-2.5 2.5" stroke="var(--c-mid)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+          <motion.div
+            className="rsp-folder-arrow"
+            style={{ display: "none", alignItems: "center", justifyContent: "center", flexShrink: 0, marginBottom: 2, x: arrowX }}
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="var(--c-mid)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-          </div>
+          </motion.div>
         </div>
       </Link>
     </motion.div>
