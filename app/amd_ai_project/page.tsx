@@ -82,7 +82,7 @@ export default function AmdAiProject() {
             {
               title: "Information overload.",
               body:  "Too much competing for attention at once. Charts, toggles, metrics, and settings competing for attention, making it hard to identify what actually matters.",
-              image: "/InformationOverload.png",
+              image: "/informationOverload.png",
             },
           ],
         },
