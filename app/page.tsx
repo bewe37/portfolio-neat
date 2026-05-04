@@ -149,7 +149,7 @@ export default function HomePage() {
             <p style={{
               margin: 0,
               fontFamily: "var(--font-sans)",
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: 400,
               color: "var(--c-mid)",
               opacity: 0.75,
