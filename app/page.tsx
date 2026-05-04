@@ -1,7 +1,6 @@
-import LogoAvatar from "@/components/LogoAvatar"
 import ContactList from "@/components/ContactList"
 import ThemeToggle from "@/components/ThemeToggle"
-import HeroTextWithPen from "@/components/HeroTextWithPen"
+import HeroTextWithPen, { NameFlipChip } from "@/components/HeroTextWithPen"
 import HeaderNav from "@/components/HeaderNav"
 import MobileMenu from "@/components/MobileMenu"
 import ProjectFolders, { AMD_PAPERS, AMD_AI_PAPERS, FME_PAPERS } from "@/components/ProjectFolders"
@@ -97,14 +96,14 @@ export default function HomePage() {
         <section
           style={{
             position: "relative",
-            padding: "56px 0 48px",
+            padding: "48px 0 80px",
             display: "flex",
             flexDirection: "column",
-            gap: 28,
+            gap: 80,
             overflow: "visible",
           }}
         >
-          {/* Profile row */}
+          {/* Nav row */}
           <div
             className="rsp-hero-row"
             style={{
@@ -116,37 +115,7 @@ export default function HomePage() {
               zIndex: 20,
             }}
           >
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <LogoAvatar />
-
-              <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                <span
-                  style={{
-                    fontFamily:  "'Departure Mono', monospace",
-                    fontSize: 17,
-                    fontWeight: 700,
-                    letterSpacing: "-0.02em",
-                    lineHeight: 1.2,
-                    color: "var(--c-primary)",
-                  }}
-                >
-                  GEORGIUS
-                </span>
-                <span
-                  style={{
-                    fontFamily: "var(--font-sans)",
-                    fontSize: 16,
-                    fontWeight: 500,
-                    color: "var(--c-dim)",
-                    letterSpacing: "-0.01em",
-                    lineHeight: 1.6,
-                  }}
-                >
-                  Product Designer
-                </span>
-              </div>
-            </div>
-
+            <NameFlipChip label="Georgius" tileH={24} />
             <span className="rsp-hide-mobile" style={{ display: "inline-flex", alignItems: "center", gap: 8, paddingTop: 4 }}>
               <HeaderNav aboutLink="/projects" />
               <ThemeToggle />
@@ -155,33 +124,40 @@ export default function HomePage() {
           </div>
 
           {/* Bio */}
-          <div style={{ position: "relative", zIndex: 1, maxWidth: 720 }}>
+          <div style={{ position: "relative", zIndex: 1, maxWidth: 810, display: "flex", flexDirection: "column", gap: 20 }}>
             <HeroTextWithPen
-              before="Hey, I'm"
+              before="Hey, I'm Georgius — "
+              balloonName="Georgius"
               name="Georgius"
-              nameColor="rgb(255,107,48)"
-              nameImage={{ src: "/sqwam.png" }}
-              tooltipWidth={200}
-              tooltipHeight={150}
-              tooltipRadius={8}
-              tooltipOffset={10}
-              middle="— Toronto-based product designer, previously at"
+              middle=" a Toronto-based product designer, previously at"
               company="AMD"
               companyLink="https://www.amd.com"
               companyLogoSrc="/amdchip.svg"
-              companyLogoSize={54}
+              companyLogoSize={56}
               afterCompany="&"
               secondCompany="Safe Software"
               secondCompanyLink="https://www.safe.com"
               secondCompanyLogoSrc="/safechip.svg"
-              secondCompanyLogoSize={80}
-              after=". I do the invisible work, turning &ldquo;why is this so confusing&rdquo; into &ldquo;wait, that was easy?&rdquo; Mostly through obsessive detail-tweaking and too much coffee."
-              fontSize={17}
-              fontWeight={450}
+              secondCompanyLogoSize={72}
+              after=". I do the invisible work — turning &ldquo;why is this so confusing&rdquo; into &ldquo;wait, that was easy?&rdquo; Mostly through obsessive detail-tweaking and too much coffee."
+              fontSize={20}
+              fontWeight={400}
               fontFamily="var(--font-sans)"
               textColor="var(--c-primary)"
               dimmedColor="var(--c-dim)"
             />
+            <p style={{
+              margin: 0,
+              fontFamily: "var(--font-sans)",
+              fontSize: 18,
+              fontWeight: 400,
+              color: "var(--c-mid)",
+              opacity: 0.75,
+              letterSpacing: "-0.01em",
+              lineHeight: 1.6,
+            }}>
+              Also into: architecture, film, painting, and finding the best meal in every city I visit.
+            </p>
           </div>
         </section>
 

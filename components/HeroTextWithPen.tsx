@@ -90,6 +90,67 @@ function buildRoughEllipsePath(
   return segs.join(" ")
 }
 
+/* ── Balloon logo tooltip ────────────────────────────────────────────── */
+const BALLOON_CONFIGS = [
+  { x: "8vw",  size: 88,  delay: 0,    dur: 1.1, bobDur: 2.8, bobAmp: 10, swayAmp: 4,  rise: 380, src: "/logoName.svg",     filter: "none" },
+  { x: "22vw", size: 64,  delay: 0.15, dur: 1.3, bobDur: 3.4, bobAmp: 7,  swayAmp: 6,  rise: 310, src: "/logoNameBlue.svg", filter: "none" },
+  { x: "42vw", size: 56,  delay: 0.28, dur: 1.0, bobDur: 2.6, bobAmp: 12, swayAmp: 3,  rise: 420, src: "/logoName.svg",     filter: "sepia(1) saturate(4) hue-rotate(340deg) brightness(1.1)" },
+  { x: "60vw", size: 76,  delay: 0.08, dur: 1.2, bobDur: 3.1, bobAmp: 8,  swayAmp: 7,  rise: 350, src: "/logoNameBlue.svg", filter: "none" },
+  { x: "75vw", size: 60,  delay: 0.22, dur: 0.95,bobDur: 2.4, bobAmp: 11, swayAmp: 5,  rise: 400, src: "/logoName.svg",     filter: "sepia(1) saturate(4) hue-rotate(340deg) brightness(1.1)" },
+  { x: "88vw", size: 82,  delay: 0.05, dur: 1.15,bobDur: 3.0, bobAmp: 9,  swayAmp: 4,  rise: 360, src: "/logoName.svg",     filter: "none" },
+]
+
+function Balloon({ cfg }: { cfg: typeof BALLOON_CONFIGS[number] }) {
+  const stringH = 90
+  return (
+    <motion.div
+      initial={{ y: 0, opacity: 0 }}
+      animate={{ y: -cfg.rise, opacity: 1 }}
+      exit={{ y: 80, opacity: 0, transition: { duration: 0.35, ease: [0.55, 0, 1, 0.45] } }}
+      transition={{ duration: cfg.dur, ease: [0.215, 0.61, 0.355, 1], delay: cfg.delay }}
+      style={{
+        position: "fixed",
+        bottom: 0,
+        left: cfg.x,
+        zIndex: 99999,
+        pointerEvents: "none",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <motion.div
+        animate={{ y: [0, -cfg.bobAmp, 0], rotate: [-cfg.swayAmp, cfg.swayAmp, -cfg.swayAmp] }}
+        transition={{ duration: cfg.bobDur, repeat: Infinity, ease: "easeInOut", delay: cfg.delay + cfg.dur }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={cfg.src}
+          alt="GB"
+          draggable={false}
+          style={{ width: cfg.size, height: "auto", display: "block", userSelect: "none", filter: cfg.filter }}
+        />
+      </motion.div>
+      <svg width="2" height={stringH} style={{ display: "block" }}>
+        <line x1="1" y1="0" x2="1" y2={stringH} stroke="rgba(0,0,0,0.15)" strokeWidth="1" strokeDasharray="3 4" />
+      </svg>
+    </motion.div>
+  )
+}
+
+function BalloonTooltip({ show, anchor: _anchor }: { show: boolean; anchor: React.RefObject<HTMLSpanElement | null> }) {
+  if (typeof document === "undefined") return null
+
+  return createPortal(
+    <AnimatePresence>
+      {show && BALLOON_CONFIGS.map((cfg, i) => (
+        <Balloon key={i} cfg={cfg} />
+      ))}
+    </AnimatePresence>,
+    document.body
+  )
+}
+
 /* ── Tooltip ─────────────────────────────────────────────────────────── */
 function Tooltip({
   show,
@@ -280,6 +341,146 @@ function PenChip({
   return inner
 }
 
+/* ── Split-flap board ────────────────────────────────────────────────── */
+const FLIP_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+function SplitFlapTile({ target, flipKey, delay, tileH, startChar }: {
+  target: string; flipKey: number; delay: number; tileH: number; startChar?: string
+}) {
+  const [char, setChar] = useState(startChar ?? target.toUpperCase())
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    const iters  = 7
+    const stepMs = 50
+    let   count  = 0
+
+    function tick() {
+      count++
+      const next = count >= iters
+        ? target.toUpperCase()
+        : FLIP_CHARS[Math.floor(Math.random() * FLIP_CHARS.length)]
+      setChar(next)
+      if (count < iters) timerRef.current = setTimeout(tick, stepMs)
+    }
+
+    timerRef.current = setTimeout(tick, delay)
+    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flipKey])
+
+  const isSpace = target === " "
+  const w = isSpace ? tileH * 0.35 : tileH * 0.72
+
+  return (
+    <span style={{
+      display:         "inline-flex",
+      alignItems:      "center",
+      justifyContent:  "center",
+      width:            w,
+      height:           tileH,
+      background:       isSpace ? "transparent" : "linear-gradient(160deg, #2a2a34 0%, #16161c 55%, #1e1c28 100%)",
+      borderRadius:     isSpace ? 0 : 4,
+      border:           isSpace ? "none" : "1px solid #353544",
+      boxShadow:        isSpace ? "none" : "inset 0 1px 0 rgba(255,255,255,0.09), inset 0 -1px 0 rgba(0,0,0,0.3)",
+      position:         "relative",
+      flexShrink:       0,
+      overflow:         "hidden",
+    }}>
+      {!isSpace && (
+        <span style={{
+          position:        "absolute",
+          top:             "50%",
+          left:            0,
+          right:           0,
+          height:          1,
+          backgroundColor: "rgba(0,0,0,0.6)",
+          zIndex:          2,
+          transform:       "translateY(-50%)",
+          pointerEvents:   "none",
+        }} />
+      )}
+      <span style={{
+        fontFamily:  "'Departure Mono', monospace",
+        fontSize:     tileH * 0.54,
+        fontWeight:   700,
+        color:        isSpace ? "transparent" : "#e8e8e8",
+        lineHeight:   1,
+        userSelect:   "none",
+        position:     "relative",
+        zIndex:       1,
+      }}>{char}</span>
+    </span>
+  )
+}
+
+function SplitFlapBoard({ text, tileH = 18, flipKey, startChars }: {
+  text: string; tileH?: number; flipKey: number; startChars?: string[]
+}) {
+  const chars = text.toUpperCase().split("")
+  return (
+    <span style={{
+      display:         "inline-flex",
+      alignItems:      "center",
+      gap:             2,
+      padding:         "2px 3px",
+      borderRadius:    4,
+      background:      "linear-gradient(180deg, #18181e 0%, #0e0e12 100%)",
+      border:          "1px solid #2a2a36",
+      boxShadow:       "0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)",
+    }}>
+      {chars.map((ch, i) => (
+        <SplitFlapTile
+          key={i}
+          target={ch}
+          flipKey={flipKey}
+          delay={i * 50 + 10}
+          tileH={tileH}
+          startChar={startChars?.[i]}
+        />
+      ))}
+    </span>
+  )
+}
+
+/* ── Inline name flip-board chip ─────────────────────────────────────── */
+export function NameFlipChip({ label, link, tileH = 18 }: { label: string; link?: string; tileH?: number }) {
+  const [flipKey, setFlipKey] = useState(0)
+  const [revealed, setRevealed] = useState(false)
+
+  // Stable gibberish chars — one random char per letter, seeded once
+  const gibberish = useMemo(() =>
+    label.split("").map(() => FLIP_CHARS[Math.floor(Math.random() * FLIP_CHARS.length)]),
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [])
+
+  function handleEnter() {
+    if (!revealed) {
+      setRevealed(true)
+      setFlipKey(1)
+    } else {
+      setFlipKey(k => k + 1)
+    }
+  }
+
+  const board = (
+    <span
+      onMouseEnter={handleEnter}
+      style={{ display: "inline-block", verticalAlign: "2px", margin: "0 4px", cursor: link ? "pointer" : "default" }}
+    >
+      <SplitFlapBoard
+        text={label}
+        tileH={tileH}
+        flipKey={flipKey}
+        startChars={revealed ? undefined : gibberish}
+      />
+    </span>
+  )
+
+  if (link) return <a href={link} target="_blank" rel="noopener noreferrer" style={{ display: "inline", textDecoration: "none" }}>{board}</a>
+  return board
+}
+
 /* ── Inline tilt logo chip ───────────────────────────────────────────── */
 function InlineLogoChip({ src, alt, link, size = 40 }: { src: string; alt: string; link?: string; size?: number }) {
   const [hov, setHov] = useState(false)
@@ -304,8 +505,8 @@ export default function HeroTextWithPen({
   before = "Hey, I'm",
   middle = "a design engineer at",
   after = "based in Toronto. I spend most of my time crafting polished interfaces for web experiences, and I'm passionate about accessibility, web animation and building products.",
-  name = "Georgius",
-  nameLink = "",
+  name: _name = "Georgius",
+  nameLink: _nameLink = "",
   nameColor = "rgb(255, 107, 48)",
   nameImage,
   company = "AMD",
@@ -338,9 +539,11 @@ export default function HeroTextWithPen({
   tooltipHeight = 110,
   tooltipRadius = 10,
   tooltipOffset = 12,
+  balloonName,
   style,
 }: {
   before?: string; middle?: string; after?: string
+  balloonName?: string
   name?: string; nameLink?: string; nameColor?: string; nameImage?: { src?: string }
   company?: string; companyLink?: string; companyColor?: string; companyImage?: { src?: string }
   companyLogoSrc?: string; companyLogoSize?: number
@@ -354,7 +557,14 @@ export default function HeroTextWithPen({
   style?: CSSProperties
 }) {
   const [blockHovered, setBlockHovered] = useState(false)
+  const [balloonHovered, setBalloonHovered] = useState(false)
+  const balloonRef = useRef<HTMLSpanElement | null>(null)
   const chipProps = { strokeWidth, duration, idleOpacity, wordGap, circlePadX, circlePadY, roughness, textColor, tooltipWidth, tooltipHeight, tooltipRadius, tooltipOffset }
+
+  // Split `before` around balloonName if provided
+  const beforeParts = balloonName && before.includes(balloonName)
+    ? before.split(balloonName)
+    : null
 
   return (
     <motion.p
@@ -364,17 +574,30 @@ export default function HeroTextWithPen({
       animate={{ color: blockHovered ? dimmedColor : textColor }}
       transition={{ duration: 0.3, ease: "easeOut" }}
     >
-      {before}
-      <PenChip label={name} link={nameLink || undefined} color={nameColor} seedBase={1} image={nameImage} font={nameFont} {...chipProps} />
+      {beforeParts ? (
+        <>
+          {beforeParts[0]}
+          <span
+            ref={balloonRef}
+            onMouseEnter={() => setBalloonHovered(true)}
+            onMouseLeave={() => setBalloonHovered(false)}
+            style={{ display: "inline" }}
+          >{balloonName}</span>
+          <BalloonTooltip show={balloonHovered} anchor={balloonRef} />
+          {beforeParts[1]}
+        </>
+      ) : before}
       {middle}
-      {companyLogoSrc
-        ? <InlineLogoChip src={companyLogoSrc} alt={company} link={companyLink || undefined} size={companyLogoSize} />
-        : <PenChip label={company} link={companyLink || undefined} color={companyColor} seedBase={2} image={companyImage} font={companyFont} {...chipProps} />
-      }
-      {afterCompany}
-      {secondCompanyLogoSrc && (
-        <InlineLogoChip src={secondCompanyLogoSrc} alt={secondCompany ?? ""} link={secondCompanyLink} size={secondCompanyLogoSize} />
-      )}
+      <span style={{ whiteSpace: "nowrap" }}>
+        {companyLogoSrc
+          ? <InlineLogoChip src={companyLogoSrc} alt={company} link={companyLink || undefined} size={companyLogoSize} />
+          : <PenChip label={company} link={companyLink || undefined} color={companyColor} seedBase={2} image={companyImage} font={companyFont} {...chipProps} />
+        }
+        {afterCompany && <span style={{ whiteSpace: "pre" }}> {afterCompany} </span>}
+        {secondCompanyLogoSrc && (
+          <InlineLogoChip src={secondCompanyLogoSrc} alt={secondCompany ?? ""} link={secondCompanyLink} size={secondCompanyLogoSize} />
+        )}
+      </span>
       {after}
     </motion.p>
   )
