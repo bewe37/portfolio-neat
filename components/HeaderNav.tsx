@@ -198,10 +198,9 @@ export default function HeaderNav({
               backgroundColor: "var(--bg)",
               backdropFilter: "blur(16px)",
               WebkitBackdropFilter: "blur(16px)",
-              border: "1px solid var(--border)",
               borderRadius: 12,
               padding: 5,
-              boxShadow: "0 8px 24px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)",
+              boxShadow: "0px 0px 0px 1px rgba(0,0,0,0.06), 0px 1px 2px -1px rgba(0,0,0,0.06), 0px 2px 4px 0px rgba(0,0,0,0.04)",
             }}
           >
             {items.map((item, i) => <MenuItem key={i} item={item} />)}

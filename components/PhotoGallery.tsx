@@ -198,22 +198,6 @@ export default function PhotoGallery() {
           backgroundSize:  "18px 18px",
         }}
       >
-        <p style={{
-          position:      "absolute",
-          bottom:        14,
-          right:         18,
-          zIndex:        0,
-          fontFamily:    "'Departure Mono', monospace",
-          fontSize:      9,
-          fontWeight:    400,
-          color:         "var(--c-faint)",
-          letterSpacing: "0.04em",
-          margin:        0,
-          pointerEvents: "none",
-        }}>
-          drag to play · click to open
-        </p>
-
         {/* Centered scatter wrapper */}
         <div style={{
           position: "absolute",
