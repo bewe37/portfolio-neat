@@ -17,7 +17,7 @@ export default function BlueprintProject() {
       sections={[
         {
           label: "Sneak Peek",
-          images: ["/HighlightBlueprint.png"],
+          images: ["/HighlightBlueprint.png", "/HighlightV2.png"],
           videos: ["/BlueprintSneak.mp4"],
           body: "ReGiftCard is still in development. Here are some sneak peeks at where things are heading.",
         },

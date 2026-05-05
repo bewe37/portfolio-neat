@@ -1048,10 +1048,10 @@ export default function CaseStudyLayout({
                   <span style={{
                     fontFamily:    "var(--font-sans)",
                     fontSize:      10,
-                    fontWeight:    500,
+                    fontWeight:    600,
                     letterSpacing: "0.08em",
                     textTransform: "uppercase" as const,
-                    color:         "var(--c-ghost)",
+                    color:         "var(--c-secondary)",
                   }}>
                     {s.label}
                   </span>
