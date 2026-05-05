@@ -130,6 +130,11 @@ export default function HeaderNav({
 
   return (
     <nav style={{ display: "inline-flex", alignItems: "center", gap: 20, position: "relative" }}>
+      {/* Companion — desktop only */}
+      <span className="rsp-hide-mobile">
+        <CompanionNavBtn />
+      </span>
+
       {/* About */}
       <a
         href={aboutLink}
@@ -208,10 +213,6 @@ export default function HeaderNav({
         </motion.div>
       </span>
 
-      {/* Companion — desktop only */}
-      <span className="rsp-hide-mobile">
-        <CompanionNavBtn />
-      </span>
     </nav>
   )
 }
