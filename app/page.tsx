@@ -127,7 +127,6 @@ export default function HomePage() {
           <div style={{ position: "relative", zIndex: 1, maxWidth: 810, display: "flex", flexDirection: "column", gap: 20 }}>
             <HeroTextWithPen
               before="Hey, I'm Georgius — "
-              balloonName="Georgius"
               name="Georgius"
               middle=" a Toronto-based product designer, previously at"
               company="AMD"

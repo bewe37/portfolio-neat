@@ -90,67 +90,6 @@ function buildRoughEllipsePath(
   return segs.join(" ")
 }
 
-/* ── Balloon logo tooltip ────────────────────────────────────────────── */
-const BALLOON_CONFIGS = [
-  { x: "8vw",  size: 88,  delay: 0,    dur: 1.1, bobDur: 2.8, bobAmp: 10, swayAmp: 4,  rise: 380, src: "/logoName.svg",     filter: "none" },
-  { x: "22vw", size: 64,  delay: 0.15, dur: 1.3, bobDur: 3.4, bobAmp: 7,  swayAmp: 6,  rise: 310, src: "/logoNameBlue.svg", filter: "none" },
-  { x: "42vw", size: 56,  delay: 0.28, dur: 1.0, bobDur: 2.6, bobAmp: 12, swayAmp: 3,  rise: 420, src: "/logoName.svg",     filter: "sepia(1) saturate(4) hue-rotate(340deg) brightness(1.1)" },
-  { x: "60vw", size: 76,  delay: 0.08, dur: 1.2, bobDur: 3.1, bobAmp: 8,  swayAmp: 7,  rise: 350, src: "/logoNameBlue.svg", filter: "none" },
-  { x: "75vw", size: 60,  delay: 0.22, dur: 0.95,bobDur: 2.4, bobAmp: 11, swayAmp: 5,  rise: 400, src: "/logoName.svg",     filter: "sepia(1) saturate(4) hue-rotate(340deg) brightness(1.1)" },
-  { x: "88vw", size: 82,  delay: 0.05, dur: 1.15,bobDur: 3.0, bobAmp: 9,  swayAmp: 4,  rise: 360, src: "/logoName.svg",     filter: "none" },
-]
-
-function Balloon({ cfg }: { cfg: typeof BALLOON_CONFIGS[number] }) {
-  const stringH = 90
-  return (
-    <motion.div
-      initial={{ y: 0, opacity: 0 }}
-      animate={{ y: -cfg.rise, opacity: 1 }}
-      exit={{ y: 80, opacity: 0, transition: { duration: 0.35, ease: [0.55, 0, 1, 0.45] } }}
-      transition={{ duration: cfg.dur, ease: [0.215, 0.61, 0.355, 1], delay: cfg.delay }}
-      style={{
-        position: "fixed",
-        bottom: 0,
-        left: cfg.x,
-        zIndex: 99999,
-        pointerEvents: "none",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
-      <motion.div
-        animate={{ y: [0, -cfg.bobAmp, 0], rotate: [-cfg.swayAmp, cfg.swayAmp, -cfg.swayAmp] }}
-        transition={{ duration: cfg.bobDur, repeat: Infinity, ease: "easeInOut", delay: cfg.delay + cfg.dur }}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={cfg.src}
-          alt="GB"
-          draggable={false}
-          style={{ width: cfg.size, height: "auto", display: "block", userSelect: "none", filter: cfg.filter }}
-        />
-      </motion.div>
-      <svg width="2" height={stringH} style={{ display: "block" }}>
-        <line x1="1" y1="0" x2="1" y2={stringH} stroke="rgba(0,0,0,0.15)" strokeWidth="1" strokeDasharray="3 4" />
-      </svg>
-    </motion.div>
-  )
-}
-
-function BalloonTooltip({ show, anchor: _anchor }: { show: boolean; anchor: React.RefObject<HTMLSpanElement | null> }) {
-  if (typeof document === "undefined") return null
-
-  return createPortal(
-    <AnimatePresence>
-      {show && BALLOON_CONFIGS.map((cfg, i) => (
-        <Balloon key={i} cfg={cfg} />
-      ))}
-    </AnimatePresence>,
-    document.body
-  )
-}
-
 /* ── Tooltip ─────────────────────────────────────────────────────────── */
 function Tooltip({
   show,
@@ -539,11 +478,9 @@ export default function HeroTextWithPen({
   tooltipHeight = 110,
   tooltipRadius = 10,
   tooltipOffset = 12,
-  balloonName,
   style,
 }: {
   before?: string; middle?: string; after?: string
-  balloonName?: string
   name?: string; nameLink?: string; nameColor?: string; nameImage?: { src?: string }
   company?: string; companyLink?: string; companyColor?: string; companyImage?: { src?: string }
   companyLogoSrc?: string; companyLogoSize?: number
@@ -557,14 +494,7 @@ export default function HeroTextWithPen({
   style?: CSSProperties
 }) {
   const [blockHovered, setBlockHovered] = useState(false)
-  const [balloonHovered, setBalloonHovered] = useState(false)
-  const balloonRef = useRef<HTMLSpanElement | null>(null)
   const chipProps = { strokeWidth, duration, idleOpacity, wordGap, circlePadX, circlePadY, roughness, textColor, tooltipWidth, tooltipHeight, tooltipRadius, tooltipOffset }
-
-  // Split `before` around balloonName if provided
-  const beforeParts = balloonName && before.includes(balloonName)
-    ? before.split(balloonName)
-    : null
 
   return (
     <motion.p
@@ -574,19 +504,7 @@ export default function HeroTextWithPen({
       animate={{ color: blockHovered ? dimmedColor : textColor }}
       transition={{ duration: 0.3, ease: "easeOut" }}
     >
-      {beforeParts ? (
-        <>
-          {beforeParts[0]}
-          <span
-            ref={balloonRef}
-            onMouseEnter={() => setBalloonHovered(true)}
-            onMouseLeave={() => setBalloonHovered(false)}
-            style={{ display: "inline" }}
-          >{balloonName}</span>
-          <BalloonTooltip show={balloonHovered} anchor={balloonRef} />
-          {beforeParts[1]}
-        </>
-      ) : before}
+      {before}
       {middle}
       <span style={{ whiteSpace: "nowrap" }}>
         {companyLogoSrc
