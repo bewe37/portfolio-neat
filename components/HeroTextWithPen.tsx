@@ -167,18 +167,64 @@ function Tooltip({
   )
 }
 
+/* ── pencil scratch sound ────────────────────────────────────────────── */
+function playPencilScratch(ctx: AudioContext) {
+  const t = ctx.currentTime
+  // One continuous stroke: 320ms with smooth arc envelope
+  const dur = 0.32
+  const sr = ctx.sampleRate
+  const bufSize = Math.floor(sr * dur)
+  const buf = ctx.createBuffer(1, bufSize, sr)
+  const data = buf.getChannelData(0)
+
+  for (let i = 0; i < bufSize; i++) {
+    const p = i / bufSize
+    // Arc envelope: rise 60ms, sustain, fall last 30%
+    const atk = Math.min(1, p / 0.18)
+    const rel = p > 0.7 ? 1 - (p - 0.7) / 0.3 : 1
+    const env = atk * rel
+    // Slow grain ~55 Hz — feels like pencil dragging on tooth of paper
+    const grain = 0.55 + 0.45 * Math.sin((i / sr) * 2 * Math.PI * 55)
+    // Occasional micro-stutters for paper texture
+    const stutter = Math.random() > 0.92 ? 0.4 : 1
+    data[i] = (Math.random() * 2 - 1) * env * grain * stutter
+  }
+
+  const src = ctx.createBufferSource()
+  src.buffer = buf
+
+  // Soft mid-heavy eq — pencil body sits around 800–4500 Hz
+  const hpf = ctx.createBiquadFilter()
+  hpf.type = "highpass"; hpf.frequency.value = 700
+
+  const lpf = ctx.createBiquadFilter()
+  lpf.type = "lowpass"; lpf.frequency.value = 5500
+
+  // Gentle presence around 2kHz for the "shhh" of graphite
+  const mid = ctx.createBiquadFilter()
+  mid.type = "peaking"; mid.frequency.value = 2000; mid.gain.value = 5; mid.Q.value = 0.8
+
+  const gain = ctx.createGain()
+  gain.gain.setValueAtTime(0.09, t)
+  gain.gain.exponentialRampToValueAtTime(0.001, t + dur)
+
+  src.connect(hpf); hpf.connect(mid); mid.connect(lpf); lpf.connect(gain); gain.connect(ctx.destination)
+  src.start(t)
+}
+
 /* ── PenChip ─────────────────────────────────────────────────────────── */
 function PenChip({
   label, link, color, strokeWidth, duration, idleOpacity, wordGap,
   circlePadX, circlePadY, roughness, textColor, seedBase, image,
-  tooltipWidth, tooltipHeight, tooltipRadius, tooltipOffset, font,
+  tooltipWidth, tooltipHeight, tooltipRadius, tooltipOffset, font, playSound,
 }: {
   label: string; link?: string; color: string; strokeWidth: number
   duration: number; idleOpacity: number; wordGap: number; circlePadX: number
   circlePadY: number; roughness: number; textColor: string; seedBase: number
   image?: { src?: string }; tooltipWidth: number; tooltipHeight: number
-  tooltipRadius: number; tooltipOffset: number; font?: string
+  tooltipRadius: number; tooltipOffset: number; font?: string; playSound?: boolean
 }) {
+  const audioCtxRef = useRef<AudioContext | null>(null)
   const ref = useRef<HTMLSpanElement | null>(null)
   const [hovered, setHovered] = useState(false)
   const seed = useMemo(() => seedBase + label.length * 17, [seedBase, label])
@@ -218,7 +264,16 @@ function PenChip({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleEnter = () => { setHovered(true); draw() }
+  const handleEnter = () => {
+    setHovered(true)
+    draw()
+    if (playSound && typeof window !== "undefined") {
+      if (!audioCtxRef.current) audioCtxRef.current = new AudioContext()
+      const ctx = audioCtxRef.current
+      if (ctx.state === "suspended") ctx.resume()
+      playPencilScratch(ctx)
+    }
+  }
   const handleLeave = () => setHovered(false)
 
   const chipPadding = circlePadX + wordGap
@@ -383,9 +438,50 @@ function SplitFlapBoard({ text, tileH = 18, flipKey, startChars }: {
 }
 
 /* ── Inline name flip-board chip ─────────────────────────────────────── */
+function playFlipClick(ctx: AudioContext, delayS: number) {
+  const t = ctx.currentTime + delayS
+
+  // ── Noise burst (the crisp "snap") ──
+  const bufSize = Math.floor(ctx.sampleRate * 0.022)
+  const buf     = ctx.createBuffer(1, bufSize, ctx.sampleRate)
+  const data    = buf.getChannelData(0)
+  for (let i = 0; i < bufSize; i++) {
+    data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufSize, 3)
+  }
+  const src = ctx.createBufferSource()
+  src.buffer = buf
+
+  const hpf = ctx.createBiquadFilter()
+  hpf.type = "highpass"; hpf.frequency.value = 1800
+
+  const peak = ctx.createBiquadFilter()
+  peak.type = "peaking"; peak.frequency.value = 3200; peak.gain.value = 10; peak.Q.value = 1.2
+
+  const noiseGain = ctx.createGain()
+  noiseGain.gain.setValueAtTime(0.28, t)
+  noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.028)
+
+  src.connect(hpf); hpf.connect(peak); peak.connect(noiseGain); noiseGain.connect(ctx.destination)
+  src.start(t)
+
+  // ── Pitch-drop oscillator (the mechanical "thud" body) ──
+  const osc = ctx.createOscillator()
+  osc.type = "sine"
+  osc.frequency.setValueAtTime(200, t)
+  osc.frequency.exponentialRampToValueAtTime(55, t + 0.025)
+
+  const oscGain = ctx.createGain()
+  oscGain.gain.setValueAtTime(0.12, t)
+  oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.03)
+
+  osc.connect(oscGain); oscGain.connect(ctx.destination)
+  osc.start(t); osc.stop(t + 0.03)
+}
+
 export function NameFlipChip({ label, link, tileH = 18 }: { label: string; link?: string; tileH?: number }) {
   const [flipKey, setFlipKey] = useState(0)
   const [revealed, setRevealed] = useState(false)
+  const audioCtxRef = useRef<AudioContext | null>(null)
 
   // Stable gibberish chars — one random char per letter, seeded once
   const gibberish = useMemo(() =>
@@ -394,6 +490,16 @@ export function NameFlipChip({ label, link, tileH = 18 }: { label: string; link?
   [])
 
   function handleEnter() {
+    // Synthesize staggered flip clicks via Web Audio
+    if (typeof window !== "undefined") {
+      if (!audioCtxRef.current) audioCtxRef.current = new AudioContext()
+      const ctx = audioCtxRef.current
+      if (ctx.state === "suspended") ctx.resume()
+      label.split("").forEach((_, i) => {
+        playFlipClick(ctx, (i * 50 + 10) / 1000)
+      })
+    }
+
     if (!revealed) {
       setRevealed(true)
       setFlipKey(1)
@@ -444,7 +550,7 @@ export default function HeroTextWithPen({
   before = "Hey, I'm",
   middle = "a design engineer at",
   after = "based in Toronto. I spend most of my time crafting polished interfaces for web experiences, and I'm passionate about accessibility, web animation and building products.",
-  name: _name = "Georgius",
+  name: personName = "Georgius",
   nameLink: _nameLink = "",
   nameColor = "rgb(255, 107, 48)",
   nameImage,
@@ -496,6 +602,8 @@ export default function HeroTextWithPen({
   const [blockHovered, setBlockHovered] = useState(false)
   const chipProps = { strokeWidth, duration, idleOpacity, wordGap, circlePadX, circlePadY, roughness, textColor, tooltipWidth, tooltipHeight, tooltipRadius, tooltipOffset }
 
+  const nameParts = personName && before.includes(personName) ? before.split(personName) : null
+
   return (
     <motion.p
       onMouseEnter={() => setBlockHovered(true)}
@@ -504,7 +612,25 @@ export default function HeroTextWithPen({
       animate={{ color: blockHovered ? dimmedColor : textColor }}
       transition={{ duration: 0.3, ease: "easeOut" }}
     >
-      {before}
+      {nameParts ? (
+        <>
+          {nameParts[0]}
+          <PenChip
+            label={personName}
+            color={nameColor}
+            seedBase={1}
+            image={nameImage}
+            font={nameFont}
+            playSound
+            {...chipProps}
+            idleOpacity={0.6}
+            circlePadX={10}
+            circlePadY={6}
+            roughness={1.2}
+          />
+          {nameParts[1]}
+        </>
+      ) : before}
       {middle}
       <span style={{ whiteSpace: "nowrap" }}>
         {companyLogoSrc

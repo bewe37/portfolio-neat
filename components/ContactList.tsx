@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { EnvelopeSimple, LinkedinLogo, XLogo } from "@phosphor-icons/react"
+import { playClick } from "@/lib/click-sound"
 
 const LINKS = [
   { Icon: EnvelopeSimple, label: "Email",    handle: "bryanwinata112@gmail.com", href: "mailto:bryanwinata112@gmail.com"      },
@@ -21,6 +22,7 @@ export default function ContactList() {
           href={href}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => playClick()}
           onMouseEnter={() => setHovered(label)}
           onMouseLeave={() => setHovered(null)}
           style={{

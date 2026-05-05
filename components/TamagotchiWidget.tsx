@@ -282,6 +282,24 @@ function getTimeActivities(h: number): CharAction[] {
   return ["walk","idle","dance","idle"]
 }
 
+function playArcadeBeep(ctx: AudioContext, freq: number) {
+  const t = ctx.currentTime
+  const osc = ctx.createOscillator()
+  osc.type = "square"
+  osc.frequency.setValueAtTime(freq, t)
+  osc.frequency.exponentialRampToValueAtTime(freq * 0.65, t + 0.055)
+
+  // slight bit-crush feel via a gentle waveshaper
+  const gain = ctx.createGain()
+  gain.gain.setValueAtTime(0.16, t)
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.09)
+
+  osc.connect(gain); gain.connect(ctx.destination)
+  osc.start(t); osc.stop(t + 0.1)
+}
+
+const BTN_FREQS: Record<string, number> = { a: 480, b: 360, c: 560 }
+
 export default function TamagotchiWidget() {
   const [time,       setTime]       = useState("")
   const [period,     setPeriod]     = useState<TimePeriod>("day")
@@ -292,6 +310,17 @@ export default function TamagotchiWidget() {
   const [facing,     setFacing]     = useState<"left"|"right">("right")
   const charXRef   = useRef(30)
   const hour24Ref  = useRef(new Date().getHours())
+  const audioCtxRef = useRef<AudioContext | null>(null)
+
+  function pressBtn(name: string) {
+    if (typeof window !== "undefined") {
+      if (!audioCtxRef.current) audioCtxRef.current = new AudioContext()
+      const ctx = audioCtxRef.current
+      if (ctx.state === "suspended") ctx.resume()
+      playArcadeBeep(ctx, BTN_FREQS[name])
+    }
+    setBtnDown(name)
+  }
 
   useEffect(() => {
     const update = () => {
@@ -573,21 +602,21 @@ export default function TamagotchiWidget() {
           <button
             style={btnStyle("a")}
             onClick={() => toggle("mood")}
-            onMouseDown={() => setBtnDown("a")}
+            onMouseDown={() => pressBtn("a")}
             onMouseUp={() => setBtnDown(null)}
             onMouseLeave={() => setBtnDown(null)}
           />
           <button
             style={{ ...btnStyle("b"), marginTop: 8 }}
             onClick={() => toggle("location")}
-            onMouseDown={() => setBtnDown("b")}
+            onMouseDown={() => pressBtn("b")}
             onMouseUp={() => setBtnDown(null)}
             onMouseLeave={() => setBtnDown(null)}
           />
           <button
             style={btnStyle("c")}
             onClick={() => toggle("availability")}
-            onMouseDown={() => setBtnDown("c")}
+            onMouseDown={() => pressBtn("c")}
             onMouseUp={() => setBtnDown(null)}
             onMouseLeave={() => setBtnDown(null)}
           />

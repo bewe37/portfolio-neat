@@ -124,7 +124,7 @@ export default function HomePage() {
           </div>
 
           {/* Bio */}
-          <div style={{ position: "relative", zIndex: 1, maxWidth: 810, display: "flex", flexDirection: "column", gap: 20 }}>
+          <div style={{ position: "relative", zIndex: 1, maxWidth: 824, display: "flex", flexDirection: "column", gap: 20 }}>
             <HeroTextWithPen
               before="Hey, I'm Georgius — "
               name="Georgius"
@@ -138,9 +138,9 @@ export default function HomePage() {
               secondCompanyLink="https://www.safe.com"
               secondCompanyLogoSrc="/safechip.svg"
               secondCompanyLogoSize={72}
-              after=". I do the invisible work — turning &ldquo;why is this so confusing&rdquo; into &ldquo;wait, that was easy?&rdquo; Mostly through obsessive detail-tweaking and too much coffee."
+              after=". I do the invisible work, turning &ldquo;why is this so confusing&rdquo; into &ldquo;wait, that was easy?&rdquo; Mostly through obsessive detail-tweaking and too much coffee."
               fontSize={20}
-              fontWeight={400}
+              fontWeight={440}
               fontFamily="var(--font-sans)"
               textColor="var(--c-primary)"
               dimmedColor="var(--c-dim)"

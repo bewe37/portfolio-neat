@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
+import { playClick } from "@/lib/click-sound"
 import {
   EnvelopeSimple,
   XLogo,
@@ -38,6 +39,7 @@ function MenuItem({ item }: { item: ContactItem }) {
       href={link}
       target={isExternal && newTab ? "_blank" : undefined}
       rel={isExternal && newTab ? "noopener noreferrer" : undefined}
+      onClick={() => playClick()}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
@@ -78,7 +80,7 @@ function CompanionNavBtn() {
   const router = useRouter()
   return (
     <button
-      onClick={() => router.push("/onboarding?edit=1")}
+      onClick={() => { playClick(); router.push("/onboarding?edit=1") }}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
@@ -138,6 +140,7 @@ export default function HeaderNav({
       {/* About */}
       <a
         href={aboutLink}
+        onClick={() => playClick()}
         onMouseEnter={() => setAboutHov(true)}
         onMouseLeave={() => setAboutHov(false)}
         target="_blank"
@@ -156,6 +159,7 @@ export default function HeaderNav({
         <button
           aria-haspopup="menu"
           aria-expanded={open}
+          onClick={() => playClick()}
           onMouseEnter={() => setBtnHov(true)}
           onMouseLeave={() => setBtnHov(false)}
           style={{

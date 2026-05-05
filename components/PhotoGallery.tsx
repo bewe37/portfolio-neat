@@ -2,6 +2,7 @@
 
 import { useRef, useState, useCallback } from "react"
 import { motion, useMotionValue, AnimatePresence } from "framer-motion"
+import { playClick } from "@/lib/click-sound"
 
 interface Photo { src: string; label?: string }
 
@@ -172,6 +173,7 @@ export default function PhotoGallery() {
 
   function openLightbox(photo: Photo, rect: DOMRect) {
     setLightbox({ photo, originRect: rect })
+    playClick()
   }
 
   function closeLightbox() {
@@ -309,7 +311,7 @@ export default function PhotoGallery() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ delay: 0.18 }}
-              onClick={closeLightbox}
+              onClick={() => { closeLightbox(); playClick() }}
               style={{
                 position:        "fixed",
                 top:             24,

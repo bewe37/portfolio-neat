@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import MarqueeFooter from "@/components/MarqueeFooter"
+import { playClick } from "@/lib/click-sound"
 
 interface Spec       { label: string; value: string | string[] }
 interface Contact    { platform: string; handle: string; href: string }
@@ -429,7 +430,7 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
             return (
               <button
                 key={i}
-                onClick={() => setActive(i)}
+                onClick={() => { playClick(); setActive(i) }}
                 style={{
                   width:      "100%",
                   display:    "flex",
@@ -583,7 +584,7 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
           {contents.map((_, i) => (
             <button
               key={i}
-              onClick={() => scrollToSlide(i)}
+              onClick={() => { playClick(); scrollToSlide(i) }}
               style={{
                 width:        active === i ? 16 : 6,
                 height:       6,
@@ -631,6 +632,7 @@ function BackButton({ href }: { href: string }) {
   return (
     <Link
       href={href}
+      onClick={() => playClick()}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       aria-label="Close"
@@ -734,7 +736,7 @@ function TableOfContents({ backHref: _backHref, items, activeId }: {
           return (
             <button
               key={id}
-              onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              onClick={() => { playClick(); document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }) }}
               onMouseEnter={() => setHovId(id)}
               onMouseLeave={() => setHovId(null)}
               style={{ background: "none", border: "none", cursor: "pointer", padding: "5px 0", textAlign: "left" }}
@@ -818,7 +820,7 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
       {sec.contacts && (
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 16 }}>
           {sec.contacts.map(c => (
-            <a key={c.platform} href={c.href} target="_blank" rel="noopener noreferrer" style={{
+            <a key={c.platform} href={c.href} target="_blank" rel="noopener noreferrer" onClick={() => playClick()} style={{
               fontFamily:      "var(--font-sans)",
               fontSize:        13,
               fontWeight:      600,
@@ -995,6 +997,7 @@ export default function CaseStudyLayout({
           {/* Mobile back button */}
           <Link
             href={backHref}
+            onClick={() => playClick()}
             className="rsp-back-mobile"
             style={{
               display:        "none",
@@ -1170,7 +1173,7 @@ export default function CaseStudyLayout({
                   }}
                 />
                 <button
-                  onClick={tryUnlock}
+                  onClick={() => { playClick(); tryUnlock() }}
                   style={{
                     padding:         "13px 20px",
                     cursor:          "pointer",

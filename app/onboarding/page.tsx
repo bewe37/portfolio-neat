@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from "framer-motion"
+import { playClick } from "@/lib/click-sound"
 import { BUDDIES, type BuddyDef } from "@/lib/buddies"
 import { SpriteView } from "@/components/SpriteBuddy"
 import LogoAvatar from "@/components/LogoAvatar"
@@ -111,7 +112,7 @@ function BuddyCard({ buddy, selected, dimmed, onSelect }: {
 
   return (
     <button
-      onClick={onSelect}
+      onClick={() => { playClick(); onSelect() }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
@@ -279,14 +280,14 @@ function WelcomeStep({ onContinue, onSkip }: { onContinue: () => void; onSkip: (
           </div>
 
           <div style={{ display: "flex", gap: 10, animation: "fadeUp 0.55s 0.30s cubic-bezier(0.22,1,0.36,1) both", marginBottom: 48 }}>
-            <button className="btn-dark-fill" onClick={onContinue} style={{
+            <button className="btn-dark-fill" onClick={() => { playClick(); onContinue() }} style={{
               padding: "12px 28px", borderRadius: 99, border: "none",
               fontSize: 14, fontWeight: 600, fontFamily: "var(--font-sans)",
               cursor: "pointer", letterSpacing: "-0.01em", position: "relative", overflow: "hidden",
             }}>
               Pick a companion →
             </button>
-            <button onClick={onSkip} style={{
+            <button onClick={() => { playClick(); onSkip() }} style={{
               padding: "12px 20px", borderRadius: 99,
               border: "1px solid rgba(244,244,245,0.12)", background: "rgba(255,255,255,0.04)",
               color: "rgba(244,244,245,0.38)", fontSize: 14, fontWeight: 500,
@@ -369,7 +370,7 @@ function BackBtn({ onClick, dark }: { onClick: () => void; dark?: boolean }) {
   const [hov, setHov] = useState(false)
   return (
     <button
-      onClick={onClick}
+      onClick={() => { playClick(); onClick() }}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
@@ -584,7 +585,7 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
               { label: "Undo",  active: false,     onClick: undo,                      disabled: !history.length },
               { label: "Clear", active: false,     onClick: clear,                     disabled: !hasContent },
             ] as const).map(btn => (
-              <button key={btn.label} onClick={btn.onClick} disabled={btn.disabled} style={{
+              <button key={btn.label} onClick={() => { playClick(); btn.onClick() }} disabled={btn.disabled} style={{
                 flex: 1, padding: "7px 0", borderRadius: 8, border: "1px solid var(--border-mid)",
                 background: btn.active ? "var(--c-primary)" : "transparent",
                 color: btn.disabled ? "var(--c-faint)" : btn.active ? "var(--bg)" : "var(--c-secondary)",
@@ -625,7 +626,7 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 32px)", gap: 5 }}>
               {DRAW_PALETTE.map(c => (
                 <motion.button key={c}
-                  onClick={() => { setColor(c); setErasing(false) }}
+                  onClick={() => { playClick(); setColor(c); setErasing(false) }}
                   whileHover={{ scale: 1.18 }} whileTap={{ scale: 0.88 }}
                   transition={{ type: "spring", stiffness: 440, damping: 18 }}
                   style={{
@@ -645,7 +646,7 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
 
       {/* Save */}
       <motion.button
-        onClick={save} disabled={!hasContent}
+        onClick={() => { if (hasContent) playClick(); save() }} disabled={!hasContent}
         className="btn-shiny"
         animate={{ opacity: hasContent ? 1 : 0.32, y: hasContent ? 0 : 4 }}
         transition={{ duration: 0.22 }}
@@ -767,7 +768,7 @@ function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, o
             <motion.button
               key={t}
               ref={t === "pick" ? pickBtnRef : drawBtnRef}
-              onClick={() => setTab(t)}
+              onClick={() => { playClick(); setTab(t) }}
               style={{
                 padding: "8px 20px", borderRadius: 99, border: "none",
                 background: "transparent",
@@ -805,7 +806,7 @@ function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, o
           {/* See all — opens gallery inline */}
           <motion.button
             ref={seeAllBtnRef}
-            onClick={() => setTab("gallery")}
+            onClick={() => { playClick(); setTab("gallery") }}
             style={{
               padding: "8px 20px", borderRadius: 99, border: "none",
               background: "transparent",
@@ -909,7 +910,7 @@ function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, o
                   pointerEvents: selected ? "auto" : "none",
                   visibility: selected ? "visible" : "hidden",
                 }}>
-                  <button className="btn-shiny" onClick={onConfirm} style={{
+                  <button className="btn-shiny" onClick={() => { playClick(); onConfirm() }} style={{
                     padding: "12px 36px", borderRadius: 99, border: "none",
                     background: "var(--c-primary)", color: "var(--bg)",
                     fontSize: 14, fontWeight: 700, fontFamily: "var(--font-sans)",

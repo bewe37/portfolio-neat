@@ -3,6 +3,7 @@
 import { useState, useRef } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import Link from "next/link"
+import { playClick } from "@/lib/click-sound"
 
 interface Project {
   title: string
@@ -220,6 +221,7 @@ function FolderItem({ project, index }: { project: Project; index: number }) {
 
         <Link
           href={project.href}
+          onClick={() => playClick()}
           style={{
             display:    "block",
             position:   "absolute",
@@ -309,7 +311,7 @@ function ArrowButton({ dir, onClick, disabled }: { dir: "left" | "right"; onClic
   const [hov, setHov] = useState(false)
   return (
     <motion.button
-      onClick={onClick}
+      onClick={() => { playClick(); onClick() }}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       animate={{ opacity: disabled ? 0.18 : hov ? 1 : 0.55 }}
@@ -430,7 +432,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       transition={{ duration: 0.42, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
       style={{ width: "100%" }}
     >
-      <Link href={project.href} style={{ textDecoration: "none", display: "block" }}>
+      <Link href={project.href} onClick={() => playClick()} style={{ textDecoration: "none", display: "block" }}>
         <div className="rsp-project-card-bg" style={{
           borderRadius:    20,
           backgroundColor: "var(--surface)",

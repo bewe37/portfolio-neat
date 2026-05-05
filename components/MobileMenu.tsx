@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { gsap } from "gsap"
 import { ArrowUpRight } from "@phosphor-icons/react"
 import ThemeToggle from "@/components/ThemeToggle"
+import { playClick } from "@/lib/click-sound"
 
 const RESUME_LINK = "https://drive.google.com/file/d/183_FgYoQBjhv5QLawsPr_fUt_K5gf6hi/view"
 
@@ -61,7 +62,7 @@ export default function MobileMenu() {
     <>
       {/* Hamburger / X button — inline flex item in header row, shown on mobile only via .rsp-hamburger */}
       <button
-        onClick={() => setOpen(o => !o)}
+        onClick={() => { setOpen(o => !o); playClick() }}
         aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
         className="rsp-hamburger"
@@ -133,7 +134,7 @@ export default function MobileMenu() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.26, ease: [0.22, 1, 0.36, 1], delay: 0.06 + i * 0.05 }}
-                  onClick={() => setOpen(false)}
+                  onClick={() => { setOpen(false); playClick() }}
                   style={{
                     display: "flex",
                     alignItems: "center",

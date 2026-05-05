@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import { playClick } from "@/lib/click-sound"
 
 type Theme = "light" | "dark" | "sunset"
 
@@ -72,6 +73,7 @@ export default function ThemeToggle() {
     setTheme(next)
     applyTheme(next)
     localStorage.setItem("theme", next)
+    playClick()
   }
 
   const Icon      = ICONS[theme]
