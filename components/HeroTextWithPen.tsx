@@ -437,6 +437,72 @@ function SplitFlapBoard({ text, tileH = 18, flipKey, startChars }: {
   )
 }
 
+export { SplitFlapBoard }
+
+/* ── Auto-cycling flip board ─────────────────────────────────────────── */
+export function CyclingFlipBoard({
+  words,
+  tileH = 48,
+  intervalMs = 3200,
+}: {
+  words: string[]
+  tileH?: number
+  intervalMs?: number
+}) {
+  const maxLen = Math.max(...words.map(w => w.length))
+  const padded = words.map(w => w.toUpperCase().padEnd(maxLen, " "))
+  const [idx, setIdx]         = useState(0)
+  const [flipKey, setFlipKey] = useState(0)
+  const audioCtxRef = useRef<AudioContext | null>(null)
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      try {
+        if (typeof window !== "undefined") {
+          if (!audioCtxRef.current) audioCtxRef.current = new AudioContext()
+          const ctx = audioCtxRef.current
+          if (ctx.state === "suspended") ctx.resume()
+          for (let i = 0; i < maxLen; i++) playFlipClick(ctx, (i * 50 + 10) / 1000)
+        }
+      } catch { /* audio blocked */ }
+      setIdx(i => (i + 1) % padded.length)
+      setFlipKey(k => k + 1)
+    }, intervalMs)
+    return () => clearInterval(id)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [padded.length, maxLen, intervalMs])
+
+  return <SplitFlapBoard text={padded[idx]} tileH={tileH} flipKey={flipKey} />
+}
+
+/* ── Hover-triggered cycling flip board ──────────────────────────────── */
+export function HoverCyclingFlipBoard({ words, tileH = 20 }: { words: string[]; tileH?: number }) {
+  const maxLen = Math.max(...words.map(w => w.length))
+  const padded = words.map(w => w.toUpperCase().padEnd(maxLen, " "))
+  const [idx, setIdx]         = useState(0)
+  const [flipKey, setFlipKey] = useState(0)
+  const audioCtxRef = useRef<AudioContext | null>(null)
+
+  const handleEnter = () => {
+    try {
+      if (typeof window !== "undefined") {
+        if (!audioCtxRef.current) audioCtxRef.current = new AudioContext()
+        const ctx = audioCtxRef.current
+        if (ctx.state === "suspended") ctx.resume()
+        for (let i = 0; i < maxLen; i++) playFlipClick(ctx, (i * 50 + 10) / 1000)
+      }
+    } catch { /* audio blocked */ }
+    setIdx(i => (i + 1) % padded.length)
+    setFlipKey(k => k + 1)
+  }
+
+  return (
+    <span onMouseEnter={handleEnter} style={{ cursor: "default", display: "inline-block", verticalAlign: "middle" }}>
+      <SplitFlapBoard text={padded[idx]} tileH={tileH} flipKey={flipKey} />
+    </span>
+  )
+}
+
 /* ── Inline name flip-board chip ─────────────────────────────────────── */
 function playFlipClick(ctx: AudioContext, delayS: number) {
   const t = ctx.currentTime + delayS
