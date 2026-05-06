@@ -1028,7 +1028,7 @@ export default function CaseStudyLayout({
             <h1 className="rsp-cs-h1" style={{
               fontFamily:    "var(--font-sans)",
               fontSize:      36,
-              fontWeight:    700,
+              fontWeight:    600,
               color:         "var(--c-primary)",
               letterSpacing: "-0.03em",
               lineHeight:    1.1,

@@ -7,13 +7,10 @@ import { ArrowUpRight } from "@phosphor-icons/react"
 import ThemeToggle from "@/components/ThemeToggle"
 import { playClick } from "@/lib/click-sound"
 
-const RESUME_LINK = "https://drive.google.com/file/d/183_FgYoQBjhv5QLawsPr_fUt_K5gf6hi/view"
 
 const NAV_ITEMS = [
-  { label: "Resume",      href: RESUME_LINK,                             newTab: true  },
-  { label: "Email",       href: "mailto:bryanwinata112@gmail.com",       newTab: false },
-  { label: "X / Twitter", href: "https://x.com/gbryanwt",               newTab: true  },
-  { label: "LinkedIn",    href: "https://www.linkedin.com/in/gbryanw/",  newTab: true  },
+  { label: "Work",  href: "/",      newTab: false },
+  { label: "About", href: "/about", newTab: false },
 ]
 
 export default function MobileMenu() {

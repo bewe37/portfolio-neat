@@ -13,7 +13,7 @@ export default function AboutSection() {
       <div className="rsp-stack" style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 24, alignItems: "start" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
           <p style={{ fontFamily: "var(--font-sans)", fontSize: 20, fontWeight: 500, color: "var(--c-mid)", letterSpacing: "-0.01em", lineHeight: 1.55, margin: 0 }}>
-            Hi, I'm Georgius Bryan Winata, but Bryan works. And yes, Georgius… gorgeous. I've heard it enough times — I'll save you the effort.
+            I came to design through a habit of needing to understand how things work before touching them.
           </p>
           <div className="rsp-stack" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px 56px" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
