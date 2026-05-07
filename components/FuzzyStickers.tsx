@@ -21,10 +21,10 @@ interface StickerDef {
 
 const ALL_STICKERS: StickerDef[] = [
   { id: "thunder", src: "/Thunder.svg",    label: "Thunder", size: 86,  top:  80, left: "calc(50% - 280px - 86px - 16px)", rotate: -15, defaultOn: true  },
-  { id: "cloud",   src: "/Cloud.svg",      label: "Cloud",   size: 84,  top:  80, left: "calc(50% + 280px + 16px)", rotate:  18, defaultOn: true  },
+  { id: "cloud",   src: "/Cloud.svg",      label: "Cloud",   size: 84,  top:  80, left: "calc(50% + 280px + 16px)", rotate:  18, defaultOn: false },
+  { id: "spark",   src: "/Spark.svg",      label: "Spark",   size: 76,  top:  80, left: "calc(50% + 280px + 16px)", rotate:  22, defaultOn: true  },
   { id: "green",   src: "/Green.svg",      label: "Green",   size: 100, top:  40, right: 160, rotate: -12, defaultOn: false },
   { id: "bang",    src: "/Bang.svg",       label: "Bang",    size: 80,  top: 260, right: 100, rotate:  -8, defaultOn: false },
-  { id: "spark",   src: "/Spark.svg",      label: "Spark",   size: 76,  top: 160, right: 160, rotate:  22, defaultOn: false },
   { id: "figma",   src: "/Figma.svg",      label: "Figma",   size: 76,  top: 280, right:  50, rotate:   8, defaultOn: false },
   { id: "claude",  src: "/Claude.svg",     label: "Claude",  size: 80,  top: 300, right: 160, rotate: -10, defaultOn: false },
   { id: "vercel",  src: "/Vercel.svg",     label: "Vercel",  size: 76,  top: 200, right: 240, rotate:  12, defaultOn: false },

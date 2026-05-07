@@ -13,7 +13,7 @@ const PROJECTS = [
     date: "2025",
     description: "Designing a conversational AI assistant embedded in AMD's Adrenalin software for millions of gamers.",
     href: "/amd_ai_project",
-    cover: "/AMDThumbnail.png",
+    cover: "/AMDThumbnail2.png",
     images: ["/amdMainImage.png", "/InGameWidget.png"],
   },
   {
@@ -22,7 +22,7 @@ const PROJECTS = [
     date: "May 2025 – Dec 2025",
     description: "Building a scalable component library that unified design and engineering across AMD's product suite.",
     href: "/amd_project",
-    cover: "/AMDCaseStudy.png",
+    cover: "/AMDCaseStudyH2.png",
     images: ["/DSHighlight.png", "/comp 1.png"],
   },
   {
@@ -31,7 +31,7 @@ const PROJECTS = [
     date: "April – August 2024",
     description: "Streamlining FME's annotation workflow so users can focus on insight, not interface noise.",
     href: "/fme_annotation_project",
-    cover: "/SafeCaseStudyH.png",
+    cover: "/SafeCaseStudyH2.png",
     images: ["/AnnotationCanvas.png", "/AnnotationNavigator.png"],
   },
   {
@@ -54,6 +54,7 @@ export default function HomePage() {
         className="rsp-px"
       >
         {/* ── Grid texture: nav + hero + selected work label ──────────── */}
+        <div style={{ maxWidth: 1200, margin: "0 auto", width: "100%" }}>
         <div className="hero-grid" style={{ position: "relative" }}>
           <FuzzyStickers />
 
@@ -107,6 +108,8 @@ export default function HomePage() {
             <ProjectCards projects={PROJECTS} />
           </section>
         </FadeUp>
+
+        </div>{/* end maxWidth wrapper */}
 
       </main>
 
