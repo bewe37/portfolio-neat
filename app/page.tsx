@@ -3,7 +3,7 @@ import ProjectCards from "@/components/ProjectCards"
 import MarqueeFooter from "@/components/MarqueeFooter"
 import WrenchWord from "@/components/WrenchWord"
 import { EasyWord } from "@/components/HeroInteractions"
-import GridGlow from "@/components/GridGlow"
+import FuzzyStickers from "@/components/FuzzyStickers"
 import FadeUp from "@/components/FadeUp"
 
 const PROJECTS = [
@@ -40,7 +40,7 @@ const PROJECTS = [
     date: "February 2026 – Now",
     description: "Designing a clear, humane dashboard for nonprofits to manage donor relationships at scale.",
     href: "/blueprint",
-    cover: "/YUBlueprintHighlight.jpg",
+    cover: "/YUBlueprintThumbnail.png",
     images: ["/blueprintpeak.png", "/CardPeak.png"],
   },
 ]
@@ -55,7 +55,7 @@ export default function HomePage() {
       >
         {/* ── Grid texture: nav + hero + selected work label ──────────── */}
         <div className="hero-grid" style={{ position: "relative" }}>
-          <GridGlow />
+          <FuzzyStickers />
 
           {/* ── Hero ──────────────────────────────────────────────────── */}
           <section style={{ padding: "24px 0 8px", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
@@ -75,21 +75,21 @@ export default function HomePage() {
               </p>
               <p style={{
                 fontFamily:    "var(--font-sans)",
-                fontSize:      16,
+                fontSize:      15,
                 fontWeight:    400,
                 letterSpacing: "-0.01em",
                 lineHeight:    1.9,
                 color:         "var(--c-dim)",
                 margin:        0,
               }}>
-                Previously taking care of pixels at<InlineLogoChip src="/amdchip.svg" alt="AMD" link="/amd_ai_project" size={48} />&amp;<InlineLogoChip src="/safechip.svg" alt="Safe Software" link="/fme_annotation_project" size={60} />
+                Previously taking care of pixels at<InlineLogoChip src="/amdchip.svg" alt="AMD" link="https://www.amd.com" size={48} />&amp;<InlineLogoChip src="/safechip.svg" alt="Safe Software" link="https://www.safe.com" size={60} />
               </p>
             </FadeUp>
           </section>
 
           {/* ── Selected Work label (inside grid) ─────────────────────── */}
           <FadeUp delay={0.1}>
-            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", paddingTop: 92 }}>
+            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", paddingTop: 100 }}>
               <p style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.01em", margin: 0 }}>
                 Selected work
               </p>

@@ -45,7 +45,7 @@ export default function AmdAiProject() {
         {
           label: "Context",
           title: "A new direction for AMD Software.",
-          body:  "For a product used by millions of gamers and creators, AMD Software had a problem: it was hard to use. Years of incremental updates had left behind a dense, technically overwhelming interface that frustrated casual and advanced users alike. Rather than patching issues one by one, the team committed to a full-scale redesign, rebuilding the experience around how users actually work. The redesign split the experience into two layers: a lightweight overlay for in-session use, and a full application for deeper control. Nowhere was the need for change more visible than the overlay.",
+          body:  "For a product used by millions of gamers and creators, AMD Software had a problem: it was hard to use. Years of incremental updates had left behind a dense, technically overwhelming interface that frustrated casual and advanced users alike. Rather than patching issues one by one, the team committed to a full-scale redesign, rebuilding the experience around how users actually work. The redesign split the experience into two layers:",
           contents: [
             {
               highlight: true,
@@ -70,7 +70,7 @@ export default function AmdAiProject() {
           body:  "With controls stripped from the overlay, users had no way to act mid-session. Any adjustment meant leaving what they were doing, opening the full app, and navigating through panels to find the right setting. Enough friction to just not bother. To understand the full scope, the team ran moderated usability sessions with 6 users. Three friction points surfaced consistently.",
           contents: [
             {
-              title: "Read-only metrics, no controls.",
+              title: "Complex navigation.",
               body:  "Users moved through multiple panels before reaching common settings, adding unnecessary steps to actions that should be immediate.",
               image: "/NavigationIssues.png",
             },
