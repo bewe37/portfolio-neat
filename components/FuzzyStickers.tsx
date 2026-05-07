@@ -1,5 +1,7 @@
 "use client"
 
+// Sticker peel effect based on the work of @BalintFerenczy on Twitter
+
 import { useRef, useEffect, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { playClick } from "@/lib/click-sound"
