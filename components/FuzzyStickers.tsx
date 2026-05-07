@@ -29,6 +29,8 @@ const ALL_STICKERS: StickerDef[] = [
   { id: "claude",  src: "/Claude.svg",     label: "Claude",  size: 80,  top: 300, right: 160, rotate: -10, defaultOn: false },
   { id: "vercel",  src: "/Vercel.svg",     label: "Vercel",  size: 76,  top: 200, right: 240, rotate:  12, defaultOn: false },
   { id: "hello",   src: "/HelloWorld.svg", label: "Hello",   size: 92,  top: 100, right: 240, rotate:  16, defaultOn: false },
+  { id: "taxi",    src: "/Taxi.svg",       label: "Taxi",    size: 100, top: 220, right:  60, rotate:   8, defaultOn: false },
+  { id: "ramen",   src: "/Ramen.svg",      label: "Ramen",   size: 84,  top: 220, right: 160, rotate: -10, defaultOn: false },
 ]
 
 function Sticker({ src, size, top, right, left, rotate, uid }: {
