@@ -6,9 +6,9 @@ import Link from "next/link"
 import { playClick } from "@/lib/click-sound"
 
 const LINKS = [
-  { href: "/",       label: "Work"   },
-  { href: "/about",  label: "About"  },
-  { href: "/resume", label: "Resume" },
+  { href: "/",       label: "Work",   external: false },
+  { href: "/about",  label: "About",  external: false },
+  { href: "https://drive.google.com/drive/home?dmr=1&ec=wgc-drive-%5Bmodule%5D-goto", label: "Resume", external: true },
 ]
 
 export default function HeaderNav() {
@@ -51,13 +51,14 @@ export default function HeaderNav() {
         />
       )}
 
-      {LINKS.map(({ href, label }, i) => {
+      {LINKS.map(({ href, label, external }, i) => {
         const active = i === activeIdx
         return (
           <span key={href} ref={el => { wrapRefs.current[i] = el }} style={{ position: "relative", zIndex: 1 }}>
             <Link
               href={href}
               onClick={() => playClick()}
+              {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
               style={{
                 display:        "block",
                 fontFamily:     "var(--font-sans)",

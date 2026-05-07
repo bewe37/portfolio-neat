@@ -976,7 +976,6 @@ export default function CaseStudyLayout({
 
   return (
     <>
-    <BackButton href={backHref} />
     <Link
       href={backHref}
       onClick={() => playClick()}

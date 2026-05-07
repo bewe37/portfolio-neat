@@ -42,17 +42,18 @@ export default function ContactList() {
             }}
           >
             {handle}
-            <motion.span
+            <motion.svg
+              width="10" height="10" viewBox="0 0 10 10" fill="none"
               animate={{
                 rotate: hovered === label ? 45 : 0,
                 x:      hovered === label ? 1 : 0,
                 y:      hovered === label ? -1 : 0,
               }}
               transition={{ type: "spring", stiffness: 400, damping: 22 }}
-              style={{ fontSize: 11, display: "inline-block", originX: "50%", originY: "50%" }}
+              style={{ display: "inline-block", flexShrink: 0 }}
             >
-              ↗
-            </motion.span>
+              <path d="M2 8L8 2M8 2H3.5M8 2V6.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+            </motion.svg>
           </a>
         </div>
       ))}
