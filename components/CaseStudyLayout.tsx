@@ -635,21 +635,19 @@ function BackButton({ href }: { href: string }) {
       onClick={() => playClick()}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      aria-label="Close"
+      className="rsp-hide-mobile"
       style={{
-        position:   "fixed", top: 24, left: 24, zIndex: 200,
-        display:    "inline-flex", alignItems: "center", justifyContent: "center",
-        width:      32, height: 32, borderRadius: "50%",
-        background: hovered ? "var(--hover-bg)" : "transparent",
-        border:     "1px solid var(--border)",
-        color:      hovered ? "var(--c-primary)" : "var(--c-secondary)",
+        position:      "fixed", top: 28, left: 32, zIndex: 200,
+        fontFamily:    "var(--font-sans)",
+        fontSize:      14,
+        fontWeight:    500,
+        letterSpacing: "-0.01em",
+        color:         hovered ? "var(--c-primary)" : "var(--c-dim)",
         textDecoration: "none",
-        transition: "background 0.15s ease, border-color 0.15s ease, color 0.15s ease",
+        transition:    "color 0.15s ease",
       }}
     >
-      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-        <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-      </svg>
+      Home
     </Link>
   )
 }
@@ -720,15 +718,37 @@ function NoodleAnimation() {
   )
 }
 
-function TableOfContents({ backHref: _backHref, items, activeId }: {
+function TableOfContents({ backHref, items, activeId }: {
   backHref: string
   items: Array<{ label: string; id: string }>
   activeId: string
 }) {
   const [hovId, setHovId] = useState<string | null>(null)
+  const [hovHome, setHovHome] = useState(false)
 
   return (
     <div style={{ display: "flex", flexDirection: "column", paddingTop: 56 }}>
+      <Link
+        href={backHref}
+        onClick={() => playClick()}
+        onMouseEnter={() => setHovHome(true)}
+        onMouseLeave={() => setHovHome(false)}
+        style={{
+          fontFamily:     "var(--font-sans)",
+          fontSize:       13,
+          fontWeight:     400,
+          color:          hovHome ? "rgb(255,107,48)" : "var(--c-dim)",
+          letterSpacing:  "-0.01em",
+          lineHeight:     1.4,
+          textDecoration: "none",
+          transition:     "color 0.18s ease",
+          padding:        "5px 0",
+          display:        "block",
+        }}
+      >
+        Home
+      </Link>
+      <div style={{ height: 1, backgroundColor: "var(--divider)", margin: "16px 0" }} />
       <nav style={{ display: "flex", flexDirection: "column", gap: 1 }}>
         {items.map(({ label, id }) => {
           const isActive = activeId === id
@@ -930,15 +950,18 @@ export default function CaseStudyLayout({
   ]
 
   useEffect(() => {
+    const ids = tocItems.map(t => t.id)
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) setActiveId(entry.target.id)
-        })
+        // pick the topmost section that is currently intersecting
+        const visible = entries
+          .filter(e => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
+        if (visible.length > 0) setActiveId(visible[0].target.id)
       },
-      { rootMargin: "-15% 0px -75% 0px", threshold: 0 }
+      { rootMargin: "0px 0px -60% 0px", threshold: 0 }
     )
-    tocItems.forEach(({ id }) => {
+    ids.forEach(id => {
       const el = document.getElementById(id)
       if (el) observer.observe(el)
     })
@@ -953,6 +976,31 @@ export default function CaseStudyLayout({
 
   return (
     <>
+    <BackButton href={backHref} />
+    <Link
+      href={backHref}
+      onClick={() => playClick()}
+      className="rsp-back-mobile"
+      style={{
+        display:        "none",
+        position:       "fixed",
+        top:            20,
+        left:           20,
+        zIndex:         1002,
+        alignItems:     "center",
+        justifyContent: "center",
+        width:          36,
+        height:         36,
+        borderRadius:   8,
+        background:     "var(--bg)",
+        border:         "1px solid var(--border)",
+        textDecoration: "none",
+      }}
+    >
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M8.5 2.5L4.5 7L8.5 11.5" stroke="var(--c-secondary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    </Link>
     <div style={{ minHeight: "100dvh", display: "flex", justifyContent: "center" }}>
       <div
         className="rsp-cs-grid"
@@ -989,34 +1037,6 @@ export default function CaseStudyLayout({
 
         {/* Main content */}
         <main className="rsp-pb" style={{ width: "100%", paddingTop: 56, paddingBottom: 120, minWidth: 0 }}>
-
-          <div className="rsp-hide-mobile">
-            <BackButton href={backHref} />
-          </div>
-
-          {/* Mobile back button */}
-          <Link
-            href={backHref}
-            onClick={() => playClick()}
-            className="rsp-back-mobile"
-            style={{
-              display:        "none",
-              alignItems:     "center",
-              gap:            6,
-              marginBottom:   24,
-              textDecoration: "none",
-              fontFamily:     "var(--font-sans)",
-              fontSize:       13,
-              fontWeight:     500,
-              color:          "var(--c-dim)",
-              letterSpacing:  "-0.01em",
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M8.5 2.5L4.5 7L8.5 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            Back
-          </Link>
 
           {/* Title */}
           <motion.div

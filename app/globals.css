@@ -129,6 +129,52 @@ a {
   text-decoration: none;
 }
 
+/* ── Hero grid texture ────────────────────────────────────── */
+.hero-grid {
+  position: relative;
+}
+.hero-grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,0,0,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.025) 1px, transparent 1px);
+  background-size: 40px 40px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 78%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+body.dark .hero-grid::before {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+}
+.hero-grid > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Page transition ──────────────────────────────────────── */
+@keyframes page-transition-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-transition {
+  animation: page-transition-in 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fade-up-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up {
+  animation: fade-up-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+
 /* ── Tamagotchi ───────────────────────────────────────────── */
 .tama-egg {
   border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
@@ -286,6 +332,7 @@ a {
 
   /* Mobile hamburger menu button */
   .rsp-hamburger { display: flex !important; }
+  .rsp-hero-row  { justify-content: flex-start !important; }
 
   /* Accordion: swap to mobile carousel */
   .rsp-accordion-desktop { display: none !important; }

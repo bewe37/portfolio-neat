@@ -1,100 +1,82 @@
 "use client"
 
-import { useRef, useState, useCallback } from "react"
-import { motion, useMotionValue, AnimatePresence } from "framer-motion"
-import { playClick } from "@/lib/click-sound"
+import { useRef, useState, useCallback, useEffect } from "react"
+import { motion, useMotionValue } from "framer-motion"
 
 interface Photo { src: string; label?: string }
 
 const PHOTOS: Photo[] = [
-  { src: "/nyc.jpg",         label: "Employees Only - NYC"      },
-  { src: "/austria.jpg",     label: "Austria"       },
-  { src: "/korea.jpg",       label: "Korea"         },
-  { src: "/paris.jpg",       label: "Paris"         },
-  { src: "/parisSelfie.jpg", label: "Paris & Me"         },
-  { src: "/vanc.jpg",        label: "Vancouver"     },
-  { src: "/BC.jpg",          label: "Vancouver Island"            },
-  { src: "/banfff.jpg",      label: "Banff"         },
-  { src: "/dawg.jpg",        label: "Leo - My Dawg"                         },
-  { src: "/fred.jpg",        label: "Toronto - Fred Again"                         },
-  { src: "/image3.jpg",      label: "Dumbo"                          },
-  { src: "/image4.jpg",       label: "Austria"                        },
+  { src: "/nyc.jpg",         label: "Employees Only"   },
+  { src: "/austria.jpg",     label: "Austria"          },
+  { src: "/korea.jpg",       label: "Korea"            },
+  { src: "/paris.jpg",       label: "Paris"            },
+  { src: "/banfff.jpg",      label: "Banff"            },
+  { src: "/parisSelfie.jpg", label: "Paris & Me"       },
+  { src: "/BC.jpg",          label: "Vancouver Island" },
+  { src: "/vanc.jpg",        label: "Vancouver"        },
+  { src: "/dawg.jpg",        label: "Leo - My Dawg"   },
+  { src: "/fred.jpg",        label: "Fred Again"       },
+  { src: "/image3.jpg",      label: "Dumbo"            },
+  { src: "/image4.jpg",      label: "Austria"          },
 ]
 
-// Scatter layout — 12 photos in two rows of 6
-const SCATTER_W = 1100
-const LAYOUT = [
-  // Row 1
-  { x:   8, y:  24, r: -5.5 },
-  { x: 188, y:  14, r:  3.2 },
-  { x: 368, y:  30, r: -2.8 },
-  { x: 548, y:  10, r:  5.5 },
-  { x: 728, y:  28, r: -4.0 },
-  { x: 908, y:  18, r:  3.8 },
-  // Row 2
-  { x:   8, y: 238, r:  4.5 },
-  { x: 188, y: 224, r: -6.0 },
-  { x: 368, y: 244, r:  2.8 },
-  { x: 548, y: 228, r: -3.5 },
-  { x: 728, y: 240, r:  4.8 },
-  { x: 908, y: 226, r: -5.0 },
+const CARD_W = 140
+
+// Positions are percentages of container so they stay centered at any width
+// Two loose rows, clustered toward center with breathing room around edges
+const LAYOUT_PCT = [
+  { cx: 14, cy: 22, r: -11 },
+  { cx: 24, cy: 17, r:   8 },
+  { cx: 34, cy: 20, r: -14 },
+  { cx: 45, cy: 15, r:  10 },
+  { cx: 56, cy: 19, r:  -7 },
+  { cx: 66, cy: 16, r:  13 },
+  { cx: 18, cy: 50, r:  13 },
+  { cx: 29, cy: 54, r:  -9 },
+  { cx: 40, cy: 49, r:   7 },
+  { cx: 51, cy: 52, r: -12 },
+  { cx: 62, cy: 48, r:  -5 },
+  { cx: 72, cy: 53, r:  11 },
 ]
 
-const SPRING = { type: "spring" as const, stiffness: 300, damping: 24 }
-const GENIE  = { type: "spring" as const, stiffness: 260, damping: 22 }
+const CONTAINER_H = 460
+
+// Use a tighter spring — less work per frame
+const SPRING = { type: "spring" as const, stiffness: 260, damping: 28 }
 
 function Card({
-  photo, ix, iy, ir, zIndex, onActivate, onOpen, containerRef,
+  photo, ir, zIndex, onActivate, containerRef, isActive,
 }: {
   photo: Photo
-  ix: number; iy: number; ir: number
+  ir: number
   zIndex: number
   onActivate: () => void
-  onOpen: (rect: DOMRect) => void
   containerRef: React.RefObject<HTMLDivElement>
+  isActive: boolean
 }) {
-  const x = useMotionValue(ix)
-  const y = useMotionValue(iy)
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
   const [hovered,  setHovered]  = useState(false)
   const [dragging, setDragging] = useState(false)
-  const cardRef = useRef<HTMLDivElement>(null)
-  const dragDist = useRef(0)
-  const pointerStart = useRef<{ x: number; y: number } | null>(null)
 
-  const handlePointerDown = useCallback((e: React.PointerEvent) => {
-    pointerStart.current = { x: e.clientX, y: e.clientY }
-    dragDist.current = 0
-    onActivate()
-  }, [onActivate])
-
-  const handlePointerUp = useCallback((e: React.PointerEvent) => {
-    if (pointerStart.current) {
-      const dx = e.clientX - pointerStart.current.x
-      const dy = e.clientY - pointerStart.current.y
-      dragDist.current = Math.sqrt(dx * dx + dy * dy)
-    }
-    if (dragDist.current < 6 && cardRef.current) {
-      onOpen(cardRef.current.getBoundingClientRect())
-    }
-  }, [onOpen])
+  const handlePointerDown = useCallback(() => { onActivate() }, [onActivate])
 
   return (
     <motion.div
-      ref={cardRef}
       drag
       dragConstraints={containerRef}
-      dragMomentum={true}
+      dragMomentum={false}
       dragElastic={0}
-      dragTransition={{ bounceStiffness: 380, bounceDamping: 36, power: 0.12, timeConstant: 160 }}
+      dragTransition={{ bounceStiffness: 320, bounceDamping: 40 }}
       onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
       onDragStart={() => { setDragging(true); onActivate() }}
       onDragEnd={() => setDragging(false)}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
+      initial={{ rotate: ir }}
       animate={{
         rotate: dragging ? ir * 0.2 : hovered ? 0 : ir,
-        scale:  dragging ? 1.08 : hovered ? 1.04 : 1,
+        scale:  dragging ? 1.06 : hovered ? 1.03 : 1,
       }}
       transition={SPRING}
       style={{
@@ -105,7 +87,8 @@ function Card({
         zIndex,
         cursor:      dragging ? "grabbing" : "grab",
         touchAction: "none",
-        willChange:  "transform",
+        // only promote to GPU layer when the card is actually being interacted with
+        willChange:  isActive ? "transform" : "auto",
       }}
     >
       <div style={{
@@ -113,18 +96,18 @@ function Card({
         padding:         "8px 8px 32px",
         borderRadius:    3,
         boxShadow:       dragging || hovered
-          ? "0 28px 64px rgba(0,0,0,0.28), 0 8px 20px rgba(0,0,0,0.13)"
+          ? "0 24px 56px rgba(0,0,0,0.24), 0 6px 16px rgba(0,0,0,0.11)"
           : "0 4px 16px rgba(0,0,0,0.11), 0 1px 4px rgba(0,0,0,0.06)",
-        transition:      "box-shadow 0.22s ease",
+        transition:      "box-shadow 0.2s ease",
         userSelect:      "none",
       }}>
         <div style={{
-          overflow:  "hidden",
+          overflow:   "hidden",
           borderRadius: 1,
-          boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.06)",
+          boxShadow:  "inset 0 0 0 1px rgba(0,0,0,0.06)",
           lineHeight: 0,
-          width:  156,
-          height: 148,
+          width:      CARD_W - 16,
+          height:     CARD_W - 16,
           flexShrink: 0,
         }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -132,6 +115,8 @@ function Card({
             src={photo.src}
             alt={photo.label ?? ""}
             draggable={false}
+            loading="lazy"
+            decoding="async"
             style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", pointerEvents: "none" }}
           />
         </div>
@@ -155,34 +140,26 @@ function Card({
   )
 }
 
-interface LightboxState { photo: Photo; originRect: DOMRect }
-
-const PREVIEW_PHOTOS = PHOTOS.filter(p => p.label).slice(0, 4)
 
 export default function PhotoGallery() {
   const containerRef = useRef<HTMLDivElement>(null!)
-  const [zStack, setZStack] = useState<number[]>(PHOTOS.map((_, i) => i + 1))
-  const [lightbox, setLightbox] = useState<LightboxState | null>(null)
+  const [zStack, setZStack]   = useState<number[]>(PHOTOS.map((_, i) => i + 1))
+  const [activeIdx, setActive] = useState<number | null>(null)
+  // Defer mounting the heavy drag gallery until after first paint
+  const [mounted, setMounted] = useState(false)
 
-  function bringToFront(i: number) {
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setMounted(true))
+    return () => cancelAnimationFrame(raf)
+  }, [])
+
+  const bringToFront = useCallback((i: number) => {
+    setActive(i)
     setZStack(prev => {
       const cur = prev[i]
       return prev.map((z, j) => j === i ? PHOTOS.length : z > cur ? z - 1 : z)
     })
-  }
-
-  function openLightbox(photo: Photo, rect: DOMRect) {
-    setLightbox({ photo, originRect: rect })
-    playClick()
-  }
-
-  function closeLightbox() {
-    setLightbox(null)
-  }
-
-  // Compute genie origin as viewport-relative center of the source card
-  const originX = lightbox ? lightbox.originRect.left + lightbox.originRect.width / 2 : 0
-  const originY = lightbox ? lightbox.originRect.top  + lightbox.originRect.height / 2 : 0
+  }, [])
 
   return (
     <>
@@ -192,7 +169,7 @@ export default function PhotoGallery() {
         ref={containerRef}
         style={{
           position:        "relative",
-          height:          480,
+          height:          CONTAINER_H,
           borderRadius:    16,
           overflow:        "hidden",
           backgroundColor: "var(--surface)",
@@ -200,170 +177,53 @@ export default function PhotoGallery() {
           backgroundSize:  "18px 18px",
         }}
       >
-        {/* Centered scatter wrapper */}
-        <div style={{
-          position: "absolute",
-          top:      0,
-          left:     "50%",
-          width:    SCATTER_W,
-          height:   "100%",
-          transform: `translateX(${-SCATTER_W / 2}px)`,
-        }}>
-          {PHOTOS.map((photo, i) => (
-            <Card
-              key={i}
-              photo={photo}
-              ix={LAYOUT[i % LAYOUT.length].x}
-              iy={LAYOUT[i % LAYOUT.length].y}
-              ir={LAYOUT[i % LAYOUT.length].r}
-              zIndex={zStack[i]}
-              onActivate={() => bringToFront(i)}
-              onOpen={(rect) => openLightbox(photo, rect)}
-              containerRef={containerRef}
-            />
-          ))}
+        {/* Caption inside gallery */}
+        <div style={{ position: "absolute", bottom: 14, left: 20, right: 20, display: "flex", justifyContent: "space-between", alignItems: "baseline", zIndex: 0, pointerEvents: "none" }}>
+          <span style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 500, color: "var(--c-faint)", letterSpacing: "-0.01em" }}>
+            Through the lens
+          </span>
+          <span style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 400, color: "var(--c-faint)", letterSpacing: "-0.01em" }}>
+            A collective memory of my 20s
+          </span>
         </div>
+
+        {mounted && (
+          <div style={{ position: "absolute", inset: "16px 16px 40px" }}>
+            {PHOTOS.map((photo, i) => {
+              const { cx, cy, r } = LAYOUT_PCT[i % LAYOUT_PCT.length]
+              return (
+                <div key={i} style={{
+                  position: "absolute",
+                  left: `${cx}%`,
+                  top:  `${cy}%`,
+                }}>
+                  <Card
+                    photo={photo}
+                    ir={r}
+                    zIndex={zStack[i]}
+                    isActive={activeIdx === i}
+                    onActivate={() => bringToFront(i)}
+                    containerRef={containerRef}
+                  />
+                </div>
+              )
+            })}
+          </div>
+        )}
       </div>
 
-      {/* ── Lightbox overlay ── */}
-      <AnimatePresence>
-        {lightbox && (
-          <motion.div
-            key="overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.22 }}
-            onClick={closeLightbox}
-            style={{
-              position:        "fixed",
-              inset:           0,
-              zIndex:          9999,
-              backgroundColor: "rgba(0,0,0,0.72)",
-              display:         "flex",
-              alignItems:      "center",
-              justifyContent:  "center",
-              backdropFilter:  "blur(6px)",
-              WebkitBackdropFilter: "blur(6px)",
-            }}
-          >
-            <motion.div
-              key="card"
-              initial={{
-                scale:   0.15,
-                opacity: 0,
-                x: originX - window.innerWidth  / 2,
-                y: originY - window.innerHeight / 2,
-              }}
-              animate={{ scale: 1, opacity: 1, x: 0, y: 0 }}
-              exit={{
-                scale:   0.15,
-                opacity: 0,
-                x: originX - window.innerWidth  / 2,
-                y: originY - window.innerHeight / 2,
-              }}
-              transition={GENIE}
-              onClick={e => e.stopPropagation()}
-              style={{
-                backgroundColor: "#fefcf8",
-                padding:         "8px 8px 40px",
-                borderRadius:    3,
-                boxShadow:       "0 40px 120px rgba(0,0,0,0.5), 0 8px 32px rgba(0,0,0,0.2)",
-                maxWidth:        "min(420px, 80vw)",
-                width:           "auto",
-                cursor:          "default",
-              }}
-            >
-              <div style={{
-                overflow:  "hidden",
-                borderRadius: 1,
-                boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.06)",
-                lineHeight: 0,
-              }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={lightbox.photo.src}
-                  alt={lightbox.photo.label ?? ""}
-                  draggable={false}
-                  style={{ width: "100%", display: "block", objectFit: "contain", maxHeight: "45vh" }}
-                />
-              </div>
-              <p style={{
-                margin:        0,
-                padding:       "14px 4px 0",
-                fontFamily:    "'Departure Mono', monospace",
-                fontSize:      11,
-                fontWeight:    400,
-                color:         "rgba(0,0,0,0.38)",
-                letterSpacing: "0.05em",
-                textTransform: "uppercase",
-                textAlign:     "center",
-                lineHeight:    1,
-                minHeight:     14,
-              }}>
-                {lightbox.photo.label ?? ""}
-              </p>
-            </motion.div>
-
-            {/* Close hint */}
-            <motion.button
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ delay: 0.18 }}
-              onClick={() => { closeLightbox(); playClick() }}
-              style={{
-                position:        "fixed",
-                top:             24,
-                right:           28,
-                background:      "rgba(255,255,255,0.12)",
-                border:          "1px solid rgba(255,255,255,0.18)",
-                borderRadius:    99,
-                padding:         "6px 16px",
-                fontFamily:      "var(--font-sans)",
-                fontSize:        13,
-                fontWeight:      500,
-                color:           "rgba(255,255,255,0.8)",
-                cursor:          "pointer",
-                backdropFilter:  "blur(4px)",
-              }}
-            >
-              Close
-            </motion.button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ── Mobile: simple 2×2 grid ── */}
+      {/* ── Mobile: single portrait photo ── */}
       <div className="rsp-gallery-mobile" style={{ display: "none" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, borderRadius: 16, overflow: "hidden" }}>
-          {PREVIEW_PHOTOS.map((photo, i) => (
-            <div key={i} style={{ position: "relative", aspectRatio: "1", overflow: "hidden", backgroundColor: "var(--surface)" }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={photo.src}
-                alt={photo.label ?? ""}
-                draggable={false}
-                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-              />
-              {photo.label && (
-                <span style={{
-                  position:      "absolute",
-                  bottom:        8,
-                  left:          10,
-                  fontFamily:    "'Departure Mono', monospace",
-                  fontSize:      8,
-                  fontWeight:    400,
-                  color:         "rgba(255,255,255,0.82)",
-                  letterSpacing: "0.06em",
-                  textTransform: "uppercase",
-                  textShadow:    "0 1px 4px rgba(0,0,0,0.5)",
-                }}>
-                  {photo.label}
-                </span>
-              )}
-            </div>
-          ))}
+        <div style={{ borderRadius: 16, overflow: "hidden", aspectRatio: "4/5", backgroundColor: "var(--surface)" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/parisSelfie.jpg"
+            alt="Paris & Me"
+            draggable={false}
+            loading="eager"
+            decoding="async"
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          />
         </div>
       </div>
     </>

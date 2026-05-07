@@ -4,8 +4,11 @@ import { useState, useRef, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { gsap } from "gsap"
 import { ArrowUpRight } from "@phosphor-icons/react"
+import Link from "next/link"
 import ThemeToggle from "@/components/ThemeToggle"
 import { playClick } from "@/lib/click-sound"
+
+const MotionLink = motion(Link)
 
 
 const NAV_ITEMS = [
@@ -64,15 +67,19 @@ export default function MobileMenu() {
         aria-expanded={open}
         className="rsp-hamburger"
         style={{
-          background: "none",
-          border: "none",
+          position: "fixed",
+          top: 20,
+          left: 20,
+          zIndex: 1002,
+          background: "var(--bg)",
+          border: "1px solid var(--border)",
+          borderRadius: 8,
           cursor: "pointer",
-          padding: "8px",
+          padding: "8px 10px",
           flexDirection: "column",
           gap: 5,
           alignItems: "center",
           justifyContent: "center",
-          flexShrink: 0,
         }}
       >
         <span ref={bar1} style={barStyle} />
@@ -123,7 +130,7 @@ export default function MobileMenu() {
               }}
             >
               {NAV_ITEMS.map(({ label, href, newTab }, i) => (
-                <motion.a
+                <MotionLink
                   key={label}
                   href={href}
                   target={newTab ? "_blank" : undefined}
@@ -148,7 +155,7 @@ export default function MobileMenu() {
                 >
                   {label}
                   <ArrowUpRight size={16} weight="regular" style={{ color: "var(--c-dim)", flexShrink: 0 }} />
-                </motion.a>
+                </MotionLink>
               ))}
 
               {/* Theme toggle row */}

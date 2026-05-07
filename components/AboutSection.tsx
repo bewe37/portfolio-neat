@@ -17,7 +17,7 @@ export default function AboutSection() {
           </p>
           <div className="rsp-stack" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px 56px" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <p style={{ fontFamily: "var(--font-sans)", fontSize: 16, fontWeight: 600, color: "var(--c-mid)", letterSpacing: "-0.01em", lineHeight: 1.5, margin: 0 }}>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: 16, fontWeight: 500, color: "var(--c-mid)", letterSpacing: "-0.01em", lineHeight: 1.5, margin: 0 }}>
                 What got me here?
               </p>
               <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 400, color: "var(--c-secondary)", letterSpacing: "-0.01em", lineHeight: 1.8, margin: 0 }}>

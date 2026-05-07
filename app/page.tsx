@@ -1,9 +1,10 @@
-import ThemeToggle from "@/components/ThemeToggle"
-import { HoverCyclingFlipBoard } from "@/components/HeroTextWithPen"
-import HeaderNav from "@/components/HeaderNav"
-import MobileMenu from "@/components/MobileMenu"
+import { InlineLogoChip, NameFlipChip } from "@/components/HeroTextWithPen"
 import ProjectCards from "@/components/ProjectCards"
 import MarqueeFooter from "@/components/MarqueeFooter"
+import WrenchWord from "@/components/WrenchWord"
+import { EasyWord } from "@/components/HeroInteractions"
+import GridGlow from "@/components/GridGlow"
+import FadeUp from "@/components/FadeUp"
 
 const PROJECTS = [
   {
@@ -49,71 +50,63 @@ export default function HomePage() {
   return (
     <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
       <main
-        style={{ width: "100%", maxWidth: 1400, margin: "0 auto", padding: "0 48px", display: "flex", flexDirection: "column" }}
+        style={{ width: "100%", padding: "0 48px", display: "flex", flexDirection: "column" }}
         className="rsp-px"
       >
-        {/* ── Hero ───────────────────────────────────────────────────── */}
-        <section style={{ padding: "48px 0 8px", display: "flex", flexDirection: "column", gap: 40 }}>
+        {/* ── Grid texture: nav + hero + selected work label ──────────── */}
+        <div className="hero-grid" style={{ position: "relative" }}>
+          <GridGlow />
 
-          {/* Nav row */}
-          <div className="rsp-hero-row" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 20 }}>
-            <span style={{ fontFamily:    "var(--font-sans)", fontSize: 15, fontWeight: 600, letterSpacing: "-0.01em", color: "var(--c-dim)" }}>
-              Georgius
-            </span>
-            <span className="rsp-hide-mobile" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-              <HeaderNav />
-              <ThemeToggle />
-            </span>
-            <MobileMenu />
-          </div>
+          {/* ── Hero ──────────────────────────────────────────────────── */}
+          <section style={{ padding: "24px 0 8px", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+            <FadeUp delay={0} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12, padding: "72px 0 0 0", textAlign: "center" }}>
+              <NameFlipChip label="Georgius" tileH={28} />
+              <p style={{
+                fontFamily:    "var(--font-sans)",
+                fontSize:      17,
+                fontWeight:    400,
+                letterSpacing: "-0.01em",
+                lineHeight:    1.9,
+                color:         "var(--c-primary)",
+                margin:        0,
+                maxWidth: 560,
+              }}>
+                I&apos;m a product designer based in Toronto. Passionate about turning why is this so confusing into wait, that was <EasyWord /> Mostly through obsessive <WrenchWord />
+              </p>
+              <p style={{
+                fontFamily:    "var(--font-sans)",
+                fontSize:      16,
+                fontWeight:    400,
+                letterSpacing: "-0.01em",
+                lineHeight:    1.9,
+                color:         "var(--c-dim)",
+                margin:        0,
+              }}>
+                Previously taking care of pixels at<InlineLogoChip src="/amdchip.svg" alt="AMD" link="/amd_ai_project" size={48} />&amp;<InlineLogoChip src="/safechip.svg" alt="Safe Software" link="/fme_annotation_project" size={60} />
+              </p>
+            </FadeUp>
+          </section>
 
+          {/* ── Selected Work label (inside grid) ─────────────────────── */}
+          <FadeUp delay={0.1}>
+            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", paddingTop: 92 }}>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.01em", margin: 0 }}>
+                Selected work
+              </p>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 400, color: "var(--c-faint)", letterSpacing: "-0.01em", margin: 0 }}>
+                2023–2026
+              </p>
+            </div>
+          </FadeUp>
 
-          {/* Hero — single inline sentence */}
-          <div style={{ display: "flex", flexDirection: "column", padding: "96px 0 0 0" }}>
-            <p style={{
-              fontFamily:    "var(--font-sans)",
-              fontSize:      16,
-              fontWeight:    500,
-              letterSpacing: "-0.01em",
-              lineHeight:    1.9,
-              color:         "var(--c-primary)",
-              margin:        0,
-              maxWidth: 820, 
-            }}>
-              <span style={{ color: "var(--c-primary)", fontWeight: 500 }}>Bryan Winata</span>
-              {" "}is a product designer based in {" "}
-              <span style={{ color: "var(--c-primary)", fontWeight: 500 }}>Toronto, Canada</span>
-              {". "}I&apos;m passionate about turning &ldquo;why is this so confusing&rdquo; into &ldquo;wait, that was easy?&rdquo; Mostly through obsessive detail-tweaking and too much coffee.
-            </p>
-            <p style={{
-              fontFamily:    "var(--font-sans)",
-              fontSize:      16,
-              fontWeight:    500,
-              letterSpacing: "-0.01em",
-              lineHeight:    1.9,
-              color:         "var(--c-dim)",
-              margin:        0,
-              width: "720px",
-            }}>
-              Previously taking care pixels at @ AMD & Safe Software.
-            </p>
-          </div>
+        </div>{/* end hero-grid */}
 
-        </section>
-
-        {/* ── Selected Work ───────────────────────────────────────────── */}
-        <section style={{ padding: "48px 0 0px", display: "flex", flexDirection: "column", gap: 24 }}>
-          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", paddingTop: 16 }}>
-            <p style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.01em", margin: 0 }}>
-              Selected work
-            </p>
-            <p style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 400, color: "var(--c-faint)", letterSpacing: "-0.01em", margin: 0 }}>
-              2023–2026
-            </p>
-          </div>
-
-          <ProjectCards projects={PROJECTS} />
-        </section>
+        {/* ── Project cards (outside grid) ────────────────────────────── */}
+        <FadeUp delay={0.18}>
+          <section style={{ padding: "16px 0 96px", display: "flex", flexDirection: "column", gap: 24 }}>
+            <ProjectCards projects={PROJECTS} />
+          </section>
+        </FadeUp>
 
       </main>
 

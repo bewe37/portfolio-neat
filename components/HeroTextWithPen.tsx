@@ -549,11 +549,13 @@ export function NameFlipChip({ label, link, tileH = 18 }: { label: string; link?
   const [revealed, setRevealed] = useState(false)
   const audioCtxRef = useRef<AudioContext | null>(null)
 
-  // Stable gibberish chars — one random char per letter, seeded once
-  const gibberish = useMemo(() =>
-    label.split("").map(() => FLIP_CHARS[Math.floor(Math.random() * FLIP_CHARS.length)]),
+  // Start with the label itself so SSR and first client render match,
+  // then swap to random gibberish after mount.
+  const [gibberish, setGibberish] = useState<string[]>(() => label.split(""))
+  useEffect(() => {
+    setGibberish(label.split("").map(() => FLIP_CHARS[Math.floor(Math.random() * FLIP_CHARS.length)]))
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  [])
+  }, [])
 
   function handleEnter() {
     // Synthesize staggered flip clicks via Web Audio
@@ -593,7 +595,7 @@ export function NameFlipChip({ label, link, tileH = 18 }: { label: string; link?
 }
 
 /* ── Inline tilt logo chip ───────────────────────────────────────────── */
-function InlineLogoChip({ src, alt, link, size = 40 }: { src: string; alt: string; link?: string; size?: number }) {
+export function InlineLogoChip({ src, alt, link, size = 40 }: { src: string; alt: string; link?: string; size?: number }) {
   const [hov, setHov] = useState(false)
   const inner = (
     <motion.span
