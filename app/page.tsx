@@ -1,3 +1,7 @@
+"use client"
+
+import { useState } from "react"
+import { AnimatePresence } from "framer-motion"
 import { InlineLogoChip, NameFlipChip } from "@/components/HeroTextWithPen"
 import ProjectCards from "@/components/ProjectCards"
 import MarqueeFooter from "@/components/MarqueeFooter"
@@ -5,6 +9,39 @@ import WrenchWord from "@/components/WrenchWord"
 import { EasyWord } from "@/components/HeroInteractions"
 import FuzzyStickers from "@/components/FuzzyStickers"
 import FadeUp from "@/components/FadeUp"
+import OnboardingLightbox from "@/components/OnboardingLightbox"
+import CompanionThumbnail from "@/components/CompanionThumbnail"
+
+const VIBE_PROJECTS = [
+  {
+    title: "Subscription Plan Component",
+    category: "Vibe Coded",
+    date: "2025",
+    description: "A multi-step subscription flow with animated billing toggle, payment form, and success state — built from a static design.",
+    href: "/subscription_plan",
+    cover: "/PricingComponents.mp4",
+    comingSoon: true,
+  },
+  {
+    title: "Portfolio Website",
+    category: "Vibe Coded",
+    date: "2025",
+    description: "This portfolio — designed and built from scratch with Next.js, framer-motion stickers, and a lot of obsessing over details.",
+    href: "https://gbryanwt.com/",
+    cover: "/PortfolioThumbnail.mp4",
+    comingSoon: true,
+  },
+  {
+    title: "Companion Mode",
+    category: "Vibe Coded",
+    date: "2025",
+    description: "Pick a pixel-art companion to follow you around the portfolio. An onboarding flow for a feature that shouldn't exist but does.",
+    href: "#companion",
+    cover: "",
+    coverNode: <CompanionThumbnail />,
+    lightbox: true,
+  },
+]
 
 const PROJECTS = [
   {
@@ -47,6 +84,8 @@ const PROJECTS = [
 
 
 export default function HomePage() {
+  const [companionOpen, setCompanionOpen] = useState(false)
+
   return (
     <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
       <main
@@ -104,14 +143,33 @@ export default function HomePage() {
 
         {/* ── Project cards (outside grid) ────────────────────────────── */}
         <FadeUp delay={0.18}>
-          <section style={{ padding: "16px 0 96px", display: "flex", flexDirection: "column", gap: 24 }}>
+          <section style={{ padding: "16px 0 64px", display: "flex", flexDirection: "column", gap: 24 }}>
             <ProjectCards projects={PROJECTS} />
+          </section>
+        </FadeUp>
+
+        {/* ── Vibe-coded section ───────────────────────────────────────── */}
+        <FadeUp delay={0.22}>
+          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", paddingBottom: 16 }}>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.01em", margin: 0 }}>
+              Vibe coded
+            </p>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 400, color: "var(--c-faint)", letterSpacing: "-0.01em", margin: 0 }}>
+              2025–2026
+            </p>
+          </div>
+          <section style={{ padding: "0 0 96px", display: "flex", flexDirection: "column", gap: 24 }}>
+            <ProjectCards projects={VIBE_PROJECTS} onLightbox={() => setCompanionOpen(true)} />
           </section>
         </FadeUp>
 
         </div>{/* end maxWidth wrapper */}
 
       </main>
+
+      <AnimatePresence>
+        {companionOpen && <OnboardingLightbox onClose={() => setCompanionOpen(false)} />}
+      </AnimatePresence>
 
       <MarqueeFooter />
     </div>

@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import TamagotchiWidget from "@/components/TamagotchiWidget"
+import { getBuddy } from "@/lib/buddies"
+import { SpriteView } from "@/components/SpriteBuddy"
+import { useDialKit } from "dialkit"
 
 function torontoTime() {
   return new Date().toLocaleTimeString("en-US", {
@@ -97,6 +100,32 @@ function FooterLink({ label, href }: { label: string; href: string }) {
   )
 }
 
+function FooterCompanion() {
+  const [buddyId, setBuddyId] = useState<string | null>(null)
+
+  useEffect(() => {
+    setBuddyId(localStorage.getItem("buddyId"))
+    const sync = () => setBuddyId(localStorage.getItem("buddyId"))
+    window.addEventListener("buddySelected", sync)
+    return () => window.removeEventListener("buddySelected", sync)
+  }, [])
+
+  if (!buddyId || buddyId === "none" || buddyId === "custom") return null
+  const buddy = getBuddy(buddyId)
+  if (!buddy) return null
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      style={{ lineHeight: 0, flexShrink: 0, alignSelf: "flex-start" }}
+    >
+      <SpriteView buddy={buddy} animKey={buddy.idleAnim} scale={2.5} />
+    </motion.div>
+  )
+}
+
 function BackToTop() {
   const [hovered, setHovered] = useState(false)
   return (
@@ -126,8 +155,17 @@ function BackToTop() {
 export default function MarqueeFooter() {
   const year = new Date().getFullYear()
 
+  const p = useDialKit("Footer", {
+    layout: {
+      paddingV:  [40,  0, 120],
+      paddingH:  [48,  0, 120],
+      innerGap:  [0,  0,  80],
+    },
+    minHeight: [260, 160, 600],
+  })
+
   return (
-    <div style={{ position: "relative", minHeight: 260, overflow: "hidden" }}>
+    <div style={{ position: "relative", minHeight: p.minHeight, overflow: "hidden" }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/Scene.jpg" alt="" style={{
         position: "absolute", inset: 0, width: "100%", height: "100%",
@@ -137,10 +175,11 @@ export default function MarqueeFooter() {
 
       <div className="rsp-footer-inner" style={{
         position: "relative", zIndex: 1,
-        minHeight: 260, margin: "0 auto",
+        minHeight: p.minHeight, margin: "0 auto",
         display: "flex", flexDirection: "column",
         justifyContent: "space-between",
-        padding: "40px 48px", gap: 20,
+        padding: `${p.layout.paddingV}px ${p.layout.paddingH}px`,
+        gap: p.layout.innerGap,
       }}>
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 24 }}>
           <p style={{
@@ -152,18 +191,19 @@ export default function MarqueeFooter() {
           }}>
             &ldquo;The art challenges the technology, and the technology inspires the art.&rdquo;
           </p>
-          <div style={{ flexShrink: 0, marginRight: 4 }}>
-            <div style={{ transform: "scale(0.7)", transformOrigin: "top left", width: 186, height: 214, overflow: "visible" }}>
+          <div style={{ flexShrink: 0, width: 186 * 0.7 + 40, height: 214 * 0.7, overflow: "visible" }}>
+            <div style={{ transform: "scale(0.7)", transformOrigin: "top left" }}>
               <TamagotchiWidget />
             </div>
           </div>
         </div>
 
         <div className="rsp-footer-bottom" style={{
-          display: "flex", alignItems: "center",
+          display: "flex", alignItems: "flex-end",
           justifyContent: "space-between", gap: 24,
         }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <FooterCompanion />
             <FooterClock />
             <span style={{
               fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 400,
