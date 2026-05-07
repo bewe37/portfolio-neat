@@ -21,8 +21,8 @@ interface StickerDef {
 
 const ALL_STICKERS: StickerDef[] = [
   { id: "thunder", src: "/Thunder.svg",    label: "Thunder", size: 86,  top:  80, left: "calc(50% - 280px - 86px - 16px)", rotate: -15, defaultOn: true  },
-  { id: "green",   src: "/Green.svg",      label: "Green",   size: 100, top:  40, right: 160, rotate: -12, defaultOn: false },
   { id: "cloud",   src: "/Cloud.svg",      label: "Cloud",   size: 84,  top:  80, left: "calc(50% + 280px + 16px)", rotate:  18, defaultOn: true  },
+  { id: "green",   src: "/Green.svg",      label: "Green",   size: 100, top:  40, right: 160, rotate: -12, defaultOn: false },
   { id: "bang",    src: "/Bang.svg",       label: "Bang",    size: 80,  top: 260, right: 100, rotate:  -8, defaultOn: false },
   { id: "spark",   src: "/Spark.svg",      label: "Spark",   size: 76,  top: 160, right: 160, rotate:  22, defaultOn: false },
   { id: "figma",   src: "/Figma.svg",      label: "Figma",   size: 76,  top: 280, right:  50, rotate:   8, defaultOn: false },
@@ -33,8 +33,9 @@ const ALL_STICKERS: StickerDef[] = [
   { id: "ramen",   src: "/Ramen.svg",      label: "Ramen",   size: 84,  top: 220, right: 160, rotate: -10, defaultOn: false },
 ]
 
-function Sticker({ src, size, top, right, left, rotate, uid }: {
-  src: string; size: number; top: number; right?: number | string; left?: number | string; rotate: number; uid: string
+function Sticker({ src, size, top, right, left, rotate, uid, spawnAt }: {
+  src: string; size: number; top: number; right?: number | string; left?: number | string
+  rotate: number; uid: string; spawnAt?: { x: number; y: number }
 }) {
   const draggableRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -65,6 +66,23 @@ function Sticker({ src, size, top, right, left, rotate, uid }: {
     }
   }, [])
 
+  // If spawned from palette, immediately start dragging from cursor position
+  useEffect(() => {
+    if (!spawnAt) return
+    const el = draggableRef.current
+    if (!el) return
+    const parent = el.offsetParent as HTMLElement | null
+    const parentRect = parent ? parent.getBoundingClientRect() : { left: 0, top: 0 }
+    // center the sticker on the cursor
+    dragOffset.current = { x: size / 2, y: size / 2 }
+    el.style.right = "auto"
+    el.style.left  = (spawnAt.x - size / 2 - parentRect.left) + "px"
+    el.style.top   = (spawnAt.y - size / 2 - parentRect.top)  + "px"
+    isDragging.current = true
+    setActive(true)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   function onMouseDown(e: React.MouseEvent) {
     const el = draggableRef.current
     if (!el) return
@@ -73,7 +91,6 @@ function Sticker({ src, size, top, right, left, rotate, uid }: {
     const parent = el.offsetParent as HTMLElement | null
     const parentRect = parent ? parent.getBoundingClientRect() : { left: 0, top: 0 }
     dragOffset.current = { x: e.clientX - rect.left, y: e.clientY - rect.top }
-    // anchor to absolute position within parent so dragging works correctly
     el.style.right = "auto"
     el.style.left  = (rect.left - parentRect.left) + "px"
     el.style.top   = (rect.top  - parentRect.top)  + "px"
@@ -102,7 +119,7 @@ function Sticker({ src, size, top, right, left, rotate, uid }: {
   const transition = active ? `all ${PEEL_EASING}` : `all ${HOVER_EASING}`
   const imgStyle: React.CSSProperties = { width: size, display: "block", transform: `rotate(${rotate}deg)`, userSelect: "none" }
 
-  const fillId   = `st-fi-${uid}`
+  const fillId = `st-fi-${uid}`
 
   return (
     <>
@@ -156,14 +173,30 @@ export default function FuzzyStickers() {
   const [active, setActive] = useState<Set<string>>(
     () => new Set(ALL_STICKERS.filter(s => s.defaultOn).map(s => s.id))
   )
+  const [spawnMap, setSpawnMap] = useState<Record<string, { x: number; y: number }>>({})
   const [paletteOpen, setPaletteOpen] = useState(false)
-  const toggle = (id: string) =>
-    setActive(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n })
+
+  function handlePaletteMouseDown(s: StickerDef, e: React.MouseEvent) {
+    if (active.has(s.id)) {
+      // already on canvas — just toggle off
+      playClick()
+      setActive(prev => { const n = new Set(prev); n.delete(s.id); return n })
+      return
+    }
+    // spawn and immediately drag from cursor
+    playClick()
+    setSpawnMap(prev => ({ ...prev, [s.id]: { x: e.clientX, y: e.clientY } }))
+    setActive(prev => { const n = new Set(prev); n.add(s.id); return n })
+  }
 
   return (
     <>
       {ALL_STICKERS.filter(s => active.has(s.id)).map(s => (
-        <Sticker key={s.id} uid={s.id} src={s.src} size={s.size} top={s.top} right={s.right} left={s.left} rotate={s.rotate} />
+        <Sticker
+          key={s.id} uid={s.id} src={s.src} size={s.size}
+          top={s.top} right={s.right} left={s.left} rotate={s.rotate}
+          spawnAt={spawnMap[s.id]}
+        />
       ))}
 
       <div style={{ position: "absolute", bottom: 24, right: 0, zIndex: 30 }}>
@@ -189,12 +222,12 @@ export default function FuzzyStickers() {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: i * 0.02, duration: 0.14, ease: "easeOut" }}
-                  onClick={() => { playClick(); toggle(s.id) }}
+                  onMouseDown={e => handlePaletteMouseDown(s, e)}
                   title={s.label}
                   style={{
                     background:   active.has(s.id) ? "var(--surface)" : "transparent",
                     border:       `1.5px solid ${active.has(s.id) ? "var(--border-mid)" : "transparent"}`,
-                    borderRadius: 10, padding: 5, cursor: "pointer",
+                    borderRadius: 10, padding: 5, cursor: "grab",
                     display: "flex", alignItems: "center", justifyContent: "center",
                     transition: "background 0.15s, border-color 0.15s",
                   }}
