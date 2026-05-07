@@ -29,7 +29,6 @@ const VIBE_PROJECTS = [
     description: "This portfolio — designed and built from scratch with Next.js, framer-motion stickers, and a lot of obsessing over details.",
     href: "https://gbryanwt.com/",
     cover: "/PortfolioThumbnail.mp4",
-    comingSoon: true,
   },
   {
     title: "Companion Mode",
