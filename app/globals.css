@@ -132,6 +132,7 @@ a {
 /* ── Hero grid texture ────────────────────────────────────── */
 .hero-grid {
   position: relative;
+  overflow: visible;
 }
 .hero-grid::before {
   content: "";

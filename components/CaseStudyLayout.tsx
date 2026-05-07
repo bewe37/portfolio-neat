@@ -1123,11 +1123,11 @@ export default function CaseStudyLayout({
                   transition={{ ...FADE, delay: i * 0.08 }}
                   style={{
                     fontFamily:    "var(--font-sans)",
-                    fontSize:      i === 0 ? 20 : 16,
-                    fontWeight:    i === 0 ? 500 : 400,
-                    color:         i === 0 ? "var(--c-primary)" : "var(--c-secondary)",
-                    letterSpacing: i === 0 ? "-0.02em" : "-0.01em",
-                    lineHeight:    i === 0 ? 1.6 : 1.85,
+                    fontSize:      20,
+                    fontWeight:    500,
+                    color:         "var(--c-primary)",
+                    letterSpacing: "-0.02em",
+                    lineHeight:    1.6,
                     margin:        0,
                   }}
                 >

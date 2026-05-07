@@ -1,172 +1,109 @@
 "use client"
 
-import { useRef, useEffect, useState, useCallback } from "react"
+import { useRef, useEffect, useState } from "react"
+import { AnimatePresence, motion } from "framer-motion"
+import { playClick } from "@/lib/click-sound"
 
-const PEEL_EASING = `2s linear(0,0.002 0.4%,0.008 0.9%,0.02 1.4%,0.035 1.9%,0.055 2.4%,0.083 3%,0.11 3.5%,0.146 4.1%,0.214 5.1%,0.297 6.2%,0.624 10.2%,0.756 11.9%,0.821 12.8%,0.874 13.6%,0.93 14.5%,0.975 15.3%,1.016 16.1%,1.053 16.9%,1.085 17.7%,1.116 18.6%,1.139 19.4%,1.16 20.3%,1.176 21.2%,1.187 22.1%,1.195 23.2%,1.197 24.4%,1.193 25.6%,1.183 26.9%,1.17 28.1%,1.153 29.4%,1.055 35.6%,1.031 37.3%,1.012 38.8%,0.994 40.6%,0.98 42.3%,0.97 44.1%,0.964 45.9%,0.961 48.3%,0.964 51.1%,0.97 53.7%,0.997 62.7%,1.003 66%,1.007 69.3%,1.007 74.4%,1 89.2%,1)`
-const HOVER_EASING = `1s linear(0,0.008 1.1%,0.031 2.2%,0.129 4.8%,0.257 7.2%,0.671 14.2%,0.789 16.5%,0.881 18.6%,0.957 20.7%,1.019 22.9%,1.063 25.1%,1.094 27.4%,1.114 30.7%,1.112 34.5%,1.018 49.9%,0.99 59.1%,1)`
+const PEELBACK_HOVER  = "30%"
+const PEELBACK_ACTIVE = "60%"
 const PAD   = "10px"
 const START = `calc(-1 * ${PAD})`
 const END   = `calc(100% + ${PAD})`
-const PH    = "30%"
-const PA    = "60%"
+const PEEL_EASING  = `2s linear(0,0.002 0.4%,0.008 0.9%,0.02 1.4%,0.035 1.9%,0.055 2.4%,0.083 3%,0.11 3.5%,0.146 4.1%,0.214 5.1%,0.297 6.2%,0.624 10.2%,0.756 11.9%,0.821 12.8%,0.874 13.6%,0.93 14.5%,0.975 15.3%,1.016 16.1%,1.053 16.9%,1.085 17.7%,1.116 18.6%,1.139 19.4%,1.16 20.3%,1.176 21.2%,1.187 22.1%,1.195 23.2%,1.197 24.4%,1.193 25.6%,1.183 26.9%,1.17 28.1%,1.153 29.4%,1.055 35.6%,1.031 37.3%,1.012 38.8%,0.994 40.6%,0.98 42.3%,0.97 44.1%,0.964 45.9%,0.961 48.3%,0.964 51.1%,0.97 53.7%,0.997 62.7%,1.003 66%,1.007 69.3%,1.007 74.4%,1 89.2%,1)`
+const HOVER_EASING = `1s linear(0,0.008 1.1%,0.031 2.2%,0.129 4.8%,0.257 7.2%,0.671 14.2%,0.789 16.5%,0.881 18.6%,0.957 20.7%,1.019 22.9%,1.063 25.1%,1.094 27.4%,1.114 30.7%,1.112 34.5%,1.018 49.9%,0.99 59.1%,1)`
 
-// ── Fuzzy shape SVGs ────────────────────────────────────────────────────────
-// Each is 120×120, filled with colour, white stroke outline
-
-function enc(svg: string) {
-  return "data:image/svg+xml," + encodeURIComponent(svg)
+interface StickerDef {
+  id: string; src: string; label: string
+  size: number; top: number; right?: number | string; left?: number | string; rotate: number; defaultOn: boolean
 }
 
-// 4-point sparkle star
-const STAR = enc(`<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-  <path d="M60 8 C60 8 64 44 76 60 C64 76 60 112 60 112 C60 112 56 76 44 60 C56 44 60 8 60 8Z" fill="#F5A623" stroke="white" stroke-width="5" stroke-linejoin="round"/>
-  <path d="M8 60 C8 60 44 56 60 44 C76 56 112 60 112 60 C112 60 76 64 60 76 C44 64 8 60 8 60Z" fill="#F5A623" stroke="white" stroke-width="5" stroke-linejoin="round"/>
-</svg>`)
-
-// Spiky daisy (many small petals)
-const SPIKY = enc(`<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-  <path d="M60 10
-    C62 28 68 30 72 22 C70 38 78 42 84 36 C78 50 86 56 92 52
-    C84 62 90 70 96 68 C86 76 88 84 94 86
-    C82 88 80 96 86 100 C74 98 70 106 72 112
-    C66 104 60 106 60 112 C54 106 48 104 48 112
-    C50 106 46 98 34 100 C40 96 38 88 26 86
-    C32 84 34 76 24 68 C30 70 36 62 28 52
-    C34 56 42 50 34 36 C40 42 48 38 46 22
-    C52 30 58 28 60 10Z"
-    fill="#4A7CF7" stroke="white" stroke-width="5" stroke-linejoin="round"/>
-</svg>`)
-
-// Puffy cloud flower (rounded bumps)
-const PUFFY = enc(`<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-  <path d="M60 14
-    C64 14 70 18 70 24 C76 18 84 18 88 24 C94 24 98 30 96 36
-    C102 38 106 46 102 52 C108 56 108 66 102 68
-    C106 74 104 82 98 84 C98 90 92 96 86 94
-    C84 100 76 102 72 98 C68 104 62 104 60 100
-    C58 104 52 104 48 98 C44 102 36 100 34 94
-    C28 96 22 90 22 84 C16 82 14 74 18 68
-    C12 66 12 56 18 52 C14 46 18 38 24 36
-    C22 30 26 24 32 24 C36 18 44 18 50 24
-    C50 18 56 14 60 14Z"
-    fill="#56BFEF" stroke="white" stroke-width="5" stroke-linejoin="round"/>
-</svg>`)
-
-// Swirl spiky flower
-const SWIRL = enc(`<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-  <path d="M60 10
-    C66 20 76 16 80 8 C82 22 92 24 98 18
-    C96 32 106 38 112 34 C106 46 112 56 112 60
-    C106 60 106 72 114 76 C104 76 100 86 106 92
-    C94 88 88 96 92 104 C80 98 76 108 78 114
-    C70 106 60 110 58 116 C54 108 44 110 40 116
-    C40 106 30 102 22 108 C26 98 20 88 10 92
-    C16 84 12 74 4 76 C10 68 8 58 4 52
-    C12 52 18 42 14 32 C24 38 32 32 30 18
-    C38 26 48 22 48 10 C52 20 62 18 60 10Z"
-    fill="#E8423A" stroke="white" stroke-width="5" stroke-linejoin="round"/>
-</svg>`)
-
-const STICKERS = [
-  { svg: STAR,  size: 88,  top:  48, right: 120, rotate: -12 },
-  { svg: SPIKY, size: 72,  top: 160, right:  44, rotate:  18 },
-  { svg: PUFFY, size: 68,  top: 260, right: 130, rotate:  -8 },
-  { svg: SWIRL, size: 70,  top: 350, right:  60, rotate:  22 },
+const ALL_STICKERS: StickerDef[] = [
+  { id: "thunder", src: "/Thunder.svg",    label: "Thunder", size: 86,  top:  80, left: "calc(50% - 280px - 86px - 16px)", rotate: -15, defaultOn: true  },
+  { id: "green",   src: "/Green.svg",      label: "Green",   size: 100, top:  40, right: 160, rotate: -12, defaultOn: false },
+  { id: "cloud",   src: "/Cloud.svg",      label: "Cloud",   size: 84,  top:  80, left: "calc(50% + 280px + 16px)", rotate:  18, defaultOn: true  },
+  { id: "bang",    src: "/Bang.svg",       label: "Bang",    size: 80,  top: 260, right: 100, rotate:  -8, defaultOn: false },
+  { id: "spark",   src: "/Spark.svg",      label: "Spark",   size: 76,  top: 160, right: 160, rotate:  22, defaultOn: false },
+  { id: "figma",   src: "/Figma.svg",      label: "Figma",   size: 76,  top: 280, right:  50, rotate:   8, defaultOn: false },
+  { id: "claude",  src: "/Claude.svg",     label: "Claude",  size: 80,  top: 300, right: 160, rotate: -10, defaultOn: false },
+  { id: "vercel",  src: "/Vercel.svg",     label: "Vercel",  size: 76,  top: 200, right: 240, rotate:  12, defaultOn: false },
+  { id: "hello",   src: "/HelloWorld.svg", label: "Hello",   size: 92,  top: 100, right: 240, rotate:  16, defaultOn: false },
 ]
 
-// ── Single sticker ───────────────────────────────────────────────────────────
-function Sticker({ svg, size, top, right, rotate, filterId }: {
-  svg: string; size: number; top: number; right: number; rotate: number; filterId: string
+function Sticker({ src, size, top, right, left, rotate, uid }: {
+  src: string; size: number; top: number; right?: number | string; left?: number | string; rotate: number; uid: string
 }) {
-  const containerRef   = useRef<HTMLDivElement>(null)
-  const draggableRef   = useRef<HTMLDivElement>(null)
-  const plRef          = useRef<SVGFEPointLightElement>(null)
-  const plFlippedRef   = useRef<SVGFEPointLightElement>(null)
-  const isDragging     = useRef(false)
-  const dragOffset     = useRef({ x: 0, y: 0 })
+  const draggableRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const isDragging   = useRef(false)
+  const dragOffset   = useRef({ x: 0, y: 0 })
   const [hovered, setHovered] = useState(false)
   const [active,  setActive]  = useState(false)
 
   useEffect(() => {
     function onMouseMove(e: MouseEvent) {
-      const el  = containerRef.current
-      const pl  = plRef.current
-      const plf = plFlippedRef.current
-      if (!el || !pl || !plf) return
-      const rect = el.getBoundingClientRect()
-      pl.setAttribute("x",  String(e.clientX - rect.left))
-      pl.setAttribute("y",  String(e.clientY - rect.top))
-      plf.setAttribute("x", String(e.clientX - rect.left))
-      plf.setAttribute("y", String(rect.height - (e.clientY - rect.top)))
       if (isDragging.current && draggableRef.current) {
-        draggableRef.current.style.left = (e.clientX - dragOffset.current.x) + "px"
-        draggableRef.current.style.top  = (e.clientY - dragOffset.current.y) + "px"
+        const el = draggableRef.current
+        const parent = el.offsetParent as HTMLElement | null
+        const parentRect = parent ? parent.getBoundingClientRect() : { left: 0, top: 0 }
+        el.style.left  = (e.clientX - dragOffset.current.x - parentRect.left) + "px"
+        el.style.top   = (e.clientY - dragOffset.current.y - parentRect.top)  + "px"
       }
     }
-    function onMouseUp() { isDragging.current = false }
+    function onMouseUp() {
+      isDragging.current = false
+      setActive(false)
+    }
     window.addEventListener("mousemove", onMouseMove)
-    window.addEventListener("mouseup", onMouseUp)
-    return () => { window.removeEventListener("mousemove", onMouseMove); window.removeEventListener("mouseup", onMouseUp) }
+    window.addEventListener("mouseup",   onMouseUp)
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove)
+      window.removeEventListener("mouseup",   onMouseUp)
+    }
   }, [])
 
-  const onMouseDown = useCallback((e: React.MouseEvent) => {
-    if (!draggableRef.current) return
-    isDragging.current = true
-    const rect = draggableRef.current.getBoundingClientRect()
+  function onMouseDown(e: React.MouseEvent) {
+    const el = draggableRef.current
+    if (!el) return
+    e.preventDefault()
+    const rect = el.getBoundingClientRect()
+    const parent = el.offsetParent as HTMLElement | null
+    const parentRect = parent ? parent.getBoundingClientRect() : { left: 0, top: 0 }
     dragOffset.current = { x: e.clientX - rect.left, y: e.clientY - rect.top }
-    draggableRef.current.style.position = "fixed"
-    draggableRef.current.style.left = rect.left + "px"
-    draggableRef.current.style.top  = rect.top  + "px"
-    draggableRef.current.style.right = "auto"
-  }, [])
+    // anchor to absolute position within parent so dragging works correctly
+    el.style.right = "auto"
+    el.style.left  = (rect.left - parentRect.left) + "px"
+    el.style.top   = (rect.top  - parentRect.top)  + "px"
+    isDragging.current = true
+    setActive(true)
+  }
 
   const mainClip = active
-    ? `polygon(${START} ${PA}, ${END} ${PA}, ${END} ${END}, ${START} ${END})`
+    ? `polygon(${START} ${PEELBACK_ACTIVE}, ${END} ${PEELBACK_ACTIVE}, ${END} ${END}, ${START} ${END})`
     : hovered
-    ? `polygon(${START} ${PH}, ${END} ${PH}, ${END} ${END}, ${START} ${END})`
+    ? `polygon(${START} ${PEELBACK_HOVER},  ${END} ${PEELBACK_HOVER},  ${END} ${END}, ${START} ${END})`
     : `polygon(${START} ${START}, ${END} ${START}, ${END} ${END}, ${START} ${END})`
 
   const flapClip = active
-    ? `polygon(${START} ${START}, ${END} ${START}, ${END} ${PA}, ${START} ${PA})`
+    ? `polygon(${START} ${START}, ${END} ${START}, ${END} ${PEELBACK_ACTIVE}, ${START} ${PEELBACK_ACTIVE})`
     : hovered
-    ? `polygon(${START} ${START}, ${END} ${START}, ${END} ${PH}, ${START} ${PH})`
+    ? `polygon(${START} ${START}, ${END} ${START}, ${END} ${PEELBACK_HOVER},  ${START} ${PEELBACK_HOVER})`
     : `polygon(${START} ${START}, ${END} ${START}, ${END} ${START}, ${START} ${START})`
 
   const flapTop = active
-    ? `calc(-100% + 2 * ${PA} - 1px)`
+    ? `calc(-100% + 2 * ${PEELBACK_ACTIVE} - 1px)`
     : hovered
-    ? `calc(-100% + 2 * ${PH} - 1px)`
+    ? `calc(-100% + 2 * ${PEELBACK_HOVER} - 1px)`
     : `calc(-100% - ${PAD} - ${PAD})`
 
   const transition = active ? `all ${PEEL_EASING}` : `all ${HOVER_EASING}`
-  const plId    = `${filterId}_pl`
-  const plFId   = `${filterId}_plf`
-  const shadowId = `${filterId}_shadow`
-  const fillId  = `${filterId}_fill`
+  const imgStyle: React.CSSProperties = { width: size, display: "block", transform: `rotate(${rotate}deg)`, userSelect: "none" }
+
+  const fillId   = `st-fi-${uid}`
 
   return (
     <>
       <svg height="0" width="0" style={{ position: "absolute", pointerEvents: "none" }}>
         <defs>
-          <filter id={plId}>
-            <feGaussianBlur stdDeviation="1" result="blur" />
-            <feSpecularLighting result="spec" in="blur" specularExponent="100" specularConstant="0.1" lightingColor="white">
-              <fePointLight ref={plRef} x="60" y="60" z="300" />
-            </feSpecularLighting>
-            <feComposite in="spec" in2="SourceGraphic" operator="screen" result="lit" />
-            <feComposite in="lit" in2="SourceAlpha" operator="in" />
-          </filter>
-          <filter id={plFId}>
-            <feGaussianBlur stdDeviation="8" result="blur" />
-            <feSpecularLighting result="spec" in="blur" specularExponent="100" specularConstant="0.6" lightingColor="white">
-              <fePointLight ref={plFlippedRef} x="60" y="60" z="300" />
-            </feSpecularLighting>
-            <feComposite in="spec" in2="SourceGraphic" operator="screen" result="lit" />
-            <feComposite in="lit" in2="SourceAlpha" operator="in" />
-          </filter>
-          <filter id={shadowId}>
-            <feDropShadow dx="1" dy="2" stdDeviation="4" floodColor="black" floodOpacity="0.15" />
-          </filter>
           <filter id={fillId}>
             <feOffset dx="0" dy="0" in="SourceAlpha" result="shape" />
             <feFlood floodColor="rgb(179,179,179)" result="flood" />
@@ -178,38 +115,32 @@ function Sticker({ svg, size, top, right, rotate, filterId }: {
       <div
         ref={draggableRef}
         onMouseDown={onMouseDown}
-        style={{ position: "absolute", top, right, cursor: "grab", zIndex: 20, userSelect: "none" }}
+        style={{ position: "absolute", top, right, left, cursor: isDragging.current ? "grabbing" : "grab", zIndex: 20, userSelect: "none" }}
       >
         <div
           ref={containerRef}
           onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => { setHovered(false); setActive(false) }}
-          onMouseDown={() => setActive(true)}
-          onMouseUp={() => setActive(false)}
+          onMouseLeave={() => { setHovered(false); if (!isDragging.current) setActive(false) }}
           style={{ position: "relative" }}
         >
-          {/* Body */}
-          <div style={{ clipPath: mainClip, transition, filter: `url(#${shadowId})`, willChange: "clip-path" }}>
-            <div style={{ filter: `url(#${plId})` }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={svg} alt="" draggable={false} style={{ width: size, display: "block", transform: `rotate(${rotate}deg)` }} />
-            </div>
+          {/* Main sticker body */}
+          <div style={{ clipPath: mainClip, transition, willChange: "clip-path" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={src} alt="" draggable={false} style={imgStyle} />
           </div>
 
-          {/* Shadow blob */}
-          <div style={{ position: "absolute", top: "0.6rem", left: "0.3rem", width: "100%", height: "100%", filter: "brightness(0) blur(8px)", opacity: 0.12, pointerEvents: "none" }}>
+          {/* Drop shadow blob */}
+          <div style={{ position: "absolute", top: "0.1rem", left: "0.05rem", width: "100%", height: "100%", filter: "brightness(0) blur(0.5px)", opacity: 0.04, pointerEvents: "none" }}>
             <div style={{ filter: `url(#${fillId})` }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={svg} alt="" draggable={false} style={{ width: size, display: "block", transform: `rotate(${rotate}deg)` }} />
+              <img src={src} alt="" draggable={false} style={imgStyle} />
             </div>
           </div>
 
           {/* Peeled flap */}
           <div style={{ position: "absolute", width: "100%", height: "100%", left: 0, top: flapTop, clipPath: flapClip, transform: "scaleY(-1)", transition, willChange: "clip-path, top", pointerEvents: "none" }}>
-            <div style={{ filter: `url(#${plFId})` }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={svg} alt="" draggable={false} style={{ width: size, display: "block", transform: `rotate(${rotate}deg)`, filter: `url(#${fillId})` }} />
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={src} alt="" draggable={false} style={{ ...imgStyle, filter: `url(#${fillId})` }} />
           </div>
         </div>
       </div>
@@ -218,11 +149,78 @@ function Sticker({ svg, size, top, right, rotate, filterId }: {
 }
 
 export default function FuzzyStickers() {
+  const [active, setActive] = useState<Set<string>>(
+    () => new Set(ALL_STICKERS.filter(s => s.defaultOn).map(s => s.id))
+  )
+  const [paletteOpen, setPaletteOpen] = useState(false)
+  const toggle = (id: string) =>
+    setActive(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n })
+
   return (
     <>
-      {STICKERS.map((s, i) => (
-        <Sticker key={i} {...s} filterId={`fuzzy_${i}`} />
+      {ALL_STICKERS.filter(s => active.has(s.id)).map(s => (
+        <Sticker key={s.id} uid={s.id} src={s.src} size={s.size} top={s.top} right={s.right} left={s.left} rotate={s.rotate} />
       ))}
+
+      <div style={{ position: "absolute", bottom: 24, right: 0, zIndex: 30 }}>
+        <AnimatePresence>
+          {paletteOpen && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 6 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 6 }}
+              transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                position: "absolute", bottom: 44, right: 0,
+                background: "var(--bg)", border: "none",
+                borderRadius: 16, padding: "10px 10px",
+                display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 4,
+                boxShadow: "0px 0px 0px 1px rgba(0,0,0,0.06), 0px 1px 2px -1px rgba(0,0,0,0.06), 0px 2px 4px 0px rgba(0,0,0,0.04)",
+                width: 212, transformOrigin: "bottom right",
+              }}
+            >
+              {ALL_STICKERS.map((s, i) => (
+                <motion.button
+                  key={s.id}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.02, duration: 0.14, ease: "easeOut" }}
+                  onClick={() => { playClick(); toggle(s.id) }}
+                  title={s.label}
+                  style={{
+                    background:   active.has(s.id) ? "var(--surface)" : "transparent",
+                    border:       `1.5px solid ${active.has(s.id) ? "var(--border-mid)" : "transparent"}`,
+                    borderRadius: 10, padding: 5, cursor: "pointer",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    transition: "background 0.15s, border-color 0.15s",
+                  }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={s.src} alt={s.label} draggable={false} style={{ width: 30, height: 30, objectFit: "contain" }} />
+                </motion.button>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <button
+          onClick={() => { playClick(); setPaletteOpen(o => !o) }}
+          title="Stickers"
+          onMouseEnter={e => { const svgs = (e.currentTarget as HTMLElement).querySelectorAll("rect"); svgs.forEach(r => r.setAttribute("fill", "rgb(255,107,48)")) }}
+          onMouseLeave={e => { const svgs = (e.currentTarget as HTMLElement).querySelectorAll("rect"); svgs.forEach(r => r.setAttribute("fill", "var(--c-secondary)")) }}
+          style={{
+            background: "var(--bg)", border: "none",
+            borderRadius: 8, width: 32, height: 32, cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            boxShadow: "0px 0px 0px 1px rgba(0,0,0,0.06), 0px 1px 2px -1px rgba(0,0,0,0.06), 0px 2px 4px 0px rgba(0,0,0,0.04)",
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <rect x="4" y="7" width="8" height="6" rx="1" fill="var(--c-secondary)" style={{ transition: "fill 0.15s" }} />
+            <rect x="5.5" y="4" width="5" height="4" rx="1" fill="var(--c-secondary)" opacity="0.6" style={{ transition: "fill 0.15s" }} />
+            <rect x="2" y="13" width="12" height="1.5" rx="0.75" fill="var(--c-secondary)" opacity="0.5" style={{ transition: "fill 0.15s" }} />
+          </svg>
+        </button>
+      </div>
     </>
   )
 }
