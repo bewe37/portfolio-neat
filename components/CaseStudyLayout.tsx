@@ -1012,18 +1012,6 @@ export default function CaseStudyLayout({
   return (
     <>
     <FloatingNav />
-    <Link
-      href={backHref}
-      onClick={() => playClick()}
-      className="rsp-hide-mobile"
-      style={{
-        position: "fixed", top: 28, left: 32, zIndex: 200,
-        fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500,
-        letterSpacing: "-0.01em", color: "var(--c-dim)", textDecoration: "none",
-      }}
-    >
-      Home
-    </Link>
     <MobileBackBar href={backHref} />
     <div style={{ minHeight: "100dvh", display: "flex", justifyContent: "center" }}>
       <div

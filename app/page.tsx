@@ -98,36 +98,40 @@ export default function HomePage() {
 
           {/* ── Hero ──────────────────────────────────────────────────── */}
           <section style={{ padding: "24px 0 8px", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-            <FadeUp delay={0} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12, padding: "100px 0 0 0", textAlign: "center" }}>
-              <NameFlipChip label="Georgius" tileH={28} />
-              <p style={{
-                fontFamily:    "var(--font-sans)",
-                fontSize:      17,
-                fontWeight:    400,
-                letterSpacing: "-0.01em",
-                lineHeight:    1.9,
-                color:         "var(--c-primary)",
-                margin:        0,
-                maxWidth: 560,
-              }}>
-                I&apos;m a product designer based in Toronto. Passionate about turning why is this so confusing into wait, that was <EasyWord /> Mostly through obsessive <WrenchWord />
-              </p>
-              <p style={{
-                fontFamily:    "var(--font-sans)",
-                fontSize:      15,
-                fontWeight:    400,
-                letterSpacing: "-0.01em",
-                lineHeight:    1.9,
-                color:         "var(--c-dim)",
-                margin:        0,
-              }}>
-                Previously taking care of pixels at<InlineLogoChip src="/amdchip.svg" alt="AMD" link="https://www.amd.com" size={48} />&amp;<InlineLogoChip src="/safechip.svg" alt="Safe Software" link="https://www.safe.com" size={60} />
-              </p>
-            </FadeUp>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12, padding: "100px 0 0 0", textAlign: "center" }}>
+              <FadeUp delay={0.1}>
+                <NameFlipChip label="Georgius" tileH={28} />
+              </FadeUp>
+              <FadeUp delay={0.3} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
+                <p style={{
+                  fontFamily:    "var(--font-sans)",
+                  fontSize:      17,
+                  fontWeight:    400,
+                  letterSpacing: "-0.01em",
+                  lineHeight:    1.9,
+                  color:         "var(--c-primary)",
+                  margin:        0,
+                  maxWidth: 560,
+                }}>
+                  I&apos;m a product designer based in Toronto. Passionate about turning why is this so confusing into wait, that was <EasyWord /> Mostly through obsessive <WrenchWord />
+                </p>
+                <p style={{
+                  fontFamily:    "var(--font-sans)",
+                  fontSize:      15,
+                  fontWeight:    400,
+                  letterSpacing: "-0.01em",
+                  lineHeight:    1.9,
+                  color:         "var(--c-dim)",
+                  margin:        0,
+                }}>
+                  Previously taking care of pixels at<InlineLogoChip src="/amdchip.svg" alt="AMD" link="https://www.amd.com" size={48} />&amp;<InlineLogoChip src="/safechip.svg" alt="Safe Software" link="https://www.safe.com" size={60} />
+                </p>
+              </FadeUp>
+            </div>
           </section>
 
           {/* ── Selected Work label (inside grid) ─────────────────────── */}
-          <FadeUp delay={0.1}>
+          <FadeUp delay={0.5}>
             <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", paddingTop: 140 }}>
               <p style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.01em", margin: 0 }}>
                 Selected work
@@ -141,14 +145,14 @@ export default function HomePage() {
         </div>{/* end hero-grid */}
 
         {/* ── Project cards (outside grid) ────────────────────────────── */}
-        <FadeUp delay={0.18}>
+        <FadeUp delay={0.6}>
           <section style={{ padding: "16px 0 64px", display: "flex", flexDirection: "column", gap: 24 }}>
             <ProjectCards projects={PROJECTS} />
           </section>
         </FadeUp>
 
         {/* ── Vibe-coded section ───────────────────────────────────────── */}
-        <FadeUp delay={0.22}>
+        <FadeUp delay={0.7}>
           <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", paddingBottom: 16 }}>
             <p style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.01em", margin: 0 }}>
               Built on Vibes ~

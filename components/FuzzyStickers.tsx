@@ -11,7 +11,7 @@ const PEELBACK_ACTIVE = "60%"
 const PAD   = "10px"
 const START = `calc(-1 * ${PAD})`
 const END   = `calc(100% + ${PAD})`
-const PEEL_EASING  = `2s linear(0,0.002 0.4%,0.008 0.9%,0.02 1.4%,0.035 1.9%,0.055 2.4%,0.083 3%,0.11 3.5%,0.146 4.1%,0.214 5.1%,0.297 6.2%,0.624 10.2%,0.756 11.9%,0.821 12.8%,0.874 13.6%,0.93 14.5%,0.975 15.3%,1.016 16.1%,1.053 16.9%,1.085 17.7%,1.116 18.6%,1.139 19.4%,1.16 20.3%,1.176 21.2%,1.187 22.1%,1.195 23.2%,1.197 24.4%,1.193 25.6%,1.183 26.9%,1.17 28.1%,1.153 29.4%,1.055 35.6%,1.031 37.3%,1.012 38.8%,0.994 40.6%,0.98 42.3%,0.97 44.1%,0.964 45.9%,0.961 48.3%,0.964 51.1%,0.97 53.7%,0.997 62.7%,1.003 66%,1.007 69.3%,1.007 74.4%,1 89.2%,1)`
+const PEEL_EASING  = `1.4s linear(0,0.002 0.4%,0.008 0.9%,0.02 1.4%,0.035 1.9%,0.055 2.4%,0.083 3%,0.11 3.5%,0.146 4.1%,0.214 5.1%,0.297 6.2%,0.624 10.2%,0.756 11.9%,0.821 12.8%,0.874 13.6%,0.93 14.5%,0.975 15.3%,1.016 16.1%,1.053 16.9%,1.085 17.7%,1.116 18.6%,1.139 19.4%,1.16 20.3%,1.176 21.2%,1.187 22.1%,1.195 23.2%,1.197 24.4%,1.193 25.6%,1.183 26.9%,1.17 28.1%,1.153 29.4%,1.055 35.6%,1.031 37.3%,1.012 38.8%,0.994 40.6%,0.98 42.3%,0.97 44.1%,0.964 45.9%,0.961 48.3%,0.964 51.1%,0.97 53.7%,0.997 62.7%,1.003 66%,1.007 69.3%,1.007 74.4%,1 89.2%,1)`
 const HOVER_EASING = `1s linear(0,0.008 1.1%,0.031 2.2%,0.129 4.8%,0.257 7.2%,0.671 14.2%,0.789 16.5%,0.881 18.6%,0.957 20.7%,1.019 22.9%,1.063 25.1%,1.094 27.4%,1.114 30.7%,1.112 34.5%,1.018 49.9%,0.99 59.1%,1)`
 
 interface StickerDef {
@@ -21,21 +21,23 @@ interface StickerDef {
 
 const ALL_STICKERS: StickerDef[] = [
   { id: "thunder", src: "/Thunder.svg",    label: "Thunder", size: 86,  top:  80, left: "calc(50% - 280px - 86px - 16px)", rotate: -15, defaultOn: true  },
-  { id: "cloud",   src: "/Cloud.svg",      label: "Cloud",   size: 84,  top:  80, left: "calc(50% + 280px + 16px)", rotate:  18, defaultOn: false },
-  { id: "spark",   src: "/Spark.svg",      label: "Spark",   size: 76,  top:  80, left: "calc(50% + 280px + 16px)", rotate:  22, defaultOn: true  },
-  { id: "green",   src: "/Green.svg",      label: "Green",   size: 100, top:  40, right: 160, rotate: -12, defaultOn: false },
-  { id: "bang",    src: "/Bang.svg",       label: "Bang",    size: 80,  top: 260, right: 100, rotate:  -8, defaultOn: false },
+  { id: "cloud",   src: "/Cloud.svg",      label: "Cloud",   size: 84,  top: 260, left: "calc(50% - 280px - 20px)", rotate:  18, defaultOn: true  },
+  { id: "spark",   src: "/Spark.svg",      label: "Spark",   size: 76,  top: 320, left: "calc(50% + 280px + 16px)", rotate:  22, defaultOn: false },
+  { id: "green",   src: "/Green.svg",      label: "Green",   size: 100, top:  95, left: "calc(50% + 280px + 16px)", rotate: -12, defaultOn: true  },
+  { id: "bang",    src: "/Bang.svg",       label: "Bang",    size: 80,  top: 260, left: "calc(50% + 190px)", rotate:  -8, defaultOn: true  },
   { id: "figma",   src: "/Figma.svg",      label: "Figma",   size: 76,  top: 280, right:  50, rotate:   8, defaultOn: false },
   { id: "claude",  src: "/Claude.svg",     label: "Claude",  size: 80,  top: 300, right: 160, rotate: -10, defaultOn: false },
   { id: "vercel",  src: "/Vercel.svg",     label: "Vercel",  size: 76,  top: 200, right: 240, rotate:  12, defaultOn: false },
   { id: "hello",   src: "/HelloWorld.svg", label: "Hello",   size: 92,  top: 100, right: 240, rotate:  16, defaultOn: false },
-  { id: "taxi",    src: "/Taxi.svg",       label: "Taxi",    size: 100, top: 220, right:  60, rotate:   8, defaultOn: false },
-  { id: "ramen",   src: "/Ramen.svg",      label: "Ramen",   size: 84,  top: 220, right: 160, rotate: -10, defaultOn: false },
+  { id: "tumpeng",   src: "/Tumpeng.svg",   label: "Tumpeng",   size: 90,  top: 160, right: 280, rotate:   6, defaultOn: false },
+  { id: "rickshaw",  src: "/Rickshaw.svg",  label: "Rickshaw",  size: 96,  top: 300, right: 220, rotate: -8,  defaultOn: false },
+  { id: "friedrice", src: "/FriedRice.svg", label: "Fried Rice",size: 88,  top: 120, right: 320, rotate:  12, defaultOn: false },
+  { id: "satay",     src: "/Satay.svg",     label: "Satay",     size: 82,  top: 260, right: 300, rotate:  -5, defaultOn: false },
 ]
 
-function Sticker({ src, size, top, right, left, rotate, uid, spawnAt }: {
+function Sticker({ src, size, top, right, left, rotate, uid, spawnAt, introDelay = 0 }: {
   src: string; size: number; top: number; right?: number | string; left?: number | string
-  rotate: number; uid: string; spawnAt?: { x: number; y: number }
+  rotate: number; uid: string; spawnAt?: { x: number; y: number }; introDelay?: number
 }) {
   const draggableRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -43,6 +45,14 @@ function Sticker({ src, size, top, right, left, rotate, uid, spawnAt }: {
   const dragOffset   = useRef({ x: 0, y: 0 })
   const [hovered, setHovered] = useState(false)
   const [active,  setActive]  = useState(false)
+  const [intro,   setIntro]   = useState(!spawnAt)
+
+  useEffect(() => {
+    if (!intro) return
+    const t = setTimeout(() => setIntro(false), introDelay + 60)
+    return () => clearTimeout(t)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     function onMouseMove(e: MouseEvent) {
@@ -98,25 +108,26 @@ function Sticker({ src, size, top, right, left, rotate, uid, spawnAt }: {
     setActive(true)
   }
 
-  const mainClip = active
+  const peeled = active || intro
+  const mainClip = peeled
     ? `polygon(${START} ${PEELBACK_ACTIVE}, ${END} ${PEELBACK_ACTIVE}, ${END} ${END}, ${START} ${END})`
     : hovered
     ? `polygon(${START} ${PEELBACK_HOVER},  ${END} ${PEELBACK_HOVER},  ${END} ${END}, ${START} ${END})`
     : `polygon(${START} ${START}, ${END} ${START}, ${END} ${END}, ${START} ${END})`
 
-  const flapClip = active
+  const flapClip = peeled
     ? `polygon(${START} ${START}, ${END} ${START}, ${END} ${PEELBACK_ACTIVE}, ${START} ${PEELBACK_ACTIVE})`
     : hovered
     ? `polygon(${START} ${START}, ${END} ${START}, ${END} ${PEELBACK_HOVER},  ${START} ${PEELBACK_HOVER})`
     : `polygon(${START} ${START}, ${END} ${START}, ${END} ${START}, ${START} ${START})`
 
-  const flapTop = active
+  const flapTop = peeled
     ? `calc(-100% + 2 * ${PEELBACK_ACTIVE} - 1px)`
     : hovered
     ? `calc(-100% + 2 * ${PEELBACK_HOVER} - 1px)`
     : `calc(-100% - ${PAD} - ${PAD})`
 
-  const transition = active ? `all ${PEEL_EASING}` : `all ${HOVER_EASING}`
+  const transition = peeled ? `all ${PEEL_EASING}` : `all ${HOVER_EASING}`
   const imgStyle: React.CSSProperties = { width: size, display: "block", transform: `rotate(${rotate}deg)`, userSelect: "none" }
 
   const fillId = `st-fi-${uid}`
@@ -170,11 +181,17 @@ function Sticker({ src, size, top, right, left, rotate, uid, spawnAt }: {
 }
 
 export default function FuzzyStickers() {
+  const [ready, setReady] = useState(false)
   const [active, setActive] = useState<Set<string>>(
     () => new Set(ALL_STICKERS.filter(s => s.defaultOn).map(s => s.id))
   )
   const [spawnMap, setSpawnMap] = useState<Record<string, { x: number; y: number }>>({})
   const [paletteOpen, setPaletteOpen] = useState(false)
+
+  useEffect(() => {
+    const t = setTimeout(() => setReady(true), 400)
+    return () => clearTimeout(t)
+  }, [])
 
   function handlePaletteMouseDown(s: StickerDef, e: React.MouseEvent) {
     if (active.has(s.id)) {
@@ -191,11 +208,12 @@ export default function FuzzyStickers() {
 
   return (
     <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-      {ALL_STICKERS.filter(s => active.has(s.id)).map(s => (
+      {ready && ALL_STICKERS.filter(s => active.has(s.id)).map((s, i) => (
         <Sticker
           key={s.id} uid={s.id} src={s.src} size={s.size}
           top={s.top} right={s.right} left={s.left} rotate={s.rotate}
           spawnAt={spawnMap[s.id]}
+          introDelay={spawnMap[s.id] ? 0 : i * 150}
         />
       ))}
 

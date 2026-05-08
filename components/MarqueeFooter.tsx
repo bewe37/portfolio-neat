@@ -183,7 +183,7 @@ export default function MarqueeFooter() {
             letterSpacing: "-0.03em", lineHeight: 1.25,
             margin: 0, maxWidth: 560, opacity: 0.92,
           }}>
-            Sleep is a design constraint. Available for hire if you catch me awake.
+            Sleep is a design constraint.<br />Available for hire if you catch me awake.
           </p>
           <div style={{ flexShrink: 0, width: 186 * 0.7 + 40, height: 214 * 0.7, overflow: "visible" }}>
             <div style={{ transform: "scale(0.7)", transformOrigin: "top left" }}>
