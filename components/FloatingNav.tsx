@@ -203,9 +203,8 @@ const NAV_STYLE: React.CSSProperties = {
 }
 
 /* ── Shell — never re-renders after mount ── */
-export default function FloatingNav({ collapsible = false }: { collapsible?: boolean }) {
+export default function FloatingNav() {
   const [theme, setTheme] = useState<Theme>("light")
-  const [expanded, setExpanded] = useState(false)
   const didAnimate = useRef(false)
 
   useEffect(() => {
@@ -230,54 +229,15 @@ export default function FloatingNav({ collapsible = false }: { collapsible?: boo
       display: "flex", justifyContent: "center",
       zIndex: 9999, pointerEvents: "none",
     }}>
-      <motion.div
+      <motion.nav
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
         onAnimationComplete={() => { didAnimate.current = true }}
-        style={{ display: "flex", alignItems: "center", gap: 8 }}
+        style={NAV_STYLE}
       >
-        {/* Desktop nav — always visible */}
-        <nav className={collapsible ? "rsp-hide-mobile" : undefined} style={NAV_STYLE}>
-          <NavInner theme={theme} toggleTheme={toggleTheme} />
-        </nav>
-
-        {/* Mobile collapsible — only on case study pages */}
-        {collapsible && (
-          <div className="rsp-mobile-only" style={{ display: "none", alignItems: "center", gap: 8 }}>
-            {/* Expanded nav pill */}
-            <AnimatePresence>
-              {expanded && (
-                <motion.nav
-                  key="expanded"
-                  initial={{ opacity: 0, scale: 0.92, y: 6 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.92, y: 6 }}
-                  transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-                  style={NAV_STYLE}
-                >
-                  <NavInner theme={theme} toggleTheme={toggleTheme} />
-                </motion.nav>
-              )}
-            </AnimatePresence>
-
-            {/* Hamburger / X button */}
-            <button
-              onClick={() => { playClick(); setExpanded(o => !o) }}
-              style={{
-                ...NAV_STYLE,
-                border: "none",
-                width: 44, flexShrink: 0,
-                cursor: "pointer",
-                color: "var(--c-dim)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}
-            >
-              <MenuIcon open={expanded} />
-            </button>
-          </div>
-        )}
-      </motion.div>
+        <NavInner theme={theme} toggleTheme={toggleTheme} />
+      </motion.nav>
     </div>
   )
 }

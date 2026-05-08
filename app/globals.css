@@ -369,7 +369,8 @@ body.dark .hero-grid::before {
   /* Case study: collapse sidebar grid + show mobile back button */
   .rsp-cs-grid       { display: block !important; padding: 0 20px !important; }
   .rsp-toc-sidebar   { display: none !important; }
-  .rsp-back-mobile   { display: none !important; }
+  .rsp-back-mobile   { display: flex !important; }
+  .rsp-cs-main       { padding-top: 80px !important; }
 
   /* Scale project folders down on mobile for breathing room */
   .rsp-project-card-bg {

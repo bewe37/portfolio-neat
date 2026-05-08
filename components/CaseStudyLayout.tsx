@@ -618,6 +618,40 @@ function MultiHighlight({ contents, marginTop }: { contents: ContentBlock[]; mar
 }
 
 
+function MobileBackBar({ href }: { href: string }) {
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768)
+    check()
+    window.addEventListener("resize", check)
+    return () => window.removeEventListener("resize", check)
+  }, [])
+  if (!isMobile) return null
+  return (
+    <>
+      <style>{`.rsp-cs-main { padding-top: 72px !important; }`}</style>
+      <Link
+        href={href}
+        onClick={() => playClick()}
+        style={{
+          position: "fixed", top: 8, left: 0, right: 0, zIndex: 1002,
+          display: "flex", alignItems: "center", gap: 8,
+          padding: "20px 20px 4px",
+          background: "var(--bg)",
+          fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500,
+          letterSpacing: "-0.01em", color: "var(--c-secondary)",
+          textDecoration: "none",
+        }}
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+        Back
+      </Link>
+    </>
+  )
+}
+
 function BackButton({ href }: { href: string }) {
   const [hovered, setHovered] = useState(false)
   const router = useRouter()
@@ -977,31 +1011,20 @@ export default function CaseStudyLayout({
 
   return (
     <>
-    <FloatingNav collapsible />
+    <FloatingNav />
     <Link
       href={backHref}
       onClick={() => playClick()}
-      className="rsp-back-mobile"
+      className="rsp-hide-mobile"
       style={{
-        display:        "none",
-        position:       "fixed",
-        top:            20,
-        left:           20,
-        zIndex:         1002,
-        alignItems:     "center",
-        justifyContent: "center",
-        width:          36,
-        height:         36,
-        borderRadius:   8,
-        background:     "var(--bg)",
-        border:         "1px solid var(--border)",
-        textDecoration: "none",
+        position: "fixed", top: 28, left: 32, zIndex: 200,
+        fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500,
+        letterSpacing: "-0.01em", color: "var(--c-dim)", textDecoration: "none",
       }}
     >
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-        <path d="M8.5 2.5L4.5 7L8.5 11.5" stroke="var(--c-secondary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      </svg>
+      Home
     </Link>
+    <MobileBackBar href={backHref} />
     <div style={{ minHeight: "100dvh", display: "flex", justifyContent: "center" }}>
       <div
         className="rsp-cs-grid"
@@ -1037,7 +1060,7 @@ export default function CaseStudyLayout({
         </div>
 
         {/* Main content */}
-        <main className="rsp-pb" style={{ width: "100%", paddingTop: 56, paddingBottom: 120, minWidth: 0 }}>
+        <main className="rsp-pb rsp-cs-main" style={{ width: "100%", paddingTop: 56, paddingBottom: 120, minWidth: 0 }}>
 
           {/* Title */}
           <motion.div
