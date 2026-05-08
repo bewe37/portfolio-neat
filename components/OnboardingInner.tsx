@@ -443,7 +443,7 @@ function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, o
       height: "100%",
       padding: mobileDraw
         ? "clamp(56px, 10vw, 72px) 8px 24px"
-        : "clamp(56px, 10vw, 72px) clamp(12px, 4vw, 24px) 40px",
+        : "clamp(56px, 10vw, 72px) clamp(20px, 6vw, 32px) 40px",
       position: "relative",
       fontFamily: "var(--font-sans)",
       background: isGallery ? "#18181b" : "#ffffff",
