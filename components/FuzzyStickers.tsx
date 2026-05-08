@@ -209,10 +209,10 @@ export default function FuzzyStickers() {
               transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
               style={{
                 position: "absolute", bottom: 44, right: 0,
-                background: "var(--bg)", border: "none",
+                background: "var(--surface)", border: "1px solid var(--border-mid)",
                 borderRadius: 16, padding: "10px 10px",
                 display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 4,
-                boxShadow: "0px 0px 0px 1px rgba(0,0,0,0.06), 0px 1px 2px -1px rgba(0,0,0,0.06), 0px 2px 4px 0px rgba(0,0,0,0.04)",
+                boxShadow: "0 8px 24px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.12)",
                 width: 212, transformOrigin: "bottom right",
               }}
             >
@@ -245,10 +245,10 @@ export default function FuzzyStickers() {
           onMouseEnter={e => { const svgs = (e.currentTarget as HTMLElement).querySelectorAll("rect"); svgs.forEach(r => r.setAttribute("fill", "rgb(255,107,48)")) }}
           onMouseLeave={e => { const svgs = (e.currentTarget as HTMLElement).querySelectorAll("rect"); svgs.forEach(r => r.setAttribute("fill", "var(--c-secondary)")) }}
           style={{
-            background: "var(--bg)", border: "none",
+            background: "var(--surface)", border: "1px solid var(--border-mid)",
             borderRadius: 8, width: 32, height: 32, cursor: "pointer",
             display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: "0px 0px 0px 1px rgba(0,0,0,0.06), 0px 1px 2px -1px rgba(0,0,0,0.06), 0px 2px 4px 0px rgba(0,0,0,0.04)",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.12)",
           }}
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
