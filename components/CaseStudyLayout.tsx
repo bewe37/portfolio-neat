@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import MarqueeFooter from "@/components/MarqueeFooter"
+import FloatingNav from "@/components/FloatingNav"
 import { playClick } from "@/lib/click-sound"
 
 interface Spec       { label: string; value: string | string[] }
@@ -976,6 +977,7 @@ export default function CaseStudyLayout({
 
   return (
     <>
+    <FloatingNav collapsible />
     <Link
       href={backHref}
       onClick={() => playClick()}

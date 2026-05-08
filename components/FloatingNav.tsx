@@ -163,9 +163,49 @@ function NavInner({ theme, toggleTheme }: { theme: Theme; toggleTheme: () => voi
   )
 }
 
+/* ── Hamburger / X icon ── */
+function MenuIcon({ open }: { open: boolean }) {
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.span
+        key={open ? "x" : "menu"}
+        initial={{ opacity: 0, rotate: open ? -45 : 45, scale: 0.7 }}
+        animate={{ opacity: 1, rotate: 0, scale: 1 }}
+        exit={{ opacity: 0, rotate: open ? 45 : -45, scale: 0.7 }}
+        transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+        style={{ display: "inline-flex" }}
+      >
+        {open ? (
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2 2L12 12M12 2L2 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+          </svg>
+        ) : (
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2 4h10M2 7h10M2 10h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+          </svg>
+        )}
+      </motion.span>
+    </AnimatePresence>
+  )
+}
+
+const NAV_STYLE: React.CSSProperties = {
+  pointerEvents: "auto",
+  height: 44,
+  display: "flex", alignItems: "stretch",
+  backgroundColor: "var(--bg)",
+  border: "1px solid var(--border-mid)",
+  borderRadius: 99,
+  boxShadow: "0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06)",
+  backdropFilter: "blur(12px)",
+  WebkitBackdropFilter: "blur(12px)",
+  overflow: "hidden",
+}
+
 /* ── Shell — never re-renders after mount ── */
-export default function FloatingNav() {
+export default function FloatingNav({ collapsible = false }: { collapsible?: boolean }) {
   const [theme, setTheme] = useState<Theme>("light")
+  const [expanded, setExpanded] = useState(false)
   const didAnimate = useRef(false)
 
   useEffect(() => {
@@ -190,26 +230,54 @@ export default function FloatingNav() {
       display: "flex", justifyContent: "center",
       zIndex: 9999, pointerEvents: "none",
     }}>
-      <motion.nav
+      <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
         onAnimationComplete={() => { didAnimate.current = true }}
-        style={{
-          pointerEvents: "auto",
-          height: 44,
-          display: "flex", alignItems: "stretch",
-          backgroundColor: "var(--bg)",
-          border: "1px solid var(--border-mid)",
-          borderRadius: 99,
-          boxShadow: "0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06)",
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-          overflow: "hidden",
-        }}
+        style={{ display: "flex", alignItems: "center", gap: 8 }}
       >
-        <NavInner theme={theme} toggleTheme={toggleTheme} />
-      </motion.nav>
+        {/* Desktop nav — always visible */}
+        <nav className={collapsible ? "rsp-hide-mobile" : undefined} style={NAV_STYLE}>
+          <NavInner theme={theme} toggleTheme={toggleTheme} />
+        </nav>
+
+        {/* Mobile collapsible — only on case study pages */}
+        {collapsible && (
+          <div className="rsp-mobile-only" style={{ display: "none", alignItems: "center", gap: 8 }}>
+            {/* Expanded nav pill */}
+            <AnimatePresence>
+              {expanded && (
+                <motion.nav
+                  key="expanded"
+                  initial={{ opacity: 0, scale: 0.92, y: 6 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.92, y: 6 }}
+                  transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                  style={NAV_STYLE}
+                >
+                  <NavInner theme={theme} toggleTheme={toggleTheme} />
+                </motion.nav>
+              )}
+            </AnimatePresence>
+
+            {/* Hamburger / X button */}
+            <button
+              onClick={() => { playClick(); setExpanded(o => !o) }}
+              style={{
+                ...NAV_STYLE,
+                border: "none",
+                width: 44, flexShrink: 0,
+                cursor: "pointer",
+                color: "var(--c-dim)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}
+            >
+              <MenuIcon open={expanded} />
+            </button>
+          </div>
+        )}
+      </motion.div>
     </div>
   )
 }
