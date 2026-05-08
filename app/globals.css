@@ -317,8 +317,11 @@ body.dark .hero-grid::before {
   .rsp-handle    { display: none !important; }
 
   /* Footer */
-  .rsp-footer-inner  { padding: 28px 20px !important; }
-  .rsp-footer-bottom { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
+  .rsp-footer-inner  { padding: 36px 24px 44px !important; min-height: 320px !important; }
+  .rsp-footer-bottom { flex-direction: column !important; align-items: flex-start !important; gap: 16px !important; }
+
+  /* Companion — center at bottom on mobile */
+  .companion-anchor { right: 50% !important; transform: translateX(50%) !important; }
 
   /* Section spec strip: let items wrap without dividers looking odd */
   .rsp-spec-item { border-right: none !important; padding-right: 0 !important; margin-right: 24px !important; }

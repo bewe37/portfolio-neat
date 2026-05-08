@@ -5,7 +5,6 @@ import { motion } from "framer-motion"
 import TamagotchiWidget from "@/components/TamagotchiWidget"
 import { getBuddy } from "@/lib/buddies"
 import { SpriteView } from "@/components/SpriteBuddy"
-import { useDialKit } from "dialkit"
 
 function torontoTime() {
   return new Date().toLocaleTimeString("en-US", {
@@ -155,17 +154,8 @@ function BackToTop() {
 export default function MarqueeFooter() {
   const year = new Date().getFullYear()
 
-  const p = useDialKit("Footer", {
-    layout: {
-      paddingV:  [40,  0, 120],
-      paddingH:  [48,  0, 120],
-      innerGap:  [0,  0,  80],
-    },
-    minHeight: [260, 160, 600],
-  })
-
   return (
-    <div style={{ position: "relative", minHeight: p.minHeight, overflow: "hidden" }}>
+    <div style={{ position: "relative", minHeight: 260, overflow: "hidden" }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/Scene.jpg" alt="" style={{
         position: "absolute", inset: 0, width: "100%", height: "100%",
@@ -175,11 +165,10 @@ export default function MarqueeFooter() {
 
       <div className="rsp-footer-inner" style={{
         position: "relative", zIndex: 1,
-        minHeight: p.minHeight, margin: "0 auto",
+        minHeight: 260, margin: "0 auto",
         display: "flex", flexDirection: "column",
         justifyContent: "space-between",
-        padding: `${p.layout.paddingV}px ${p.layout.paddingH}px`,
-        gap: p.layout.innerGap,
+        padding: "40px 48px", gap: 0,
       }}>
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 24 }}>
           <p style={{

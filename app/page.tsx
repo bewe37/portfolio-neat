@@ -94,7 +94,7 @@ export default function HomePage() {
         {/* ── Grid texture: nav + hero + selected work label ──────────── */}
         <div style={{ maxWidth: 1200, margin: "0 auto", width: "100%" }}>
         <div className="hero-grid" style={{ position: "relative" }}>
-          <FuzzyStickers />
+          <div className="rsp-hide-mobile" style={{ position: "absolute", inset: 0, zIndex: 10, pointerEvents: "none" }}><FuzzyStickers /></div>
 
           {/* ── Hero ──────────────────────────────────────────────────── */}
           <section style={{ padding: "24px 0 8px", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>

@@ -28,8 +28,16 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
   const [erasing,  setErasing]  = useState(false)
   const [painting, setPainting] = useState(false)
   const [history,  setHistory]  = useState<(string | null)[][]>([])
+  const [isMobile, setIsMobile] = useState(false)
   const gridRef    = useRef<HTMLDivElement>(null)
   const previewRef = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 500)
+    check()
+    window.addEventListener("resize", check)
+    return () => window.removeEventListener("resize", check)
+  }, [])
 
   useEffect(() => {
     const saved = localStorage.getItem("customBuddyData")
@@ -81,13 +89,15 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
     setHistory(h => [...h.slice(-29), [...pixels]])
     setPainting(true)
     const t = e.touches[0], rect = gridRef.current!.getBoundingClientRect()
-    applyAt(Math.floor((t.clientY - rect.top) / DC) * DG + Math.floor((t.clientX - rect.left) / DC))
+    const cs = rect.width / DG
+    applyAt(Math.floor((t.clientY - rect.top) / cs) * DG + Math.floor((t.clientX - rect.left) / cs))
   }
 
   function handleTouchMove(e: React.TouchEvent) {
     e.preventDefault(); if (!painting) return
     const t = e.touches[0], rect = gridRef.current!.getBoundingClientRect()
-    applyAt(Math.floor((t.clientY - rect.top) / DC) * DG + Math.floor((t.clientX - rect.left) / DC))
+    const cs = rect.width / DG
+    applyAt(Math.floor((t.clientY - rect.top) / cs) * DG + Math.floor((t.clientX - rect.left) / cs))
   }
 
   const undo  = () => { if (!history.length) return; setPixels(history[history.length - 1]); setHistory(h => h.slice(0, -1)) }
@@ -110,6 +120,81 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
 
   const PV = DG * 3
 
+  // ── Mobile layout ─────────────────────────────────────────────
+  if (isMobile) {
+    // canvas size = viewport width minus the 8px padding on each side of CompanionStep
+    const canvasSize = `min(calc(100vw - 16px), 260px)`
+    return (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, width: "100%" }}>
+        <div
+          ref={gridRef}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={() => setPainting(false)}
+          style={{
+            display: "grid", gridTemplateColumns: `repeat(${DG}, 1fr)`,
+            width: canvasSize, height: canvasSize, flexShrink: 0,
+            borderRadius: 10, overflow: "hidden", border: "1px solid #e0e0e0",
+            userSelect: "none", touchAction: "none",
+            backgroundImage: `linear-gradient(45deg,rgba(0,0,0,.06) 25%,transparent 25%),linear-gradient(-45deg,rgba(0,0,0,.06) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,rgba(0,0,0,.06) 75%),linear-gradient(-45deg,transparent 75%,rgba(0,0,0,.06) 75%)`,
+            backgroundSize: "12.5% 12.5%", backgroundPosition: "0 0, 0 6.25%, 6.25% -6.25%, -6.25% 0",
+          }}
+        >
+          {pixels.map((px, i) => (
+            <div key={i} style={{ backgroundColor: px ?? "transparent", boxShadow: "inset 0 0 0 0.5px rgba(0,0,0,0.07)" }} />
+          ))}
+        </div>
+        <div style={{ display: "flex", gap: 6, width: canvasSize }}>
+          {([
+            { label: "Erase", active: erasing,  onClick: () => setErasing(e => !e), disabled: false },
+            { label: "Undo",  active: false,     onClick: undo,                      disabled: !history.length },
+            { label: "Clear", active: false,     onClick: clear,                     disabled: !hasContent },
+          ] as const).map(btn => (
+            <button key={btn.label} onClick={() => { playClick(); btn.onClick() }} disabled={btn.disabled} style={{
+              flex: 1, padding: "7px 0", borderRadius: 8,
+              border: btn.active ? "1px solid #111111" : "1px solid rgba(0,0,0,0.18)",
+              background: btn.active ? "#111111" : "rgba(0,0,0,0.06)",
+              color: btn.disabled ? "rgba(0,0,0,0.25)" : btn.active ? "#ffffff" : "rgba(0,0,0,0.65)",
+              fontSize: 10, fontWeight: 700, fontFamily: "var(--font-sans)",
+              letterSpacing: "0.06em", textTransform: "uppercase" as const,
+              cursor: btn.disabled ? "default" : "pointer", transition: "all 0.15s ease",
+            }}>{btn.label}</button>
+          ))}
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(8, 1fr)", gap: 5, width: canvasSize }}>
+          {DRAW_PALETTE.map(c => (
+            <motion.button key={c}
+              onClick={() => { playClick(); setColor(c); setErasing(false) }}
+              whileTap={{ scale: 0.85 }}
+              style={{
+                aspectRatio: "1", borderRadius: 6, backgroundColor: c,
+                border: "none", outline: "none", cursor: "pointer",
+                boxShadow: color === c && !erasing ? "0 0 0 2px #fff, 0 0 0 4px #111111" : "0 1px 4px rgba(0,0,0,0.22)",
+                transition: "box-shadow 0.15s ease",
+              }}
+            />
+          ))}
+        </div>
+        <motion.button
+          onClick={() => { if (hasContent) { playClick(); save() } }} disabled={!hasContent}
+          className="btn-shiny"
+          animate={{ opacity: hasContent ? 1 : 0.32, y: hasContent ? 0 : 4 }}
+          transition={{ duration: 0.22 }}
+          style={{
+            padding: "11px 32px", borderRadius: 99, border: "none",
+            background: "#111111", color: "#ffffff",
+            fontSize: 14, fontWeight: 700, fontFamily: "var(--font-sans)",
+            cursor: hasContent ? "pointer" : "default", letterSpacing: "-0.01em",
+            position: "relative", overflow: "hidden", width: canvasSize,
+          }}
+        >
+          Use as companion →
+        </motion.button>
+      </div>
+    )
+  }
+
+  // ── Desktop layout (original, unchanged) ──────────────────────
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
       <div style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>
@@ -229,7 +314,8 @@ function BuddyCard({ buddy, selected, dimmed, onSelect }: {
       onMouseLeave={() => setHovered(false)}
       style={{
         background: "none", border: "none", padding: 0, cursor: "pointer",
-        display: "flex", flexDirection: "column", alignItems: "center", gap: 16, outline: "none",
+        display: "flex", flexDirection: "column", alignItems: "center", gap: 10, outline: "none",
+        width: "100%",
         opacity: dimmed ? 0.35 : 1,
         filter: dimmed ? "saturate(0)" : "none",
         transform: selected ? "translateY(-8px) scale(1.04)" : hovered && !dimmed ? "translateY(-4px) scale(1.02)" : "none",
@@ -237,8 +323,8 @@ function BuddyCard({ buddy, selected, dimmed, onSelect }: {
       }}
     >
       <div style={{
-        width: buddy.tileW * SCALE + 32, height: buddy.tileH * SCALE + 32,
-        borderRadius: 20, border: `2px solid ${selected ? "#111111" : "#e0e0e0"}`,
+        width: "100%", aspectRatio: "1",
+        borderRadius: 16, border: `2px solid ${selected ? "#111111" : "#e0e0e0"}`,
         background: selected ? "#f0f0f0" : "#fafafa",
         display: "flex", alignItems: "center", justifyContent: "center",
         transition: "border-color 0.2s ease, background 0.2s ease",
@@ -252,8 +338,8 @@ function BuddyCard({ buddy, selected, dimmed, onSelect }: {
         }} />
         <SpriteView buddy={buddy} animKey={animKey} scale={SCALE} />
       </div>
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-        <span style={{ fontFamily: "var(--font-sans)", fontSize: 18, fontWeight: 700, color: "#111111", letterSpacing: "-0.01em" }}>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+        <span style={{ fontFamily: "var(--font-sans)", fontSize: "clamp(12px, 3vw, 18px)", fontWeight: 700, color: "#111111", letterSpacing: "-0.01em" }}>
           {buddy.name}
         </span>
       </div>
@@ -311,15 +397,23 @@ function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, o
 }) {
   const [tab, setTab]             = useState<"pick" | "draw" | "gallery">("pick")
   const [galleryPool, setGalleryPool] = useState<string[]>([])
+  const [tabsMobile, setTabsMobile]   = useState(false)
   const pickBtnRef   = useRef<HTMLButtonElement>(null)
   const drawBtnRef   = useRef<HTMLButtonElement>(null)
   const seeAllBtnRef = useRef<HTMLButtonElement>(null)
   const [pillStyle, setPillStyle] = useState({ x: 0, width: 0 })
 
   useEffect(() => {
+    const check = () => setTabsMobile(window.innerWidth < 500)
+    check()
+    window.addEventListener("resize", check)
+    return () => window.removeEventListener("resize", check)
+  }, [])
+
+  useEffect(() => {
     const ref = tab === "pick" ? pickBtnRef.current : tab === "draw" ? drawBtnRef.current : seeAllBtnRef.current
     if (ref) setPillStyle({ x: ref.offsetLeft, width: ref.offsetWidth })
-  }, [tab])
+  }, [tab, tabsMobile])
 
   useEffect(() => {
     if (tab !== "gallery" || galleryPool.length > 0) return
@@ -341,10 +435,16 @@ function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, o
 
   const isGallery = tab === "gallery"
 
+  const mobileDraw = tabsMobile && tab === "draw"
+
   return (
     <div style={{
       display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start",
-      height: "100%", padding: "72px 24px 40px", position: "relative",
+      height: "100%",
+      padding: mobileDraw
+        ? "clamp(56px, 10vw, 72px) 8px 24px"
+        : "clamp(56px, 10vw, 72px) clamp(12px, 4vw, 24px) 40px",
+      position: "relative",
       fontFamily: "var(--font-sans)",
       background: isGallery ? "#18181b" : "#ffffff",
       transition: "background 0.55s cubic-bezier(0.22,1,0.36,1)",
@@ -360,9 +460,10 @@ function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, o
       >
         {/* Toggle */}
         <div style={{
-          position: "relative", display: "flex", gap: 3, padding: 4, borderRadius: 99,
+          position: "relative", display: "flex", gap: 2, padding: 3, borderRadius: 99,
           background: isGallery ? "rgba(255,255,255,0.06)" : "#f0f0f0",
           border: isGallery ? "1px solid rgba(255,255,255,0.1)" : "1px solid #e0e0e0",
+          width: "fit-content", maxWidth: "calc(100vw - 48px)",
         }}>
           {pillStyle.width > 0 && (
             <motion.span
@@ -376,63 +477,51 @@ function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, o
               }}
             />
           )}
-          <motion.button
-            ref={pickBtnRef}
-            onClick={() => { playClick(); setTab("pick") }}
-            style={{
-              padding: "8px 20px", borderRadius: 99, border: "none", background: "transparent",
-              color: isGallery ? "rgba(255,255,255,0.4)" : tab === "pick" ? "#111111" : "#888888",
-              fontSize: 13, fontWeight: 600, fontFamily: "var(--font-sans)",
-              cursor: "pointer", letterSpacing: "-0.01em",
-              display: "flex", alignItems: "center", gap: 6, position: "relative", zIndex: 1,
-              transition: "color 0.3s ease",
-            }}
-          >
-            Pick a companion
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-              <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" strokeWidth="1.3"/>
-              <circle cx="4.8" cy="5.6" r="0.75" fill="currentColor"/>
-              <circle cx="8.2" cy="5.6" r="0.75" fill="currentColor"/>
-              <path d="M4.2 8C4.2 8 5 9.3 6.5 9.3C8 9.3 8.8 8 8.8 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-            </svg>
-          </motion.button>
-          <motion.button
-            ref={drawBtnRef}
-            onClick={() => { playClick(); setTab("draw") }}
-            style={{
-              padding: "8px 20px", borderRadius: 99, border: "none", background: "transparent",
-              color: isGallery ? "rgba(255,255,255,0.4)" : tab === "draw" ? "#111111" : "#888888",
-              fontSize: 13, fontWeight: 600, fontFamily: "var(--font-sans)",
-              cursor: "pointer", letterSpacing: "-0.01em",
-              display: "flex", alignItems: "center", gap: 6, position: "relative", zIndex: 1,
-              transition: "color 0.3s ease",
-            }}
-          >
-            Draw your own
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-              <path d="M8.5 1.5L10.5 3.5L4 10H2V8L8.5 1.5Z" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </motion.button>
-          <motion.button
-            ref={seeAllBtnRef}
-            onClick={() => { playClick(); setTab("gallery") }}
-            style={{
-              padding: "8px 20px", borderRadius: 99, border: "none", background: "transparent",
-              color: isGallery ? "rgba(255,255,255,0.9)" : "#888888",
-              fontSize: 13, fontWeight: 600, fontFamily: "var(--font-sans)",
-              cursor: "pointer", letterSpacing: "-0.01em",
-              display: "flex", alignItems: "center", gap: 6, position: "relative", zIndex: 1,
-              transition: "color 0.3s ease",
-            }}
-          >
-            See all
-            <svg width="16" height="10" viewBox="0 0 16 10" fill="none">
-              <ellipse cx="4.5" cy="5" rx="3.5" ry="4" stroke="currentColor" strokeWidth="1.3"/>
-              <circle cx="5.5" cy="5" r="1.4" fill="currentColor"/>
-              <ellipse cx="11.5" cy="5" rx="3.5" ry="4" stroke="currentColor" strokeWidth="1.3"/>
-              <circle cx="12.5" cy="5" r="1.4" fill="currentColor"/>
-            </svg>
-          </motion.button>
+          {([
+            { id: "pick",    ref: pickBtnRef,   label: "Pick a companion", icon: (
+              <svg width="14" height="14" viewBox="0 0 13 13" fill="none" style={{ flexShrink: 0 }}>
+                <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" strokeWidth="1.3"/>
+                <circle cx="4.8" cy="5.6" r="0.75" fill="currentColor"/>
+                <circle cx="8.2" cy="5.6" r="0.75" fill="currentColor"/>
+                <path d="M4.2 8C4.2 8 5 9.3 6.5 9.3C8 9.3 8.8 8 8.8 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+              </svg>
+            )},
+            { id: "draw",    ref: drawBtnRef,   label: "Draw your own", icon: (
+              <svg width="13" height="13" viewBox="0 0 12 12" fill="none" style={{ flexShrink: 0 }}>
+                <path d="M8.5 1.5L10.5 3.5L4 10H2V8L8.5 1.5Z" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            )},
+            { id: "gallery", ref: seeAllBtnRef, label: "See all",   icon: (
+              <svg width="16" height="10" viewBox="0 0 16 10" fill="none" style={{ flexShrink: 0 }}>
+                <ellipse cx="4.5" cy="5" rx="3.5" ry="4" stroke="currentColor" strokeWidth="1.3"/>
+                <circle cx="5.5" cy="5" r="1.4" fill="currentColor"/>
+                <ellipse cx="11.5" cy="5" rx="3.5" ry="4" stroke="currentColor" strokeWidth="1.3"/>
+                <circle cx="12.5" cy="5" r="1.4" fill="currentColor"/>
+              </svg>
+            )},
+          ] as { id: string; ref: React.RefObject<HTMLButtonElement | null>; label: string; icon: React.ReactNode }[]).map(({ id, ref, label, icon }) => (
+            <motion.button
+              key={id}
+              ref={ref}
+              onClick={() => { playClick(); setTab(id as typeof tab) }}
+              style={{
+                padding: tabsMobile ? "8px 12px" : "8px 16px",
+                borderRadius: 99, border: "none", background: "transparent",
+                color: isGallery
+                  ? (id === "gallery" ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.4)")
+                  : (tab === id ? "#111111" : "#aaaaaa"),
+                cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+                gap: 6, position: "relative", zIndex: 1,
+                fontSize: 13, fontWeight: 600, fontFamily: "var(--font-sans)", letterSpacing: "-0.01em",
+                transition: "color 0.25s ease",
+              }}
+            >
+              {icon}
+              {!tabsMobile && (
+                <span style={{ whiteSpace: "nowrap" }}>{label}</span>
+              )}
+            </motion.button>
+          ))}
         </div>
 
         <h1 style={{
@@ -482,9 +571,9 @@ function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, o
                 transition={{ duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
                 style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
               >
-                <div style={{ display: "flex", gap: 16, alignItems: "flex-start", flexWrap: "nowrap", justifyContent: "center" }}>
+                <div style={{ display: "grid", gridTemplateColumns: tabsMobile ? "repeat(3, 1fr)" : "repeat(6, 1fr)", gap: 24, width: "100%" }}>
                   {BUDDIES.map((buddy, i) => (
-                    <div key={buddy.id} style={{ animation: `buddyCardIn 0.5s cubic-bezier(0.34,1.56,0.64,1) ${i * 0.08}s both` }}>
+                    <div key={buddy.id} style={{ animation: `buddyCardIn 0.5s cubic-bezier(0.34,1.56,0.64,1) ${i * 0.08}s both`, display: "flex", justifyContent: "center" }}>
                       <BuddyCard buddy={buddy} selected={selected === buddy.id}
                         dimmed={selected !== null && selected !== buddy.id}
                         onSelect={() => onSelect(buddy.id)} />

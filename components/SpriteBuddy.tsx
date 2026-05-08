@@ -620,7 +620,8 @@ export default function SpriteBuddy() {
 
       <div
         onClick={handleClick}
-        style={{ position: "fixed", bottom: 12, right: MAIN_RIGHT, zIndex: 60, cursor: "pointer", lineHeight: 0 }}
+        style={{ position: "fixed", bottom: 12, right: `max(${MAIN_RIGHT}px, env(safe-area-inset-right, 0px))`, zIndex: 60, cursor: "pointer", lineHeight: 0 }}
+        className="companion-anchor"
       >
         <div style={{ position: "relative", lineHeight: 0 }}>
           {petId !== null && <PetHand key={petId} onDone={() => setPetId(null)} />}

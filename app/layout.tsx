@@ -5,8 +5,6 @@ import PageTransition from "@/components/PageTransition"
 import SharedNav from "@/components/SharedNav"
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
-import { DialRoot } from "dialkit"
-import "dialkit/styles.css"
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -24,7 +22,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ShadowBg />
         <SharedNav />
         <PageTransition>{children}</PageTransition>
-        <DialRoot position="bottom-left" />
       </body>
     </html>
   )

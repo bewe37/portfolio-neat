@@ -136,7 +136,7 @@ function Sticker({ src, size, top, right, left, rotate, uid, spawnAt }: {
       <div
         ref={draggableRef}
         onMouseDown={onMouseDown}
-        style={{ position: "absolute", top, right, left, cursor: isDragging.current ? "grabbing" : "grab", zIndex: 20, userSelect: "none" }}
+        style={{ position: "absolute", top, right, left, cursor: isDragging.current ? "grabbing" : "grab", zIndex: 20, userSelect: "none", pointerEvents: "auto" }}
       >
         <div
           ref={containerRef}
@@ -190,7 +190,7 @@ export default function FuzzyStickers() {
   }
 
   return (
-    <>
+    <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
       {ALL_STICKERS.filter(s => active.has(s.id)).map(s => (
         <Sticker
           key={s.id} uid={s.id} src={s.src} size={s.size}
@@ -199,7 +199,7 @@ export default function FuzzyStickers() {
         />
       ))}
 
-      <div style={{ position: "absolute", bottom: 24, right: 0, zIndex: 30 }}>
+      <div style={{ position: "absolute", bottom: 24, right: 0, zIndex: 30, pointerEvents: "auto" }}>
         <AnimatePresence>
           {paletteOpen && (
             <motion.div
@@ -258,6 +258,6 @@ export default function FuzzyStickers() {
           </svg>
         </button>
       </div>
-    </>
+    </div>
   )
 }

@@ -65,54 +65,57 @@ export default function CompanionThumbnail() {
       position: "relative",
       overflow: "hidden",
     }}>
-      {/* Speech bubble */}
-      <AnimatePresence>
-        {visible && (
-          <motion.div
-            key={lineIdx}
-            initial={{ opacity: 0, y: 6, scale: 0.92 }}
-            animate={{ opacity: 1, y: 0,  scale: 1    }}
-            exit={{    opacity: 0, y: -4, scale: 0.95 }}
-            transition={{ duration: 0.22, ease: [0.34, 1.56, 0.64, 1] }}
-            style={{
-              position: "absolute",
-              bottom: 144,
-              right: 16,
-              background: "#ffffff",
-              border: "1px solid #e8e8e8",
-              borderRadius: 10,
-              padding: "7px 11px",
-              fontSize: 11,
-              fontFamily: "var(--font-sans)",
-              fontWeight: 600,
-              color: "#222222",
-              whiteSpace: "nowrap",
-              boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
-              pointerEvents: "none",
-              zIndex: 2,
-            }}
-          >
-            {LINES[lineIdx]}
-            <div style={{
-              position: "absolute",
-              bottom: -5, right: 18,
-              width: 8, height: 8,
-              background: "#ffffff",
-              border: "1px solid #e8e8e8",
-              borderTop: "none", borderLeft: "none",
-              transform: "rotate(45deg)",
-            }} />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+      {/* Anchor point — percentage based so creature stays fixed on the grass */}
       <div style={{
         position: "absolute",
-        bottom: 92,
-        right: 12,
-        lineHeight: 0,
+        bottom: "22%",
+        right: "5%",
       }}>
-        <SpriteView buddy={buddy} animKey={buddy.idleAnim} scale={SCALE} />
+        {/* Speech bubble — positioned relative to creature anchor */}
+        <AnimatePresence>
+          {visible && (
+            <motion.div
+              key={lineIdx}
+              initial={{ opacity: 0, y: 6, scale: 0.92 }}
+              animate={{ opacity: 1, y: 0,  scale: 1    }}
+              exit={{    opacity: 0, y: -4, scale: 0.95 }}
+              transition={{ duration: 0.22, ease: [0.34, 1.56, 0.64, 1] }}
+              style={{
+                position: "absolute",
+                bottom: "60%",
+                right: 0,
+                marginBottom: 0,
+                background: "#ffffff",
+                border: "1px solid #e8e8e8",
+                borderRadius: 10,
+                padding: "7px 11px",
+                fontSize: 11,
+                fontFamily: "var(--font-sans)",
+                fontWeight: 600,
+                color: "#222222",
+                whiteSpace: "nowrap",
+                boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
+                pointerEvents: "none",
+                zIndex: 2,
+              }}
+            >
+              {LINES[lineIdx]}
+              <div style={{
+                position: "absolute",
+                bottom: -5, right: 18,
+                width: 8, height: 8,
+                background: "#ffffff",
+                border: "1px solid #e8e8e8",
+                borderTop: "none", borderLeft: "none",
+                transform: "rotate(45deg)",
+              }} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div style={{ lineHeight: 0 }}>
+          <SpriteView buddy={buddy} animKey={buddy.idleAnim} scale={SCALE} />
+        </div>
       </div>
     </div>
   )
