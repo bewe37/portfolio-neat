@@ -98,7 +98,7 @@ export default function HomePage() {
 
           {/* ── Hero ──────────────────────────────────────────────────── */}
           <section style={{ padding: "24px 0 8px", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-            <FadeUp delay={0} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12, padding: "72px 0 0 0", textAlign: "center" }}>
+            <FadeUp delay={0} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12, padding: "100px 0 0 0", textAlign: "center" }}>
               <NameFlipChip label="Georgius" tileH={28} />
               <p style={{
                 fontFamily:    "var(--font-sans)",
@@ -128,12 +128,12 @@ export default function HomePage() {
 
           {/* ── Selected Work label (inside grid) ─────────────────────── */}
           <FadeUp delay={0.1}>
-            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", paddingTop: 100 }}>
+            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", paddingTop: 140 }}>
               <p style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.01em", margin: 0 }}>
                 Selected work
               </p>
               <p style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 400, color: "var(--c-faint)", letterSpacing: "-0.01em", margin: 0 }}>
-                2023–2026
+                End-to-end Design & Design System
               </p>
             </div>
           </FadeUp>
@@ -151,10 +151,10 @@ export default function HomePage() {
         <FadeUp delay={0.22}>
           <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", paddingBottom: 16 }}>
             <p style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.01em", margin: 0 }}>
-              Vibe coded
+              Built on Vibes ~
             </p>
             <p style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 400, color: "var(--c-faint)", letterSpacing: "-0.01em", margin: 0 }}>
-              2025–2026
+              Claude, Paper, Motion & React
             </p>
           </div>
           <section style={{ padding: "0 0 96px", display: "flex", flexDirection: "column", gap: 24 }}>
