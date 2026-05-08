@@ -33,7 +33,7 @@ export default function OnboardingLightbox({ onClose }: { onClose: () => void })
       exit={{ opacity: 0 }}
       transition={{ duration: 0.22 }}
       style={{
-        position: "fixed", inset: 0, zIndex: 1000,
+        position: "fixed", inset: 0, zIndex: 1010,
         background: "rgba(0,0,0,0.72)",
         backdropFilter: "blur(6px)",
         display: "flex", alignItems: "center", justifyContent: "center",
