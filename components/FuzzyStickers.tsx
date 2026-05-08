@@ -210,7 +210,7 @@ export default function FuzzyStickers() {
               className="sticker-palette"
               style={{
                 position: "absolute", bottom: 44, right: 0,
-                background: "var(--surface)", border: "1px solid var(--border-mid)",
+                background: "var(--bg)", border: "1px solid var(--border)",
                 borderRadius: 16, padding: "10px 10px",
                 display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 4,
                 width: 212, transformOrigin: "bottom right",
@@ -225,8 +225,8 @@ export default function FuzzyStickers() {
                   onMouseDown={e => handlePaletteMouseDown(s, e)}
                   title={s.label}
                   style={{
-                    background:   active.has(s.id) ? "var(--surface)" : "transparent",
-                    border:       `1.5px solid ${active.has(s.id) ? "var(--border-mid)" : "transparent"}`,
+                    background:   active.has(s.id) ? "rgba(37, 37, 37, 0.06)" : "transparent",
+                    border:       `1.5px solid ${active.has(s.id) ? "var(--border)" : "transparent"}`,
                     borderRadius: 10, padding: 5, cursor: "grab",
                     display: "flex", alignItems: "center", justifyContent: "center",
                     transition: "background 0.15s, border-color 0.15s",
@@ -242,19 +242,15 @@ export default function FuzzyStickers() {
         <button
           onClick={() => { playClick(); setPaletteOpen(o => !o) }}
           title="Stickers"
-          onMouseEnter={e => { const svgs = (e.currentTarget as HTMLElement).querySelectorAll("rect"); svgs.forEach(r => r.setAttribute("fill", "rgb(255,107,48)")) }}
-          onMouseLeave={e => { const svgs = (e.currentTarget as HTMLElement).querySelectorAll("rect"); svgs.forEach(r => r.setAttribute("fill", "var(--c-secondary)")) }}
-          className="sticker-palette"
+          className="sticker-toggle-btn"
           style={{
-            background: "var(--surface)", border: "1px solid var(--border-mid)",
-            borderRadius: 8, width: 32, height: 32, cursor: "pointer",
+            background: "var(--bg)", border: "0.5px solid var(--border)",
+            borderRadius: "50%", width: 32, height: 32, cursor: "pointer",
             display: "flex", alignItems: "center", justifyContent: "center",
           }}
         >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <rect x="4" y="7" width="8" height="6" rx="1" fill="var(--c-secondary)" style={{ transition: "fill 0.15s" }} />
-            <rect x="5.5" y="4" width="5" height="4" rx="1" fill="var(--c-secondary)" opacity="0.6" style={{ transition: "fill 0.15s" }} />
-            <rect x="2" y="13" width="12" height="1.5" rx="0.75" fill="var(--c-secondary)" opacity="0.5" style={{ transition: "fill 0.15s" }} />
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="m23.967 10.417a12.04 12.04 0 1 0 -13.55 13.55 3.812 3.812 0 0 0 .489.032 3.993 3.993 0 0 0 2.805-1.184l9.1-9.1a3.962 3.962 0 0 0 1.156-3.298zm-21.9.474a10.034 10.034 0 0 1 19.8-.884 12.006 12.006 0 0 0 -11.86 11.852 9.988 9.988 0 0 1 -7.944-10.968zm10.233 10.509a2.121 2.121 0 0 1 -.278.225 10 10 0 0 1 9.606-9.607 2.043 2.043 0 0 1 -.224.279z"/>
           </svg>
         </button>
       </div>

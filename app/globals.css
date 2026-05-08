@@ -27,7 +27,7 @@
 :root {
   --font-sans:  'Uncut Sans', sans-serif;
   --bg:          rgb(250,249,247);
-  --surface:     rgb(240,238,233);
+  --surface:     rgb(237, 237, 237);
   --dot-color:   rgba(0,0,0,0.07);
   --c-primary:   rgba(22, 22, 22, 0.88);
   --c-high:      rgba(0,0,0,0.78);
@@ -47,7 +47,7 @@
 
 body.dark {
   --bg:          rgb(14,13,12);
-  --surface:     rgb(26,24,21);
+  --surface:     rgb(31, 31, 31);
   --dot-color:   rgba(255,255,255,0.055);
   --c-primary:   rgba(255,255,255,0.92);
   --c-high:      rgba(255,255,255,0.82);
@@ -387,6 +387,10 @@ body.dark .hero-grid::before {
     transform: none !important;
   }
 }
+
+/* Sticker toggle button — hover turns icon orange */
+.sticker-toggle-btn { color: var(--c-dim); transition: color 0.15s; box-shadow: 0 1px 4px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.05); }
+.sticker-toggle-btn:hover { color: rgb(255,107,48); }
 
 /* Sticker palette — light mode shadow */
 .sticker-palette {
