@@ -387,3 +387,12 @@ body.dark .hero-grid::before {
     transform: none !important;
   }
 }
+
+/* Sticker palette — light mode shadow */
+.sticker-palette {
+  box-shadow: 0px 0px 0px 1px rgba(0,0,0,0.06), 0px 1px 2px -1px rgba(0,0,0,0.06), 0px 2px 4px 0px rgba(0,0,0,0.04) !important;
+}
+body.dark .sticker-palette,
+body.sunset .sticker-palette {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.12) !important;
+}
