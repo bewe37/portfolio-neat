@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
+import { useState, useEffect, useRef } from "react"
+import { motion, useScroll, useTransform } from "framer-motion"
 import TamagotchiWidget from "@/components/TamagotchiWidget"
 import { getBuddy } from "@/lib/buddies"
 import { SpriteView } from "@/components/SpriteBuddy"
@@ -153,14 +153,19 @@ function BackToTop() {
 
 export default function MarqueeFooter() {
   const year = new Date().getFullYear()
+  const ref = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] })
+  const y = useTransform(scrollYProgress, [0, 1], ["-12%", "12%"])
 
   return (
-    <div style={{ position: "relative", minHeight: 260, overflow: "hidden" }}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/Scene.jpg" alt="" style={{
-        position: "absolute", inset: 0, width: "100%", height: "100%",
-        objectFit: "cover", objectPosition: "center", pointerEvents: "none",
-      }} />
+    <div ref={ref} style={{ position: "relative", minHeight: 260, overflow: "hidden" }}>
+      <motion.div style={{ position: "absolute", inset: "-20%", y }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/Scene.jpg" alt="" style={{
+          width: "100%", height: "100%",
+          objectFit: "cover", objectPosition: "center", pointerEvents: "none",
+        }} />
+      </motion.div>
       <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.38)" }} />
 
       <div className="rsp-footer-inner" style={{
