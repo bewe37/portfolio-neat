@@ -178,7 +178,7 @@ export default function MarqueeFooter() {
             letterSpacing: "-0.03em", lineHeight: 1.25,
             margin: 0, maxWidth: 560, opacity: 0.92,
           }}>
-            &ldquo;The art challenges the technology, and the technology inspires the art.&rdquo;
+            Sleep is a design constraint. Available for hire if you catch me awake.
           </p>
           <div style={{ flexShrink: 0, width: 186 * 0.7 + 40, height: 214 * 0.7, overflow: "visible" }}>
             <div style={{ transform: "scale(0.7)", transformOrigin: "top left" }}>
@@ -204,6 +204,7 @@ export default function MarqueeFooter() {
 
           <div style={{ display: "flex", alignItems: "center", gap: 20, flexShrink: 0 }}>
             {[
+              { label: "Email",    href: "mailto:bryanwinata112@gmail.com" },
               { label: "LinkedIn", href: "https://linkedin.com/in/gbryanw" },
               { label: "Twitter",  href: "https://x.com/gbryanwt" },
             ].map(l => <FooterLink key={l.href} {...l} />)}
