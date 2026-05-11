@@ -136,11 +136,18 @@ function Sticker({ src, size, top, right, left, rotate, uid, spawnAt, appearDela
         </defs>
       </svg>
 
-      <div
+      <motion.div
         ref={draggableRef}
         onMouseDown={onMouseDown}
-        className={spawnAt ? undefined : "sticker-appear"}
-        style={{ position: "absolute", top, right, left, cursor: isDragging.current ? "grabbing" : "grab", zIndex: 20, userSelect: "none", pointerEvents: "auto", animationDelay: `${appearDelay}ms` }}
+        initial={spawnAt ? false : { opacity: 0, scale: 0.6 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={spawnAt ? undefined : {
+          delay: appearDelay / 1000,
+          type: "spring",
+          stiffness: 400,
+          damping: 18,
+        }}
+        style={{ position: "absolute", top, right, left, cursor: isDragging.current ? "grabbing" : "grab", zIndex: 20, userSelect: "none", pointerEvents: "auto" }}
       >
         <div
           ref={containerRef}
@@ -168,7 +175,7 @@ function Sticker({ src, size, top, right, left, rotate, uid, spawnAt, appearDela
             <img src={src} alt="" draggable={false} style={{ ...imgStyle, filter: `url(#${fillId})` }} />
           </div>
         </div>
-      </div>
+      </motion.div>
     </>
   )
 }
