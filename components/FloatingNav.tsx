@@ -205,6 +205,7 @@ const NAV_STYLE: React.CSSProperties = {
 /* ── Shell — never re-renders after mount ── */
 export default function FloatingNav() {
   const [theme, setTheme] = useState<Theme>("light")
+  const [atBottom, setAtBottom] = useState(false)
   const didAnimate = useRef(false)
 
   useEffect(() => {
@@ -213,6 +214,15 @@ export default function FloatingNav() {
     setTheme(initial)
     document.body.classList.remove("dark", "sunset")
     if (initial !== "light") document.body.classList.add(initial)
+  }, [])
+
+  useEffect(() => {
+    function onScroll() {
+      const distFromBottom = document.documentElement.scrollHeight - window.scrollY - window.innerHeight
+      setAtBottom(distFromBottom < 120)
+    }
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
   function toggleTheme() {
@@ -231,8 +241,8 @@ export default function FloatingNav() {
     }}>
       <motion.nav
         initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+        animate={{ y: atBottom ? 80 : 0, opacity: atBottom ? 0 : 1 }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: didAnimate.current ? 0 : 0.1 }}
         onAnimationComplete={() => { didAnimate.current = true }}
         style={NAV_STYLE}
       >

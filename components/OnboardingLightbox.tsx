@@ -37,7 +37,7 @@ export default function OnboardingLightbox({ onClose }: { onClose: () => void })
         background: "rgba(0,0,0,0.72)",
         backdropFilter: "blur(6px)",
         display: "flex", alignItems: "center", justifyContent: "center",
-        padding: 24,
+        padding: "24px 32px",
       }}
       onClick={onClose}
     >

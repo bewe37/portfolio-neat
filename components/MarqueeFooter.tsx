@@ -153,11 +153,18 @@ function BackToTop() {
 
 export default function MarqueeFooter() {
   const year = new Date().getFullYear()
+  const outerRef = useRef<HTMLDivElement>(null)
   const ref = useRef<HTMLDivElement>(null)
+
+  const { scrollYProgress: revealProgress } = useScroll({ target: outerRef, offset: ["start end", "center center"] })
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] })
-  const y = useTransform(scrollYProgress, [0, 1], ["-12%", "12%"])
+
+  const y       = useTransform(scrollYProgress, [0, 1], ["-12%", "12%"])
+  const revealY = useTransform(revealProgress, [0, 1], ["60px", "0px"])
+  const opacity = useTransform(revealProgress, [0, 0.5], [0, 1])
 
   return (
+    <motion.div ref={outerRef} style={{ y: revealY, opacity }}>
     <div ref={ref} style={{ position: "relative", minHeight: 260, overflow: "hidden" }}>
       <motion.div style={{ position: "absolute", inset: "-20%", y }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -219,5 +226,6 @@ export default function MarqueeFooter() {
         </div>
       </div>
     </div>
+    </motion.div>
   )
 }
