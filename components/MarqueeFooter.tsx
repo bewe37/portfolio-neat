@@ -6,6 +6,131 @@ import TamagotchiWidget from "@/components/TamagotchiWidget"
 import { getBuddy } from "@/lib/buddies"
 import { SpriteView } from "@/components/SpriteBuddy"
 
+const SPACING      = 32
+const CURSOR_RADIUS = 80
+const CURSOR_FORCE  = 1.8
+const DOT_R         = 1.5
+
+interface Dot {
+  ox: number; oy: number
+  x: number;  y: number
+  vx: number; vy: number
+  phase: number
+  drift: number
+}
+
+function InteractiveDots({ mouse }: { mouse: React.RefObject<{ x: number; y: number }> }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const rafRef    = useRef<number>(0)
+  const dots      = useRef<Dot[]>([])
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext("2d")!
+
+    function seed() {
+      const W = canvas!.width
+      const H = canvas!.height
+      dots.current = []
+      const cols = Math.ceil(W / SPACING) + 1
+      const rows = Math.ceil(H / SPACING) + 1
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const ox = c * SPACING
+          const oy = r * SPACING
+          dots.current.push({
+            ox, oy, x: ox, y: oy,
+            vx: 0, vy: 0,
+            phase: Math.random() * Math.PI * 2,
+            drift: 0.3 + Math.random() * 0.5,
+          })
+        }
+      }
+    }
+
+    function resize() {
+      const rect = canvas!.getBoundingClientRect()
+      canvas!.width  = rect.width  || canvas!.clientWidth  || 800
+      canvas!.height = rect.height || canvas!.clientHeight || 300
+      seed()
+    }
+    resize()
+    const ro = new ResizeObserver(resize)
+    ro.observe(canvas)
+
+    function getDotColors(): { base: string; glow: string } {
+      const isDark   = document.body.classList.contains("dark")
+      const isSunset = document.body.classList.contains("sunset")
+      if (isDark)   return { base: "rgb(75, 75, 75)", glow: "rgb(198, 198, 198)" }
+      if (isSunset) return { base: "rgb(180,130,60)",  glow: "rgb(255,210,140)" }
+      return          { base: "rgb(195, 195, 195)",        glow: "rgb(114, 114, 114)"    }
+    }
+
+    let t = 0
+    function draw() {
+      t += 0.012
+      const W = canvas!.width
+      const H = canvas!.height
+      ctx.clearRect(0, 0, W, H)
+      const { x: mx, y: my } = mouse.current!
+      const { base: baseColor, glow: glowColor } = getDotColors()
+
+      for (const d of dots.current) {
+        // gentle ambient sine drift around origin
+        const ambX = Math.cos(t + d.phase) * d.drift
+        const ambY = Math.sin(t + d.phase * 1.3) * d.drift
+
+        // cursor repulsion
+        const dx = d.x - mx
+        const dy = d.y - my
+        const dist = Math.hypot(dx, dy)
+        if (dist < CURSOR_RADIUS && dist > 0) {
+          const force = (1 - dist / CURSOR_RADIUS) * CURSOR_FORCE
+          d.vx += (dx / dist) * force
+          d.vy += (dy / dist) * force
+        }
+
+        // spring back to origin
+        d.vx += (d.ox - d.x) * 0.06
+        d.vy += (d.oy - d.y) * 0.06
+        d.vx *= 0.82
+        d.vy *= 0.82
+
+        d.x += d.vx
+        d.y += d.vy
+
+        const drawX = d.x + ambX
+        const drawY = d.y + ambY
+
+        const proximity = dist < CURSOR_RADIUS ? Math.max(0, 1 - dist / CURSOR_RADIUS) : 0
+
+        ctx.globalAlpha = 1
+        ctx.fillStyle = proximity > 0 ? glowColor : baseColor
+        ctx.beginPath()
+        ctx.arc(drawX, drawY, DOT_R, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.globalAlpha = 1
+      }
+
+      rafRef.current = requestAnimationFrame(draw)
+    }
+    rafRef.current = requestAnimationFrame(draw)
+
+    return () => {
+      cancelAnimationFrame(rafRef.current)
+      ro.disconnect()
+    }
+  }, [mouse])
+
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}
+    />
+  )
+}
+
 function torontoTime() {
   return new Date().toLocaleTimeString("en-US", {
     timeZone: "America/Toronto",
@@ -69,11 +194,11 @@ function FooterClock() {
     <span style={{
       display: "inline-flex", alignItems: "center", gap: 6,
       fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 400,
-      color: "rgba(255,255,255,0.75)", letterSpacing: "-0.01em",
+      color: "var(--footer-text)", letterSpacing: "-0.01em",
     }}>
       {weather && <WeatherIcon code={weather.code} />}
       {time}, Toronto
-      {weather && <span style={{ color: "rgba(255,255,255,0.55)" }}>· {weather.temp}°C</span>}
+      {weather && <span style={{ color: "var(--footer-text-dim)" }}>· {weather.temp}°C</span>}
     </span>
   )
 }
@@ -90,8 +215,9 @@ function FooterLink({ label, href }: { label: string; href: string }) {
       style={{
         fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 500,
         letterSpacing: "-0.01em", textDecoration: "none",
-        color: hovered ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.72)",
-        transition: "color 0.15s ease",
+        color: "var(--footer-text)",
+        opacity: hovered ? 1 : 0.72,
+        transition: "opacity 0.15s ease",
       }}
     >
       {label}
@@ -137,9 +263,10 @@ function BackToTop() {
       style={{
         background: "none", border: "none", cursor: "pointer", padding: 0,
         display: "inline-flex", alignItems: "center", gap: 5,
-        color: hovered ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.72)",
+        color: "var(--footer-text)",
+        opacity: hovered ? 1 : 0.72,
         fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 500,
-        letterSpacing: "-0.01em", transition: "color 0.15s ease",
+        letterSpacing: "-0.01em", transition: "opacity 0.15s ease",
       }}
     >
       <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -154,26 +281,34 @@ function BackToTop() {
 export default function MarqueeFooter() {
   const year = new Date().getFullYear()
   const outerRef = useRef<HTMLDivElement>(null)
-  const ref = useRef<HTMLDivElement>(null)
+  const footerRef = useRef<HTMLDivElement>(null)
+  const mouse = useRef({ x: -9999, y: -9999 })
 
   const { scrollYProgress: revealProgress } = useScroll({ target: outerRef, offset: ["start end", "center center"] })
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] })
 
-  const y       = useTransform(scrollYProgress, [0, 1], ["-12%", "12%"])
   const revealY = useTransform(revealProgress, [0, 1], ["60px", "0px"])
   const opacity = useTransform(revealProgress, [0, 0.5], [0, 1])
 
+  useEffect(() => {
+    const el = footerRef.current
+    if (!el) return
+    const onMove = (e: MouseEvent) => {
+      const rect = el.getBoundingClientRect()
+      mouse.current = { x: e.clientX - rect.left, y: e.clientY - rect.top }
+    }
+    const onLeave = () => { mouse.current = { x: -9999, y: -9999 } }
+    el.addEventListener("mousemove", onMove)
+    el.addEventListener("mouseleave", onLeave)
+    return () => {
+      el.removeEventListener("mousemove", onMove)
+      el.removeEventListener("mouseleave", onLeave)
+    }
+  }, [])
+
   return (
     <motion.div ref={outerRef} style={{ y: revealY, opacity }}>
-    <div ref={ref} style={{ position: "relative", minHeight: 260, overflow: "hidden" }}>
-      <motion.div style={{ position: "absolute", inset: "-20%", y }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/Scene.jpg" alt="" style={{
-          width: "100%", height: "100%",
-          objectFit: "cover", objectPosition: "center", pointerEvents: "none",
-        }} />
-      </motion.div>
-      <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.38)" }} />
+    <div ref={footerRef} style={{ position: "relative", minHeight: 260, overflow: "hidden", background: "var(--footer-bg)" }}>
+      <InteractiveDots mouse={mouse} />
 
       <div className="rsp-footer-inner" style={{
         position: "relative", zIndex: 1,
@@ -186,7 +321,7 @@ export default function MarqueeFooter() {
           <p style={{
             fontFamily: "var(--font-sans)",
             fontSize: "clamp(18px, 3vw, 28px)",
-            fontWeight: 500, color: "#fff",
+            fontWeight: 500, color: "var(--footer-text)",
             letterSpacing: "-0.03em", lineHeight: 1.25,
             margin: 0, maxWidth: 560, opacity: 0.92,
           }}>
@@ -208,7 +343,7 @@ export default function MarqueeFooter() {
             <FooterClock />
             <span style={{
               fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 400,
-              color: "rgba(255,255,255,0.55)", letterSpacing: "-0.01em",
+              color: "var(--footer-text-dim)", letterSpacing: "-0.01em",
             }}>
               © {year} Georgius. All rights reserved.
             </span>
@@ -220,7 +355,7 @@ export default function MarqueeFooter() {
               { label: "LinkedIn", href: "https://linkedin.com/in/gbryanw" },
               { label: "Twitter",  href: "https://x.com/gbryanwt" },
             ].map(l => <FooterLink key={l.href} {...l} />)}
-            <span style={{ width: 1, height: 12, background: "rgba(255,255,255,0.15)", flexShrink: 0 }} />
+            <span style={{ width: 1, height: 12, background: "var(--footer-divider)", flexShrink: 0 }} />
             <BackToTop />
           </div>
         </div>
