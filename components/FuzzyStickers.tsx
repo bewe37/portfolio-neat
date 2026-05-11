@@ -35,9 +35,9 @@ const ALL_STICKERS: StickerDef[] = [
   { id: "satay",     src: "/Satay.svg",     label: "Satay",     size: 82,  top: 260, right: 300, rotate:  -5, defaultOn: false },
 ]
 
-function Sticker({ src, size, top, right, left, rotate, uid, spawnAt, introDelay = 0 }: {
+function Sticker({ src, size, top, right, left, rotate, uid, spawnAt, appearDelay = 0 }: {
   src: string; size: number; top: number; right?: number | string; left?: number | string
-  rotate: number; uid: string; spawnAt?: { x: number; y: number }; introDelay?: number
+  rotate: number; uid: string; spawnAt?: { x: number; y: number }; appearDelay?: number
 }) {
   const draggableRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -45,14 +45,6 @@ function Sticker({ src, size, top, right, left, rotate, uid, spawnAt, introDelay
   const dragOffset   = useRef({ x: 0, y: 0 })
   const [hovered, setHovered] = useState(false)
   const [active,  setActive]  = useState(false)
-  const [intro,   setIntro]   = useState(!spawnAt)
-
-  useEffect(() => {
-    if (!intro) return
-    const t = setTimeout(() => setIntro(false), introDelay + 60)
-    return () => clearTimeout(t)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   useEffect(() => {
     function onMouseMove(e: MouseEvent) {
@@ -108,7 +100,7 @@ function Sticker({ src, size, top, right, left, rotate, uid, spawnAt, introDelay
     setActive(true)
   }
 
-  const peeled = active || intro
+  const peeled = active
   const mainClip = peeled
     ? `polygon(${START} ${PEELBACK_ACTIVE}, ${END} ${PEELBACK_ACTIVE}, ${END} ${END}, ${START} ${END})`
     : hovered
@@ -147,7 +139,8 @@ function Sticker({ src, size, top, right, left, rotate, uid, spawnAt, introDelay
       <div
         ref={draggableRef}
         onMouseDown={onMouseDown}
-        style={{ position: "absolute", top, right, left, cursor: isDragging.current ? "grabbing" : "grab", zIndex: 20, userSelect: "none", pointerEvents: "auto" }}
+        className={spawnAt ? undefined : "sticker-appear"}
+        style={{ position: "absolute", top, right, left, cursor: isDragging.current ? "grabbing" : "grab", zIndex: 20, userSelect: "none", pointerEvents: "auto", animationDelay: `${appearDelay}ms` }}
       >
         <div
           ref={containerRef}
@@ -213,7 +206,7 @@ export default function FuzzyStickers() {
           key={s.id} uid={s.id} src={s.src} size={s.size}
           top={s.top} right={s.right} left={s.left} rotate={s.rotate}
           spawnAt={spawnMap[s.id]}
-          introDelay={spawnMap[s.id] ? 0 : i * 150}
+          appearDelay={spawnMap[s.id] ? 0 : i * 80}
         />
       ))}
 
