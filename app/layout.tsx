@@ -10,7 +10,7 @@ const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: "Georgius Bryan",
-  description: "Design engineer at AMD based in Toronto.",
+  description: "Product designer based in Toronto.",
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

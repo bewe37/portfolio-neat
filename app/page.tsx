@@ -14,6 +14,16 @@ import CompanionThumbnail from "@/components/CompanionThumbnail"
 
 const VIBE_PROJECTS = [
   {
+    title: "My Unhealthy Obsession Over Skeuomorphic Design",
+    category: "Vibe Coded",
+    date: "",
+    description: "A skeuomorphic command palette — brushed metal, tactile keys, real physics. Built because flat design took something away.",
+    href: "https://github.com/bewe37",
+    cover: "/skeuomorphicCommand.mp4",
+    carousel: ["/skeuomorphicCommand.mp4", "/SkeuomorphicCalendarShort.mp4"],
+    comingSoon: true,
+  },
+  {
     title: "Subscription Plan Component",
     category: "Vibe Coded",
     date: "",
