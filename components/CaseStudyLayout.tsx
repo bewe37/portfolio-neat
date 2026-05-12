@@ -98,7 +98,7 @@ function MediaBox({ src, video }: { src: string; video?: boolean }) {
       border: "1px solid var(--border)",
     }}>
       {video
-        ? <video src={src} autoPlay muted loop playsInline style={{ width: "100%", display: "block" }} />
+        ? <video src={src} autoPlay muted loop playsInline preload="none" style={{ width: "100%", display: "block" }} />
         /* eslint-disable-next-line @next/next/no-img-element */
         : <img src={src} alt="" draggable={false} style={{ width: "100%", display: "block" }} />
       }
@@ -131,7 +131,7 @@ function Bento({ items }: { items: BentoItem[] }) {
           backgroundColor: "var(--surface)",
         }}>
           {item.video && (
-            <video src={item.video} autoPlay muted loop playsInline style={{ width: "100%", display: "block" }} />
+            <video src={item.video} autoPlay muted loop playsInline preload="none" style={{ width: "100%", display: "block" }} />
           )}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {item.image && <img src={item.image} alt={item.label ?? ""} draggable={false} style={{ width: "100%", display: "block" }} />}
@@ -521,7 +521,7 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
                 style={{ borderRadius: 14, overflow: "hidden", backgroundColor: "var(--surface)", border: "1px solid var(--border)", height: 440 }}
               >
                 {mediaSrc.video
-                  ? <video src={mediaSrc.src} autoPlay muted loop playsInline style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: objectPos, display: "block" }} />
+                  ? <video src={mediaSrc.src} autoPlay muted loop playsInline preload="none" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: objectPos, display: "block" }} />
                   /* eslint-disable-next-line @next/next/no-img-element */
                   : <img src={mediaSrc.src} alt="" draggable={false} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: objectPos, display: "block" }} />
                 }
@@ -552,7 +552,7 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
                 {src && (
                   <div style={{ borderRadius: 14, overflow: "hidden", backgroundColor: "var(--surface)", border: "1px solid var(--border)", height: 260 }}>
                     {src.video
-                      ? <video src={src.src} autoPlay muted loop playsInline style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: objPos, display: "block" }} />
+                      ? <video src={src.src} autoPlay muted loop playsInline preload="none" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: objPos, display: "block" }} />
                       /* eslint-disable-next-line @next/next/no-img-element */
                       : <img src={src.src} alt="" draggable={false} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: objPos, display: "block" }} />
                     }

@@ -8,7 +8,7 @@ import { playClick } from "@/lib/click-sound"
 const LINKS = [
   { href: "/",       label: "Work",   external: false },
   { href: "/about",  label: "About",  external: false },
-  { href: "https://drive.google.com/drive/home?dmr=1&ec=wgc-drive-%5Bmodule%5D-goto", label: "Resume", external: true },
+  { href: "https://drive.google.com/file/d/183_FgYoQBjhv5QLawsPr_fUt_K5gf6hi/view?usp=drive_link", label: "Resume", external: true },
 ]
 
 export default function HeaderNav() {

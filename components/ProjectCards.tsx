@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useState, useRef } from "react"
+import { useState } from "react"
 import { playClick } from "@/lib/click-sound"
 
 interface Project {
@@ -24,36 +24,33 @@ const coverStyle = (hovered: boolean): React.CSSProperties => ({
   transition: "transform 0.6s cubic-bezier(0.22,1,0.36,1)",
 })
 
+const carouselBtnStyle: React.CSSProperties = {
+  position: "absolute", top: "50%", transform: "translateY(-50%)",
+  width: 28, height: 28, borderRadius: "50%",
+  background: "rgba(0,0,0,0.45)", border: "none",
+  color: "#fff", cursor: "pointer", zIndex: 2,
+  display: "flex", alignItems: "center", justifyContent: "center",
+  fontSize: 12, backdropFilter: "blur(4px)",
+  transition: "background 0.15s ease",
+}
+
 function CarouselCover({ videos, hovered }: { videos: string[]; hovered: boolean }) {
   const [active, setActive] = useState(0)
-  const videoRefs = useRef<(HTMLVideoElement | null)[]>([])
-
-
 
   const prev = (e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); setActive(i => (i - 1 + videos.length) % videos.length) }
   const next = (e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); setActive(i => (i + 1) % videos.length) }
-
-  const btnStyle: React.CSSProperties = {
-    position: "absolute", top: "50%", transform: "translateY(-50%)",
-    width: 28, height: 28, borderRadius: "50%",
-    background: "rgba(0,0,0,0.45)", border: "none",
-    color: "#fff", cursor: "pointer", zIndex: 2,
-    display: "flex", alignItems: "center", justifyContent: "center",
-    fontSize: 12, backdropFilter: "blur(4px)",
-    transition: "background 0.15s ease",
-  }
 
   return (
     <div style={{ width: "100%", height: "100%", position: "relative" }}>
       {videos.map((src, i) => (
         <video
           key={src}
-          ref={el => { videoRefs.current[i] = el }}
           src={src}
-          autoPlay
+          autoPlay={active === i}
           loop
           muted
           playsInline
+          preload={active === i ? "auto" : "none"}
           style={{
             ...coverStyle(hovered),
             position: i === 0 ? "relative" : "absolute",
@@ -64,8 +61,8 @@ function CarouselCover({ videos, hovered }: { videos: string[]; hovered: boolean
           }}
         />
       ))}
-      <button onClick={prev} className="carousel-btn" style={{ ...btnStyle, left: 10 }}>‹</button>
-      <button onClick={next} className="carousel-btn" style={{ ...btnStyle, right: 10 }}>›</button>
+      <button onClick={prev} className="carousel-btn" style={{ ...carouselBtnStyle, left: 10 }}>‹</button>
+      <button onClick={next} className="carousel-btn" style={{ ...carouselBtnStyle, right: 10 }}>›</button>
     </div>
   )
 }
@@ -80,7 +77,7 @@ function ProjectCard({ project, onLightbox }: { project: Project; onLightbox?: (
         {project.carousel ? (
           <CarouselCover videos={project.carousel} hovered={hovered} />
         ) : project.coverNode ? project.coverNode : isVideo ? (
-          <video src={project.cover} autoPlay loop muted playsInline style={coverStyle(hovered)} />
+          <video src={project.cover} autoPlay loop muted playsInline preload="none" style={coverStyle(hovered)} />
         ) : (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={project.cover} alt={project.title} draggable={false} style={coverStyle(hovered)} />

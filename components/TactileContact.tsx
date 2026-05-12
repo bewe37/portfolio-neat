@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { EnvelopeSimple, LinkedinLogo, GithubLogo, FileText } from "@phosphor-icons/react"
 
 const LINKS = [
-  { label: "Resume",   href: "/resume.pdf",                         Icon: FileText       },
+  { label: "Resume",   href: "https://drive.google.com/file/d/183_FgYoQBjhv5QLawsPr_fUt_K5gf6hi/view?usp=drive_link", Icon: FileText },
   { label: "Email",    href: "mailto:bryanwinata112@gmail.com",      Icon: EnvelopeSimple },
   { label: "GitHub",   href: "https://github.com/bewe37",            Icon: GithubLogo     },
   { label: "LinkedIn", href: "https://linkedin.com/in/georgius",     Icon: LinkedinLogo   },
