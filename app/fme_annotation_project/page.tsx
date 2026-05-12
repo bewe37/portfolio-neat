@@ -16,15 +16,6 @@ export default function FmeProject() {
       ]}
       sections={[
         {
-          label: "The Impact",
-          body:  "The enhanced annotation feature reduced visible canvas clutter by 57%, improving workflow readability and navigation across complex workflows.",
-          stat: {
-            value: "57%",
-            label: "reduction in visible canvas clutter",
-            body:  "The enhanced annotation feature improved workflow readability and navigation across complex workflows.",
-          },
-        },
-        {
           label: "Problem Space",
           contents: [
             {
@@ -94,23 +85,10 @@ export default function FmeProject() {
           ],
         },
         {
-          label: "Implementation",
+          label: "Shipping",
           title: "What made it to release and what didn't.",
-          body:  "The annotation in the parameter dialog has been released and is now available to users. However, the annotation visibility feature is on hold due to capacity constraints, though it has been prioritized for future development and remains on the Product Planning page.",
+          body:  "The annotation in the parameter dialog has been released and is now available to users. However, the annotation visibility feature is on hold due to capacity constraints, though it has been prioritized for future development and remains on the Product Planning page.\n\nThe enhanced annotation feature reduced visible canvas clutter by 57%, improving how users navigated and read complex workflows. More importantly, users gained meaningful control — for the first time, they could collapse and show annotations on demand, rather than managing a canvas that worked against them.",
           image: "/linkedInComments.png",
-        },
-        {
-          label: "Retrospective",
-          contents: [
-            {
-              title: "Collaboration and communication is key.",
-              body:  "Worked closely with project managers, developers, and designers from the start to keep the project aligned with its goals.",
-            },
-            {
-              title: "Always consider having backup ideas.",
-              body:  "Maintaining a bank of ideas enabled the team to adapt efficiently to any changes in project direction and facilitated smoother negotiations with developers.",
-            },
-          ],
         },
       ]}
     />

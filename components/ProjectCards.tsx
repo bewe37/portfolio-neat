@@ -28,10 +28,19 @@ function CarouselCover({ videos, hovered }: { videos: string[]; hovered: boolean
   const [active, setActive] = useState(0)
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([])
 
-  const goTo = (i: number, e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setActive(i)
+
+
+  const prev = (e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); setActive(i => (i - 1 + videos.length) % videos.length) }
+  const next = (e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); setActive(i => (i + 1) % videos.length) }
+
+  const btnStyle: React.CSSProperties = {
+    position: "absolute", top: "50%", transform: "translateY(-50%)",
+    width: 28, height: 28, borderRadius: "50%",
+    background: "rgba(0,0,0,0.45)", border: "none",
+    color: "#fff", cursor: "pointer", zIndex: 2,
+    display: "flex", alignItems: "center", justifyContent: "center",
+    fontSize: 12, backdropFilter: "blur(4px)",
+    transition: "background 0.15s ease",
   }
 
   return (
@@ -55,28 +64,8 @@ function CarouselCover({ videos, hovered }: { videos: string[]; hovered: boolean
           }}
         />
       ))}
-      {/* Dot indicators */}
-      <div style={{
-        position: "absolute", bottom: 10, left: "50%", transform: "translateX(-50%)",
-        display: "flex", gap: 5, zIndex: 2,
-      }}>
-        {videos.map((_, i) => (
-          <button
-            key={i}
-            onClick={e => goTo(i, e)}
-            style={{
-              width: active === i ? 16 : 6,
-              height: 6,
-              borderRadius: 3,
-              border: "none",
-              background: active === i ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.45)",
-              cursor: "pointer",
-              padding: 0,
-              transition: "width 0.25s ease, background 0.2s ease",
-            }}
-          />
-        ))}
-      </div>
+      <button onClick={prev} className="carousel-btn" style={{ ...btnStyle, left: 10 }}>‹</button>
+      <button onClick={next} className="carousel-btn" style={{ ...btnStyle, right: 10 }}>›</button>
     </div>
   )
 }

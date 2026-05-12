@@ -47,6 +47,7 @@ interface Section {
   cards?: CardItem[]
   bento?: BentoItem[]
   accordion?: boolean
+  footnote?: string
 }
 
 interface Props {
@@ -150,13 +151,16 @@ function StatCallout({ stat }: { stat: StatBlock }) {
     <div style={{
       padding:         "32px 36px",
       borderRadius:    16,
-      marginBottom:    32,
+      marginBottom:    28,
       border:          "1px solid var(--border)",
       backgroundColor: "var(--surface)",
+      display:         "flex",
+      flexDirection:   "column",
+      width:           "100%",
     }}>
       <span style={{
         fontFamily:    "var(--font-sans)",
-        fontSize:      64,
+        fontSize:      88,
         fontWeight:    800,
         color:         "var(--c-primary)",
         letterSpacing: "-0.04em",
@@ -165,11 +169,12 @@ function StatCallout({ stat }: { stat: StatBlock }) {
       }}>
         {stat.value}
       </span>
-      <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 600, color: "var(--c-mid)", margin: "14px 0 0", letterSpacing: "-0.01em" }}>
+      <div style={{ width: 40, height: 2, backgroundColor: "var(--border)", margin: "20px 0 16px" }} />
+      <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 600, color: "var(--c-mid)", margin: 0, letterSpacing: "-0.01em" }}>
         {stat.label}
       </p>
       {stat.body && (
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 400, color: "var(--c-body)", margin: "6px 0 0", lineHeight: 1.7 }}>
+        <p style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 400, color: "var(--c-body)", margin: "8px 0 0", lineHeight: 1.7 }}>
           {stat.body}
         </p>
       )}
@@ -288,8 +293,42 @@ function renderContentBlock(block: ContentBlock, bi: number) {
   const allVideos = block.videos ?? []
   const hasMedia  = allImages.length > 0 || allVideos.length > 0
 
-  // Note variant: image on the left, sticky side-note on the right (below on mobile)
-  if (block.note && block.image) {
+  // Note variant: with image → side by side; without → standalone card
+  if (block.note) {
+    const noteCard = (
+      <div className="sticky-note" style={{
+        borderRadius: 12,
+        overflow:     "hidden",
+        transform:    "rotate(-0.6deg)",
+        ...(block.image ? { position: "sticky", top: 80 } : {}),
+      }}>
+        <div className="sticky-note-tape" style={{ height: 6 }} />
+        <div style={{ padding: "14px 16px 18px", display: "flex", flexDirection: "column", gap: 8 }}>
+          {block.title && (
+            <span className="sticky-note-label" style={{
+              fontFamily:    "'Departure Mono', monospace",
+              fontSize:      9,
+              fontWeight:    700,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase" as const,
+            }}>
+              {block.title}
+            </span>
+          )}
+          <p className="sticky-note-body" style={{
+            fontFamily:    "var(--font-sans)",
+            fontSize:      13,
+            fontWeight:    500,
+            lineHeight:    1.75,
+            margin:        0,
+            letterSpacing: "-0.01em",
+          }}>
+            {block.note}
+          </p>
+        </div>
+      </div>
+    )
+
     return (
       <motion.div
         key={bi}
@@ -297,55 +336,13 @@ function renderContentBlock(block: ContentBlock, bi: number) {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={VIEWPORT}
         transition={{ ...FADE, delay: bi * 0.05 }}
-        className="rsp-stack"
-        style={{ display: "grid", gridTemplateColumns: "1fr 212px", gap: 24, alignItems: "start" }}
+        className={block.image ? "rsp-stack" : undefined}
+        style={block.image
+          ? { display: "grid", gridTemplateColumns: "1fr 212px", gap: 24, alignItems: "start" }
+          : {}}
       >
-        <MediaBox src={block.image} />
-
-        {/* Sticky note */}
-        <div style={{
-          position:      "sticky",
-          top:           80,
-          background:    "rgba(252,240,140,0.55)",
-          border:        "1px solid rgba(200,170,0,0.22)",
-          borderRadius:  12,
-          overflow:      "hidden",
-          boxShadow:     "0 4px 18px rgba(160,130,0,0.10), 0 1px 4px rgba(0,0,0,0.06)",
-          transform:     "rotate(-0.6deg)",
-        }}>
-          {/* Tape strip at top */}
-          <div style={{
-            height:     6,
-            background: "rgba(240,210,0,0.35)",
-            borderBottom: "1px solid rgba(200,170,0,0.18)",
-          }} />
-
-          <div style={{ padding: "14px 16px 18px", display: "flex", flexDirection: "column", gap: 8 }}>
-            {block.title && (
-              <span style={{
-                fontFamily:    "'Departure Mono', monospace",
-                fontSize:      9,
-                fontWeight:    700,
-                letterSpacing: "0.1em",
-                textTransform: "uppercase" as const,
-                color:         "rgba(120,95,0,0.65)",
-              }}>
-                {block.title}
-              </span>
-            )}
-            <p style={{
-              fontFamily:    "var(--font-sans)",
-              fontSize:      13,
-              fontWeight:    500,
-              color:         "rgba(60,45,0,0.82)",
-              lineHeight:    1.75,
-              margin:        0,
-              letterSpacing: "-0.01em",
-            }}>
-              {block.note}
-            </p>
-          </div>
-        </div>
+        {block.image && <MediaBox src={block.image} />}
+        {noteCard}
       </motion.div>
     )
   }
@@ -911,6 +908,21 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
                 </div>
               )
             })()
+      )}
+
+      {sec.footnote && (
+        <p style={{
+          fontFamily:    "var(--font-sans)",
+          fontSize:      13,
+          fontWeight:    400,
+          fontStyle:     "italic",
+          color:         "var(--c-faint)",
+          letterSpacing: "0.01em",
+          lineHeight:    1.6,
+          margin:        "20px 0 0",
+        }}>
+          {sec.footnote}
+        </p>
       )}
 
       {sec.experience && (

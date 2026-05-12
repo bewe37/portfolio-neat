@@ -46,18 +46,19 @@ export default function AmdAiProject() {
           label: "Context",
           title: "A new direction for AMD Software.",
           body:  "For a product used by millions of gamers and creators, AMD Software had a problem: it was hard to use. Years of incremental updates had left behind a dense, technically overwhelming interface that frustrated casual and advanced users alike. Rather than patching issues one by one, the team committed to a full-scale redesign, rebuilding the experience around how users actually work. The redesign split the experience into two layers:",
-          contents: [
+contents: [
             {
               highlight: true,
-              title: "In-Session Overlay",
-              body: "A lightweight surface that stays on top of any application, designed for quick access and immediate control — without breaking focus or switching windows.",
+              title: "Overlay View",
+              body: "A lightweight surface that stays on top of any application, designed for quick access and immediate control",
             },
             {
               highlight: true,
-              title: "Full Application",
-              body: "The complete configuration layer. For deeper settings, longer workflows, and anything that requires time, context, and comparison.",
+              title: "Full View",
+              body: "The complete configuration layer. For deeper settings, information, and anything that requires more context.",
             },
           ],
+          footnote: "This case study covers the In-Session Overlay. The Full Application was developed in parallel by a separate workstream.",
         },
         {
           label: "A Step Back",
@@ -88,8 +89,8 @@ export default function AmdAiProject() {
         },
         {
           label: "The Goals",
-          title: "Redefining what the overlay should do.",
-          body: "The usability sessions made one thing clear: the overlay wasn't just missing features, it was missing its purpose. It's the only part of AMD Software users reach for mid-session, when they need a quick answer or a fast adjustment without breaking focus. Fixing the full application wouldn't solve that. The overlay needed to be rethought on its own terms. Two goals shaped the direction:",
+          title: "The overlay needed a new job.",
+          body: "The usability sessions made one thing clear: the overlay wasn't just missing features, it was missing its purpose. It's the only part of AMD Software users reach for mid-session, when they need a quick answer or a fast adjustment without breaking focus. Fixing the full application wouldn't solve that. The overlay needed to be rethought on its own terms and there are two goals shaped the direction:",
           contents: [
             {
               highlight: true,
@@ -99,7 +100,7 @@ export default function AmdAiProject() {
             {
               highlight: true,
               title: "02",
-              body: "Use AI to make technical settings approachable through plain language, no prior knowledge required.",
+              body: "Use AI to make technical settings, with no prior knowledge required.",
             },
           ],
         },
