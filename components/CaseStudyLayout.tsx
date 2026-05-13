@@ -996,11 +996,12 @@ export default function CaseStudyLayout({
     ...(unlocked && lockedSections ? lockedSections.map((s, si) => ({ label: s.label, id: `sec-l${si}` })) : []),
   ]
 
+  const tocIds = tocItems.map(t => t.id).join(",")
+
   useEffect(() => {
     const ids = tocItems.map(t => t.id)
     const observer = new IntersectionObserver(
       (entries) => {
-        // pick the topmost section that is currently intersecting
         const visible = entries
           .filter(e => e.isIntersecting)
           .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
@@ -1014,7 +1015,7 @@ export default function CaseStudyLayout({
     })
     return () => observer.disconnect()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [unlocked])
+  }, [tocIds])
 
   const tryUnlock = () => {
     if (pwInput === password) { setUnlocked(true); setPwError(false) }

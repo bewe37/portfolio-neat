@@ -55,6 +55,21 @@ export default function FmeProject() {
           ],
         },
         {
+          label: "Project Kickoff Audit",
+          contents: [
+            {
+              title: "Finding the right home for collapsed annotations indicator.",
+              body:  "We audited the current canvas object layout to determine where a collapsed annotation could sit without interfering with other elements. We identified the right side of the object header as the only viable location, since the left side is already dedicated to alert and warning indicators.",
+              image: "/Visibility Control Audit.png",
+            },
+            {
+              title: "Intuitive placement within parameter workflows.",
+              body:  "To ensure annotations in parameter dialogs felt natural and didn't disrupt existing workflows, we placed the annotation option within the existing dropdown area, where users can define parameter logic and adjust parameter properties.",
+              image: "/AnnotationDialogAudit.png",
+            },
+          ],
+        },
+        {
           label: "Solution — Annotation Visibility",
           contents: [
             {
@@ -77,12 +92,25 @@ export default function FmeProject() {
               body:   "Users were constantly switching between the canvas and parameter dialogs to reference their notes. To solve this, I brought annotations directly into the dialog, so context lives right where decisions are being made.",
               videos: ["/safedialogannotation.mp4"],
             },
-            {
-              title: "Multi-level visibility.",
-              body:  "Annotations are accessible across the canvas, and navigator levels, so users can always find context no matter where they're working in a complex workflow.",
-              images: ["/AnnotationCanvas.png", "/AnnotationNavigator.png"],
-            },
           ],
+        },
+        {
+          label: "Getting Buy-ins",
+          title: "Design evaluation & stakeholder feedback.",
+          body:  "To evaluate our design and uncover potential pain points, we used storyboarding to walk PMs and engineers through the proposed flow and interactions, which helped us in gathering feedback & opportunities to improve the overall flow or design.",
+          image: "/storyboarding1.png",
+        },
+        {
+          label: "Iteration",
+          title: "Showing annotation on a different level.",
+          body:  "After discussions with stakeholders, we identified that annotations inside the parameter dialog weren't getting enough visibility. We explored surfacing them at both the group and canvas levels using icons and formatted text as indicators, and brought them into the navigator so users could locate annotations quickly without digging through the canvas.",
+          images: ["/AnnotationCanvas.png", "/AnnotationNavigator.png"],
+        },
+        {
+          label: "Usability Testing",
+          title: "Putting the design in front of real users.",
+          body:  "To evaluate our design and uncover pain points, we ran qualitative usability tests with four customer success team members experienced in FME Workbench. Using detailed test plans and an interactive prototype, we gathered feedback on usability and functionality.\n\nParticipants completed 96% of the required tasks and indicated that the feature would provide meaningful value by improving users' workflow.",
+          image: "/UsabilityTestingFME.png",
         },
         {
           label: "Shipping",

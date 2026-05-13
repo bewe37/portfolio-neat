@@ -33,12 +33,13 @@ function InteractiveDots({ mouse }: { mouse: React.RefObject<{ x: number; y: num
       const W = canvas!.width
       const H = canvas!.height
       dots.current = []
+      const offset = SPACING / 2
       const cols = Math.ceil(W / SPACING) + 1
       const rows = Math.ceil(H / SPACING) + 1
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
-          const ox = c * SPACING
-          const oy = r * SPACING
+          const ox = offset + c * SPACING
+          const oy = offset + r * SPACING
           dots.current.push({
             ox, oy, x: ox, y: oy,
             vx: 0, vy: 0,
@@ -62,9 +63,9 @@ function InteractiveDots({ mouse }: { mouse: React.RefObject<{ x: number; y: num
     function getDotColors(): { base: string; glow: string } {
       const isDark   = document.body.classList.contains("dark")
       const isSunset = document.body.classList.contains("sunset")
-      if (isDark)   return { base: "rgb(75, 75, 75)", glow: "rgb(198, 198, 198)" }
-      if (isSunset) return { base: "rgb(180,130,60)",  glow: "rgb(255,210,140)" }
-      return          { base: "rgb(195, 195, 195)",        glow: "rgb(114, 114, 114)"    }
+      if (isDark)   return { base: "rgb(58, 58, 58)", glow: "rgb(198, 198, 198)" }
+      if (isSunset) return { base: "rgb(89, 64, 29)",  glow: "rgb(202, 167, 111)" }
+      return          { base: "rgb(206, 206, 206)",        glow: "rgb(118, 118, 118)"    }
     }
 
     let t = 0
