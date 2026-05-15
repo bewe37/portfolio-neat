@@ -27,6 +27,8 @@ interface ContentBlock {
   body?: string
   highlight?: boolean
   note?: string
+  insight?: string
+  insightTitle?: string
   objectPosition?: string
 }
 
@@ -48,6 +50,7 @@ interface Section {
   bento?: BentoItem[]
   accordion?: boolean
   footnote?: string
+  beforeAfter?: [string, string]
 }
 
 interface Props {
@@ -227,9 +230,83 @@ function Cards({ cards }: { cards: CardItem[] }) {
   )
 }
 
+function BeforeAfterSlider({ before, after }: { before: string; after: string }) {
+  const [pct, setPct] = useState(50)
+  const ref = useRef<HTMLDivElement>(null)
+
+  const update = (clientX: number) => {
+    const el = ref.current
+    if (!el) return
+    const { left, width } = el.getBoundingClientRect()
+    setPct(Math.min(100, Math.max(0, ((clientX - left) / width) * 100)))
+  }
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault()
+    const move = (e: MouseEvent) => update(e.clientX)
+    const up   = () => { window.removeEventListener("mousemove", move); window.removeEventListener("mouseup", up) }
+    window.addEventListener("mousemove", move)
+    window.addEventListener("mouseup", up)
+  }
+
+  const onTouchMove = (e: React.TouchEvent) => update(e.touches[0].clientX)
+
+  return (
+    <div ref={ref} style={{ position: "relative", borderRadius: 14, overflow: "hidden", cursor: "col-resize", userSelect: "none", border: "1px solid var(--border)" }}
+      onMouseDown={onMouseDown} onTouchMove={onTouchMove}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={after} alt="After" style={{ width: "100%", display: "block" }} />
+      <div style={{ position: "absolute", inset: 0, overflow: "hidden", width: `${pct}%` }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={before} alt="Before" style={{ width: ref.current?.offsetWidth ?? "100%", maxWidth: "none", display: "block" }} />
+      </div>
+      <div style={{ position: "absolute", top: 0, bottom: 0, left: `${pct}%`, transform: "translateX(-50%)", width: 2, backgroundColor: "white", pointerEvents: "none" }}>
+        <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 32, height: 32, borderRadius: "50%", backgroundColor: "white", boxShadow: "0 2px 8px rgba(0,0,0,0.25)", display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4 2L1 6L4 10M8 2L11 6L8 10" stroke="#333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </div>
+      </div>
+      <div style={{ position: "absolute", top: 10, left: 10, padding: "2px 6px", borderRadius: 4, backgroundColor: "rgba(0,0,0,0.4)", color: "white", fontSize: 9, fontWeight: 600, letterSpacing: "0.06em", pointerEvents: "none" }}>BLUEPRINT</div>
+      <div style={{ position: "absolute", top: 10, right: 10, padding: "2px 6px", borderRadius: 4, backgroundColor: "rgba(0,0,0,0.4)", color: "white", fontSize: 9, fontWeight: 600, letterSpacing: "0.06em", pointerEvents: "none" }}>FINAL DESIGN</div>
+    </div>
+  )
+}
+
+function HighlightCarousel({ images }: { images: string[] }) {
+  const [active, setActive] = useState(0)
+  return (
+    <div style={{ marginTop: 20 }}>
+      <div style={{ overflow: "hidden" }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={images[active]} alt="" style={{ width: "100%", display: "block" }} />
+      </div>
+      {images.length > 1 && (
+        <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 12 }}>
+          {images.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setActive(i)}
+              style={{
+                width:           i === active ? 16 : 6,
+                height:          6,
+                borderRadius:    99,
+                border:          "none",
+                backgroundColor: i === active ? "var(--c-primary)" : "var(--border)",
+                padding:         0,
+                cursor:          "pointer",
+                transition:      "width 0.2s ease, background-color 0.2s ease",
+              }}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function renderContentBlock(block: ContentBlock, bi: number) {
   if (block.highlight) {
-    const isNumbered = block.title && /^\d+$/.test(block.title.trim())
+    const isNumbered  = block.title && /^\d+$/.test(block.title.trim())
+    const hlImages    = block.images ?? (block.image ? [block.image] : [])
     return (
       <motion.div
         key={bi}
@@ -238,53 +315,57 @@ function renderContentBlock(block: ContentBlock, bi: number) {
         viewport={VIEWPORT}
         transition={{ ...FADE, delay: bi * 0.05 }}
         style={{
-          padding:      isNumbered ? "36px 40px" : "52px 48px",
-          borderRadius: 18,
-          border:       "1px solid var(--border)",
-          textAlign:    isNumbered ? "left" : "center",
+          padding:         isNumbered ? "36px 40px" : "24px 24px",
+          borderRadius:    18,
+          border:          "1px solid var(--border)",
+          backgroundColor: "var(--surface)",
+          textAlign:       "left",
+          display:         "flex",
+          flexDirection:   "column",
         }}
       >
-        {isNumbered && (
-          <span style={{
-            fontFamily:    "var(--font-sans)",
-            fontSize:      11,
-            fontWeight:    700,
-            letterSpacing: "0.1em",
-            color:         "var(--c-faint)",
-            display:       "block",
-            marginBottom:  20,
-          }}>
-            {block.title}
-          </span>
-        )}
-        {!isNumbered && block.title && (
-          <p style={{
-            fontFamily:    "var(--font-sans)",
-            fontSize:      22,
-            fontWeight:    600,
-            color:         "var(--c-primary)",
-            letterSpacing: "-0.025em",
-            lineHeight:    1.45,
-            margin:        "0 auto",
-            maxWidth:      760,
-          }}>
-            {block.title}
-          </p>
-        )}
-        {block.body && (
-          <p style={{
-            fontFamily:    "var(--font-sans)",
-            fontSize:      isNumbered ? 22 : 15,
-            fontWeight:    400,
-            color:         isNumbered ? "var(--c-primary)" : "var(--c-body)",
-            margin:        (!isNumbered && block.title) ? "16px auto 0" : 0,
-            lineHeight:    isNumbered ? 1.55 : 1.7,
-            letterSpacing: isNumbered ? "-0.025em" : "0",
-            maxWidth:      isNumbered ? "none" : 640,
-          }}>
-            {block.body}
-          </p>
-        )}
+        <div>
+          {isNumbered && (
+            <span style={{
+              fontFamily:    "var(--font-sans)",
+              fontSize:      11,
+              fontWeight:    700,
+              letterSpacing: "0.1em",
+              color:         "var(--c-faint)",
+              display:       "block",
+              marginBottom:  20,
+            }}>
+              {block.title}
+            </span>
+          )}
+          {!isNumbered && block.title && (
+            <p style={{
+              fontFamily:    "var(--font-sans)",
+              fontSize:      16,
+              fontWeight:    600,
+              color:         "var(--c-primary)",
+              letterSpacing: "-0.025em",
+              lineHeight:    1.45,
+              margin:        0,
+            }}>
+              {block.title}
+            </p>
+          )}
+          {block.body && (
+            <p style={{
+              fontFamily:    "var(--font-sans)",
+              fontSize:      isNumbered ? 22 : 15,
+              fontWeight:    400,
+              color:         isNumbered ? "var(--c-primary)" : "var(--c-body)",
+              margin:        (!isNumbered && block.title) ? "6px 0 0" : 0,
+              lineHeight:    isNumbered ? 1.55 : 1.7,
+              letterSpacing: isNumbered ? "-0.025em" : "0",
+            }}>
+              {block.body}
+            </p>
+          )}
+        </div>
+        {hlImages.length > 0 && <HighlightCarousel images={hlImages} />}
       </motion.div>
     )
   }
@@ -362,7 +443,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
             <h3 style={{
               fontFamily:    "var(--font-sans)",
               fontSize:      22,
-              fontWeight:    600,
+              fontWeight:    500,
               color:         "var(--c-primary)",
               letterSpacing: "-0.025em",
               lineHeight:    1.2,
@@ -389,6 +470,43 @@ function renderContentBlock(block: ContentBlock, bi: number) {
       )}
       {hasMedia && (
         <MediaGrid srcs={allImages.length ? allImages : undefined} videos={allVideos.length ? allVideos : undefined} />
+      )}
+      {block.insight && (
+        <div style={{
+          display:         "flex",
+          alignItems:      "flex-start",
+          gap:             12,
+          padding:         "20px 20px",
+          borderRadius:    12,
+          border:          "1px solid var(--border)",
+          backgroundColor: "var(--surface)",
+        }}>
+          <img src="/Spark.svg" alt="" style={{ width: 16, height: 16, flexShrink: 0, marginTop: 2 }} />
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <p style={{
+              fontFamily:    "var(--font-sans)",
+              fontSize:      18,
+              fontWeight:    500,
+              color:         "var(--c-primary)",
+              lineHeight:    1.4,
+              margin:        0,
+              letterSpacing: "-0.02em",
+            }}>
+              {block.insightTitle}
+            </p>
+            <p style={{
+              fontFamily:    "var(--font-sans)",
+              fontSize:      16,
+              fontWeight:    400,
+              color:         "var(--c-body)",
+              lineHeight:    1.7,
+              margin:        0,
+              letterSpacing: "-0.01em",
+            }}>
+              {block.insight}
+            </p>
+          </div>
+        </div>
       )}
     </motion.div>
   )
@@ -447,7 +565,7 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
                   <span style={{
                     fontFamily:    "var(--font-sans)",
                     fontSize:      11,
-                    fontWeight:    600,
+                    fontWeight:    500,
                     color:         isActive ? "var(--c-primary)" : "var(--c-faint)",
                     letterSpacing: "0.06em",
                     lineHeight:    1.5,
@@ -460,7 +578,7 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
                   <span style={{
                     fontFamily:    "var(--font-sans)",
                     fontSize:      17,
-                    fontWeight:    600,
+                    fontWeight:    500,
                     color:         isActive ? "var(--c-primary)" : "var(--c-dim)",
                     letterSpacing: "-0.02em",
                     lineHeight:    1.3,
@@ -559,11 +677,11 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
                   </div>
                 )}
                 <div style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
-                  <span style={{ fontFamily: "var(--font-sans)", fontSize: 11, fontWeight: 600, color: "var(--c-faint)", letterSpacing: "0.06em", paddingTop: 2, flexShrink: 0 }}>
+                  <span style={{ fontFamily: "var(--font-sans)", fontSize: 11, fontWeight: 500, color: "var(--c-faint)", letterSpacing: "0.06em", paddingTop: 2, flexShrink: 0 }}>
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <div style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 0 }}>
-                    <span style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 600, color: "var(--c-primary)", letterSpacing: "-0.015em", lineHeight: 1.3 }}>
+                    <span style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.015em", lineHeight: 1.3 }}>
                       {item.title}
                     </span>
                     {item.body && (
@@ -796,7 +914,7 @@ function TableOfContents({ backHref, items, activeId }: {
               <span style={{
                 fontFamily:    "var(--font-sans)",
                 fontSize:      13,
-                fontWeight:    isActive ? 600 : 400,
+                fontWeight:    isActive ? 500 : 400,
                 color:         isHov ? "rgb(255,107,48)" : isActive ? "var(--c-primary)" : "var(--c-dim)",
                 letterSpacing: "-0.01em",
                 lineHeight:    1.4,
@@ -833,7 +951,7 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
         <h2 style={{
           fontFamily:    "var(--font-sans)",
           fontSize:      22,
-          fontWeight:    600,
+          fontWeight:    500,
           color:         "var(--c-primary)",
           letterSpacing: "-0.025em",
           lineHeight:    1.2,
@@ -860,7 +978,11 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
 
       {sec.bento && <Bento items={sec.bento} />}
 
-      {hasTopMedia && (
+      {sec.beforeAfter && (
+        <BeforeAfterSlider before={sec.beforeAfter[0]} after={sec.beforeAfter[1]} />
+      )}
+
+      {!sec.beforeAfter && hasTopMedia && (
         <MediaGrid
           srcs={topImages.length ? topImages : undefined}
           videos={sec.videos?.length ? sec.videos : undefined}
@@ -875,7 +997,7 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
             <a key={c.platform} href={c.href} target="_blank" rel="noopener noreferrer" onClick={() => playClick()} style={{
               fontFamily:      "var(--font-sans)",
               fontSize:        13,
-              fontWeight:      600,
+              fontWeight:      500,
               color:           "var(--c-mid)",
               letterSpacing:   "-0.01em",
               textDecoration:  "none",

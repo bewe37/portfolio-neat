@@ -8,7 +8,7 @@ export default function AmdAiProject() {
       category="Product Design"
       year="2025"
       role="Product Design Intern"
-      cover="/AMDThumbnail.png"
+      cover="/AMDThumbnailCS.png"
       overview={"In the summer of 2025, I joined AMD as a Product Design Intern contributing to one of the largest redesigns AMD Software had undertaken in recent years. My focus was reworking the Overlay View, a lightweight interface that sits on top of any application, designed for quick, in-session control. At the time, the overlay was limited to displaying system metrics. My role was to evolve it into something users could interact with and act through, without leaving whatever they were doing."}
       specs={[
         { label: "Scope",    value: "Feature Design — Conversational AI" },
@@ -26,18 +26,18 @@ export default function AmdAiProject() {
             {
               title: "AMD Chat",
               body:  "Describe what's wrong in plain language — \"my game is stuttering,\" \"fan is too loud\" — and the AI surfaces a one-tap fix backed by your live hardware data.",
-              videos: ["/DemoAMDNew.mp4"],
+              videos: ["/DemoAmdChat1.mp4"],
             },
             {
               title: "In-Game Mode",
               body:  "Most-used controls surface immediately when you enter a game. No navigation, no hunting — the overlay adapts to what you need mid-session.",
-              videos: ["/DemoRecording.mp4"],
+              videos: ["/ScreenRecording.mp4"],
               objectPosition: "left center",
             },
             {
               title: "One-Click Tuning",
               body:  "A single slider adjusts the right combination of graphics settings for your system — no manual parameter tweaking required.",
-              videos: ["/DemoOneClick.mp4"],
+              videos: ["/GraphicOptimization.mp4"],
               objectPosition: "left center",
             },
           ],
@@ -49,13 +49,15 @@ export default function AmdAiProject() {
 contents: [
             {
               highlight: true,
-              title: "Overlay View",
-              body: "A lightweight surface that stays on top of any application, designed for quick access and immediate control",
+              title: "Full View",
+              body: "The complete configuration layer for deeper settings and context.",
+              image: "/full-view-viz.svg",
             },
             {
               highlight: true,
-              title: "Full View",
-              body: "The complete configuration layer. For deeper settings, information, and anything that requires more context.",
+              title: "Overlay View",
+              body: "Stays on top of any application for quick, in-session control.",
+              image: "/overlay-view-viz.svg",
             },
           ],
           footnote: "This case study covers the In-Session Overlay. The Full Application was developed in parallel by a separate workstream.",
@@ -78,7 +80,7 @@ contents: [
             {
               title: "Settings only experts could parse.",
               body:  "This wasn't a new problem. Even the original overlay used terminology that casual users struggled to parse. But as more features moved into the full application, settings became more numerous and granular, making it harder to know what each option did or how it would affect your system without prior technical knowledge.",
-              image: "/Problem Space 4.png",
+              image: "/TechnicalTerms.png",
             },
             {
               title: "Information overload.",
@@ -110,9 +112,34 @@ contents: [
           body:  "The first concept introduced a traditional multi-message chatbot within the Overlay View. Users could engage in threaded conversations and refine requests over time. While familiar, the interface quickly became visually dense and required users to manage chat history in a space meant for quick interactions.",
           contents: [
             {
-              image: "/InitialChat.png",
-              title: "Key Insight",
-              note:  "A threaded chat adds cognitive load and slows the path from question to action. The overlay needed something faster.",
+              image:        "/InitialChat.png",
+              insightTitle: "The familiar pattern came with a hidden cost.",
+              insight:      "The overlay is built for fast, in-session actions. But with AI as the only entry point, every interaction required a conversation as users had to describe actions they could've just tapped.",
+            },
+          ],
+        },
+        {
+          label: "New Direction",
+          title: "AI as an accelerator, not a gatekeeper.",
+          body:  "The new model kept AI for what it's actually good at — diagnosing problems and surfacing fixes — while restoring direct controls so users never have to go through conversation to do something simple. Three things made that possible:",
+          contents: [
+            {
+              highlight: true,
+              title: "Contextual Chat",
+              body:  "Ask a question, get a direct answer or a one-tap fix. No thread, no history.",
+              images: ["/chat.svg"],
+            },
+            {
+              highlight: true,
+              title: "Pinned Widgets",
+              body:  "Controls you care about stay pinned and instantly accessible every session.",
+              images: ["/pinned.svg"],
+            },
+            {
+              highlight: true,
+              title: "Manual Discovery",
+              body:  "Browse and add controls yourself, no assistant required to get started.",
+              images: ["/discover.svg"],
             },
           ],
         },
@@ -122,12 +149,7 @@ contents: [
             {
               title:  "Describe the problem, get a fix.",
               body:   "Instead of continuing a thread, responses can transform into pinnable widgets, allowing users to take immediate action. Just type or say what you're experiencing, like \"my game is stuttering\" or \"my fan is too loud,\" and the AI reads your live hardware data, figures out what's actually wrong, and hands you a one-tap fix on the spot. ",
-              videos: ["/DemoAmdChat.mp4"],
-            },
-            {
-              title:  "Responses that become controls.",
-              body:   "I designed the assistant to adapt its responses based on user intent. For explanations or recommendations, it provides concise text outputs. When a user requests a specific feature, the assistant generates a pinnable widget instead, turning guidance into an actionable and persistent control within the Overlay View.",
-              videos: ["/DemoPinning.mp4"],
+              videos: ["/DemoAmdChat1.mp4"],
             },
           ],
         },
@@ -142,7 +164,7 @@ contents: [
             {
               title:  "Manual widget customization.",
               body:   "Beyond pinning chat outputs, I designed the overlay to let users add widgets manually, giving them the flexibility to tailor the experience to their own needs rather than relying only on AI suggestions.",
-              videos: ["/ManualAddition.mp4"],
+              videos: ["/ManuallyAddedWidget.mp4"],
             },
           ],
         },
@@ -150,7 +172,7 @@ contents: [
           label: "Overall Structure",
           title: "Layout built around how users scan.",
           body:  "To preserve familiar scanning patterns and maintain consistency with the current overlay layout, I kept key system information on the right, where pinnable widgets live as persistent controls. The center becomes the space for contextual actions, with AMD Chat serving as the primary interaction point.",
-          images: ["/StructureBefore.png", "/StructureAfter.png"],
+          beforeAfter: ["/StructureBefore.png", "/StructureAfter.png"],
         },
         {
           label: "In-Game Mode",
@@ -158,17 +180,17 @@ contents: [
             {
               title: "Most-used controls, one click away.",
               body:  "Most gamers don't stop to think mid-session, they act. So instead of asking the AI to do something, we added  a modal that puts the most-reached-for controls & features one click away.",
-              image: "/InGameWidget.png",
+              image: "/In-Game Widgets.png",
             },
             {
               title:  "Tune performance without touching settings.",
               body:   "While the software offers powerful configuration options, users often struggle to determine which settings actually improve performance for their specific system during gameplay. To address this, I initiated the idea of an in game widget with simplified slider controls, enabling quick performance adjustments without manually tweaking multiple parameters.",
-              videos: ["/DemoOneClick.mp4"],
+              videos: ["/GraphicOptimization.mp4"],
             },
             {
               title:  "Start recording without leaving the game.",
               body:   "The in-game mode prioritizes high-usage features like screen recording, allowing users to start capturing directly through AMD Chat or a keyboard shortcut without navigating the full application.",
-              videos: ["/DemoRecording.mp4"],
+              videos: ["/ScreenRecording.mp4"],
             },
           ],
         },
