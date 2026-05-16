@@ -55,7 +55,7 @@ export default function FmeProject() {
           ],
         },
         {
-          label: "Project Kickoff Audit",
+          label: "Audit",
           contents: [
             {
               title: "Finding the right home for collapsed annotations indicator.",
@@ -70,7 +70,7 @@ export default function FmeProject() {
           ],
         },
         {
-          label: "Solution — Annotation Visibility",
+          label: "Annotation Visibility",
           contents: [
             {
               title:  "Right click menu as access point.",
@@ -85,7 +85,7 @@ export default function FmeProject() {
           ],
         },
         {
-          label: "Solution — Parameter Dialog",
+          label: "Parameter Dialog",
           contents: [
             {
               title:  "Adding in-line annotation.",

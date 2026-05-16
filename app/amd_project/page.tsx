@@ -8,39 +8,61 @@ export default function AmdProject() {
       year="2025"
       role="Design System Designer"
       cover="/AMDCaseStudy.png"
-      overview={"When I joined AMD's UX team, the product didn't have a shared design foundation.\n\nDesigners organized files differently, colors were applied inconsistently, and components varied from screen to screen. The team was also preparing for a full software redesign — which meant the inconsistency wasn't just a current problem, it was about to be a much bigger one.\n\nI took on building the design system from the ground up: not as a cleanup effort, but as the structural layer the redesign would be built on top of."}
+      overview={"When I joined AMD's UX team, the product didn't have a shared design foundation. Designers organized files differently, colors were applied inconsistently, and components varied from screen to screen. The team was also preparing for a full software redesign, which meant the inconsistency wasn't just a current problem. It was about to be a much bigger one. I took on building the design system from the ground up, not as a cleanup effort, but as the structural layer the redesign would be built on top of."}
       specs={[
         { label: "Scope",    value: "Design System" },
         { label: "Duration", value: "May – December 2025" },
       ]}
       sections={[
         {
-          label: "High-Level Audit",
+          label: "Goals",
+          title: "What the system needed to do.",
+          body: "With a clear direction established, I outlined three goals the design system would need to support:",
+          contents: [
+            {
+              highlight: true,
+              title: "A consistent design foundation.",
+              body: "Standardize components and bring visual consistency across the product.",
+            },
+            {
+              highlight: true,
+              title: "Faster design-to-dev handover.",
+              body: "Reduce back-and-forth with a shared system both sides can reference.",
+            },
+            {
+              highlight: true,
+              title: "Built to scale.",
+              body: "Support the upcoming redesign without needing to be rebuilt from scratch.",
+            },
+          ],
+        },
+        {
+          label: "Context",
           title: "Identifying the problems",
           images: ["/colorMismatch.png", "/inconsistentStyling.png"],
-          body:   "Before diving into any design system work, I conducted an audit and found two major issues. Colors were applied inconsistently across teams, leading to unclear states and a broken visual hierarchy. Component styling had the same problem — buttons alone varied across screens in size, corner radius, spacing, and interaction states, revealing a product that had grown without any visual governance.",
+          body:   "Two problems showed up immediately. Colors were applied inconsistently across teams, creating unclear states and a broken visual hierarchy. Component styling had the same issue. Buttons alone varied across screens in size, corner radius, spacing, and interaction states. The product had grown without any visual governance, and with a full redesign on the horizon, these problems were about to get a lot harder to fix.",
         },
         {
           label: "Design Foundation",
           contents: [
             {
               image: "/primitiveTokens.png",
-              title: "The push for a better color foundation.",
-              body:  "To keep the design system flexible, I defined primitive tokens as the base color palette and used semantic tokens to apply those colors throughout the components. This allowed components to rely on intent-driven values rather than fixed hex codes.",
+              title: "A better color foundation.",
+              body:  "I defined primitive tokens as the raw color palette and mapped them to semantic tokens applied across components. Components reference intent-driven values instead of hardcoded hex codes, so a single update propagates everywhere it matters.",
             },
             {
               images: ["/Tokens1.png", "/ColorStructure.png"],
-              body:   "Once the primitives were set, I mapped them to semantic tokens named by purpose or state. This ensured components always referenced meaningful, role-based tokens, which made updates much smoother and more consistent.",
+              body:   "Once the primitives were set, I mapped them to semantic tokens named by purpose or state. Components always reference role-based values, which made global updates straightforward and kept the system from drifting as it grew.",
             },
             {
               image: "/radius_spacingtokens.png",
-              title: "A proper spacing & radius token system.",
-              body:  "To bring consistency to layouts, I introduced numeric tokens for spacing and radius based on a structured 4-point scale. By defining a predictable set of spacing and radius tokens, layout decisions became clearer and adjustments were safer to make.",
+              title: "A spacing and radius token system.",
+              body:  "I introduced numeric tokens for spacing and radius built on a 4-point scale. Layout decisions became consistent across the board, and adjustments no longer required guesswork.",
             },
             {
               image: "/TextStyling.png",
-              title: "Streamlined text styling.",
-              body:  "I simplified the text-styling by consolidating everything into a single, structured typography scale with clear header and body levels.",
+              title: "A unified typography scale.",
+              body:  "Text styling was scattered across files with no shared structure. I consolidated everything into a single scale with clear header and body levels, so type decisions were predictable and easy to apply consistently.",
             },
           ],
         },
@@ -49,8 +71,8 @@ export default function AmdProject() {
           contents: [
             {
               images: ["/ComponentAnatomy.png", "/CommonComponents.png"],
-              title:  "Dissecting the designs.",
-              body:   "Before building anything, I went through the approved designs and identified the foundational elements that appeared repeatedly — buttons, inputs, tags, toggles. Recognizing these common components early meant I could establish a shared base layer rather than designing each screen in isolation.",
+              title:  "Finding what repeats.",
+              body:   "Before building anything, I audited the approved designs and identified the elements that appeared most often: buttons, inputs, tags, toggles. Starting from what repeated meant I could build a shared base layer rather than designing each screen from scratch.",
             },
             {
               image: "/Slots.jpg",
@@ -61,21 +83,22 @@ export default function AmdProject() {
         },
         {
           label: "Documentation",
-          title: "Reducing communication gaps between designers and developers.",
+          title: "Closing the gap between design and development.",
           images: ["/guides.png", "/DesignGuides.png"],
           body:   "Wrote usage and behavior guidelines for each component. The goal was simple: designers and developers shouldn't have to chase each other down to figure out how something is supposed to work.",
         },
         {
           label: "Outcome",
-          title: "Consistent & maintainable mockups.",
+          title: "Consistent, maintainable mockups.",
           images: ["/DesignSystemImpact.png", "/DesignSpecs.png"],
-          body:   "By the end of the internship, the team had a working system they could actually build with. Updates propagated cleanly across mockups, designers stopped guessing at spacing values, and the redesign had a consistent foundation to grow from.",
+          body:   "By the end of the internship, the team had a working system they could actually build with. Updates propagated cleanly across mockups, designers stopped guessing at spacing values, and the redesign had a consistent foundation to grow from.\n\nBeyond building the system, I took on getting the team to actually use it. That meant running walkthroughs, answering questions during handoff, and making sure designers felt confident reaching for the system instead of going off on their own. Adoption was the real measure of whether the work landed.",
         },
         {
-          label: "How It Comes Together",
-          title: "The vibeeee ~",
-          images: ["/DSHighlight.png"],
-          body:   "Even as the overlay introduces new features, the design system keeps everything consistent and connected. Shared components and patterns make the interface feel cohesive, so the overlay stays lightweight and easy to navigate without adding visual noise.",
+          label: "Oh, and there's more.",
+          title: "Rethinking the Overlay as a Control Surface",
+          href: "/amd_ai_project",
+          body: "The design system was built to support this. A full redesign of the AMD Software overlay, turning a read-only metrics display into something users could actually act on.",
+          image: "/DSHighlight.png",
         },
       ]}
     />

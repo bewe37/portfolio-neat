@@ -38,6 +38,7 @@ interface CardItem  { icon?: string; title: string; body: string }
 interface Section {
   label: string
   title?: string
+  href?: string
   body?: string
   image?: string
   images?: string[]
@@ -51,7 +52,10 @@ interface Section {
   accordion?: boolean
   footnote?: string
   beforeAfter?: [string, string]
+  hideToc?: boolean
 }
+
+interface NextProject { label: string; title: string; href: string }
 
 interface Props {
   title: string
@@ -68,6 +72,7 @@ interface Props {
   passwordDesc?: string
   backHref?: string
   banner?: React.ReactNode
+  nextProject?: NextProject
 }
 
 const FADE     = { duration: 0.55, ease: [0.16, 1, 0.3, 1] as const }
@@ -80,7 +85,7 @@ function SectionLabel({ text }: { text: string }) {
       <span style={{
         fontFamily:    "var(--font-sans)",
         fontSize:      11,
-        fontWeight:    600,
+        fontWeight:    500,
         letterSpacing: "0.08em",
         textTransform: "uppercase" as const,
         color:         "var(--c-secondary)",
@@ -96,7 +101,7 @@ function SectionLabel({ text }: { text: string }) {
 function MediaBox({ src, video }: { src: string; video?: boolean }) {
   return (
     <div style={{
-      borderRadius: 14, overflow: "hidden",
+      borderRadius: 8, overflow: "hidden",
       backgroundColor: "var(--surface)",
       border: "1px solid var(--border)",
     }}>
@@ -173,7 +178,7 @@ function StatCallout({ stat }: { stat: StatBlock }) {
         {stat.value}
       </span>
       <div style={{ width: 40, height: 2, backgroundColor: "var(--border)", margin: "20px 0 16px" }} />
-      <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 600, color: "var(--c-mid)", margin: 0, letterSpacing: "-0.01em" }}>
+      <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 500, color: "var(--c-mid)", margin: 0, letterSpacing: "-0.01em" }}>
         {stat.label}
       </p>
       {stat.body && (
@@ -206,7 +211,7 @@ function Cards({ cards }: { cards: CardItem[] }) {
           <h4 style={{
             fontFamily:    "var(--font-sans)",
             fontSize:      14,
-            fontWeight:    600,
+            fontWeight:    500,
             color:         "var(--c-high)",
             letterSpacing: "-0.01em",
             margin:        "0 0 8px",
@@ -252,7 +257,7 @@ function BeforeAfterSlider({ before, after }: { before: string; after: string })
   const onTouchMove = (e: React.TouchEvent) => update(e.touches[0].clientX)
 
   return (
-    <div ref={ref} style={{ position: "relative", borderRadius: 14, overflow: "hidden", cursor: "col-resize", userSelect: "none", border: "1px solid var(--border)" }}
+    <div ref={ref} style={{ position: "relative", borderRadius: 8, overflow: "hidden", cursor: "col-resize", userSelect: "none", border: "1px solid var(--border)" }}
       onMouseDown={onMouseDown} onTouchMove={onTouchMove}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={after} alt="After" style={{ width: "100%", display: "block" }} />
@@ -265,8 +270,8 @@ function BeforeAfterSlider({ before, after }: { before: string; after: string })
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4 2L1 6L4 10M8 2L11 6L8 10" stroke="#333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
         </div>
       </div>
-      <div style={{ position: "absolute", top: 10, left: 10, padding: "2px 6px", borderRadius: 4, backgroundColor: "rgba(0,0,0,0.4)", color: "white", fontSize: 9, fontWeight: 600, letterSpacing: "0.06em", pointerEvents: "none" }}>BLUEPRINT</div>
-      <div style={{ position: "absolute", top: 10, right: 10, padding: "2px 6px", borderRadius: 4, backgroundColor: "rgba(0,0,0,0.4)", color: "white", fontSize: 9, fontWeight: 600, letterSpacing: "0.06em", pointerEvents: "none" }}>FINAL DESIGN</div>
+      <div style={{ position: "absolute", top: 10, left: 10, padding: "2px 6px", borderRadius: 4, backgroundColor: "rgba(0,0,0,0.4)", color: "white", fontSize: 9, fontWeight: 500, letterSpacing: "0.06em", pointerEvents: "none" }}>BLUEPRINT</div>
+      <div style={{ position: "absolute", top: 10, right: 10, padding: "2px 6px", borderRadius: 4, backgroundColor: "rgba(0,0,0,0.4)", color: "white", fontSize: 9, fontWeight: 500, letterSpacing: "0.06em", pointerEvents: "none" }}>FINAL DESIGN</div>
     </div>
   )
 }
@@ -315,7 +320,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
         viewport={VIEWPORT}
         transition={{ ...FADE, delay: bi * 0.05 }}
         style={{
-          padding:         isNumbered ? "36px 40px" : "24px 24px",
+          padding:         isNumbered ? "24px 24px" : "24px 24px",
           borderRadius:    18,
           border:          "1px solid var(--border)",
           backgroundColor: "var(--surface)",
@@ -342,7 +347,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
             <p style={{
               fontFamily:    "var(--font-sans)",
               fontSize:      16,
-              fontWeight:    600,
+              fontWeight:    500,
               color:         "var(--c-primary)",
               letterSpacing: "-0.025em",
               lineHeight:    1.45,
@@ -354,12 +359,12 @@ function renderContentBlock(block: ContentBlock, bi: number) {
           {block.body && (
             <p style={{
               fontFamily:    "var(--font-sans)",
-              fontSize:      isNumbered ? 22 : 15,
-              fontWeight:    400,
-              color:         isNumbered ? "var(--c-primary)" : "var(--c-body)",
+              fontSize:      isNumbered ? 22 : (!block.title ? 18 : 15),
+              fontWeight:    isNumbered ? 400 : (!block.title ? 500 : 400),
+              color:         isNumbered ? "var(--c-primary)" : (!block.title ? "var(--c-primary)" : "var(--c-body)"),
               margin:        (!isNumbered && block.title) ? "6px 0 0" : 0,
-              lineHeight:    isNumbered ? 1.55 : 1.7,
-              letterSpacing: isNumbered ? "-0.025em" : "0",
+              lineHeight:    isNumbered ? 1.55 : (!block.title ? 1.5 : 1.7),
+              letterSpacing: isNumbered ? "-0.025em" : (!block.title ? "-0.02em" : "0"),
             }}>
               {block.body}
             </p>
@@ -538,115 +543,47 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
 
   return (
     <>
-      {/* Desktop: accordion list + sticky media */}
-      <div className="rsp-accordion-desktop" style={{ display: "grid", gridTemplateColumns: "2fr 3fr", gap: 56, alignItems: "start" }}>
-        <div style={{ borderTop: "1px solid var(--divider)" }}>
-          {contents.map((item, i) => {
-            const isActive = active === i
-            return (
-              <button
-                key={i}
-                onClick={() => { playClick(); setActive(i) }}
-                style={{
-                  width:      "100%",
-                  display:    "flex",
-                  flexDirection: "column",
-                  gap:        0,
-                  padding:    "22px 0",
-                  background: "none",
-                  border:     "none",
-                  borderBottom: "1px solid var(--divider)",
-                  cursor:     "pointer",
-                  textAlign:  "left",
-                }}
-              >
-                {/* Header row: number + title + chevron */}
-                <div style={{ display: "grid", gridTemplateColumns: "28px 1fr 20px", gap: "0 16px", alignItems: "center" }}>
-                  <span style={{
-                    fontFamily:    "var(--font-sans)",
-                    fontSize:      11,
-                    fontWeight:    500,
-                    color:         isActive ? "var(--c-primary)" : "var(--c-faint)",
-                    letterSpacing: "0.06em",
-                    lineHeight:    1.5,
-                    transition:    "color 0.2s",
-                    alignSelf:     "start",
-                    paddingTop:    2,
-                  }}>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span style={{
-                    fontFamily:    "var(--font-sans)",
-                    fontSize:      17,
-                    fontWeight:    500,
-                    color:         isActive ? "var(--c-primary)" : "var(--c-dim)",
-                    letterSpacing: "-0.02em",
-                    lineHeight:    1.3,
-                    transition:    "color 0.2s",
-                  }}>
-                    {item.title}
-                  </span>
-                  <motion.svg
-                    animate={{ rotate: isActive ? 180 : 0 }}
-                    transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                    width="14" height="14" viewBox="0 0 14 14" fill="none"
-                    style={{ flexShrink: 0, opacity: isActive ? 0.7 : 0.3 }}
-                  >
-                    <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-                  </motion.svg>
+      {/* Desktop: full-width stacked items with dividers */}
+      <div className="rsp-accordion-desktop" style={{ display: "flex", flexDirection: "column" }}>
+        {contents.map((item, i) => {
+          const src = item.videos?.[0]
+            ? { src: item.videos[0], video: true }
+            : item.image
+              ? { src: item.image, video: false }
+              : item.images?.[0]
+                ? { src: item.images[0], video: false }
+                : null
+          return (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={VIEWPORT}
+              transition={{ ...FADE, delay: i * 0.05 }}
+              style={{ paddingTop: i === 0 ? 0 : 48, display: "flex", flexDirection: "column", gap: 24 }}
+            >
+              <div>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: 17, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.3, margin: 0 }}>
+                  {item.title}
+                </p>
+                {item.body && (
+                  <p style={{ fontFamily: "var(--font-sans)", fontSize: 16, fontWeight: 400, color: "var(--c-body)", lineHeight: 1.85, letterSpacing: "-0.01em", margin: "6px 0 0" }}>
+                    {item.body}
+                  </p>
+                )}
+              </div>
+              {src && (
+                <div style={{ borderRadius: 8, overflow: "hidden", border: "1px solid var(--border)", backgroundColor: "var(--surface)" }}>
+                  {src.video
+                    ? <video src={src.src} autoPlay muted loop playsInline preload="none" style={{ width: "100%", display: "block" }} />
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    : <img src={src.src} alt="" draggable={false} style={{ width: "100%", display: "block" }} />
+                  }
                 </div>
-
-                {/* Collapsible body */}
-                <AnimatePresence initial={false}>
-                  {isActive && item.body && (
-                    <motion.div
-                      key="body"
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                      style={{ overflow: "hidden", paddingLeft: 44 }}
-                    >
-                      <span style={{
-                        fontFamily:    "var(--font-sans)",
-                        fontSize:      15,
-                        fontWeight:    400,
-                        color:         "var(--c-secondary)",
-                        lineHeight:    1.75,
-                        letterSpacing: "-0.01em",
-                        display:       "block",
-                        paddingTop:    10,
-                      }}>
-                        {item.body}
-                      </span>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </button>
-            )
-          })}
-        </div>
-
-        <div style={{ position: "sticky", top: 80 }}>
-          <AnimatePresence mode="wait">
-            {mediaSrc && (
-              <motion.div
-                key={active}
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.98 }}
-                transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
-                style={{ borderRadius: 14, overflow: "hidden", backgroundColor: "var(--surface)", border: "1px solid var(--border)", height: 440 }}
-              >
-                {mediaSrc.video
-                  ? <video src={mediaSrc.src} autoPlay muted loop playsInline preload="none" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: objectPos, display: "block" }} />
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  : <img src={mediaSrc.src} alt="" draggable={false} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: objectPos, display: "block" }} />
-                }
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+              )}
+            </motion.div>
+          )
+        })}
       </div>
 
       {/* Mobile: snap-scroll carousel */}
@@ -668,7 +605,7 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
             return (
               <div key={i} style={{ minWidth: "100%", maxWidth: "100%", flexShrink: 0, overflow: "hidden", scrollSnapAlign: "start", display: "flex", flexDirection: "column", gap: 16 }}>
                 {src && (
-                  <div style={{ borderRadius: 14, overflow: "hidden", backgroundColor: "var(--surface)", border: "1px solid var(--border)", height: 260 }}>
+                  <div style={{ borderRadius: 8, overflow: "hidden", backgroundColor: "var(--surface)", border: "1px solid var(--border)", height: 260 }}>
                     {src.video
                       ? <video src={src.src} autoPlay muted loop playsInline preload="none" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: objPos, display: "block" }} />
                       /* eslint-disable-next-line @next/next/no-img-element */
@@ -868,6 +805,87 @@ function NoodleAnimation() {
   )
 }
 
+const SPARKLE_COLORS = ["#e8443a", "#e07b00", "#c9a000", "#2ba84a", "#1a8fc9", "#9b3fd4"]
+const SPARKLE_COUNT  = 8
+
+function HighlightsButton({ id, isActive, onClick }: { id: string; isActive: boolean; onClick: () => void }) {
+  const [burst, setBurst] = useState(false)
+  const [hov, setHov]     = useState(false)
+
+  const handleClick = () => {
+    onClick()
+    setBurst(false)
+    requestAnimationFrame(() => requestAnimationFrame(() => setBurst(true)))
+    setTimeout(() => setBurst(false), 700)
+  }
+
+  const particles = Array.from({ length: SPARKLE_COUNT }, (_, i) => {
+    const angle  = (i / SPARKLE_COUNT) * 360
+    const color  = SPARKLE_COLORS[i % SPARKLE_COLORS.length]
+    const dist   = 22 + Math.random() * 12
+    const rad    = (angle * Math.PI) / 180
+    const tx     = Math.cos(rad) * dist
+    const ty     = Math.sin(rad) * dist
+    return { color, tx, ty, angle, i }
+  })
+
+  return (
+    <button
+      onClick={handleClick}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{ background: "none", border: "none", cursor: "pointer", padding: "5px 0", textAlign: "left", position: "relative" }}
+    >
+      {burst && particles.map(({ color, tx, ty, i }) => (
+        <span
+          key={i}
+          style={{
+            position:  "absolute",
+            left:      "50%",
+            top:       "50%",
+            width:     3,
+            height:    3,
+            borderRadius: "50%",
+            backgroundColor: color,
+            pointerEvents: "none",
+            transform: `translate(-50%, -50%)`,
+            animation: `toc-sparkle-${i} 0.65s cubic-bezier(0.22,1,0.36,1) forwards`,
+          }}
+        />
+      ))}
+      <style>{`
+        ${particles.map(({ tx, ty, i }) => `
+          @keyframes toc-sparkle-${i} {
+            0%   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(0); opacity: 0; }
+          }
+        `).join("")}
+        @keyframes toc-hl-shimmer {
+          0%   { background-position: 0% 50%; }
+          100% { background-position: 200% 50%; }
+        }
+      `}</style>
+      <span style={{
+        fontFamily:    "var(--font-sans)",
+        fontSize:      13,
+        fontWeight:    isActive ? 500 : 400,
+        letterSpacing: "-0.01em",
+        lineHeight:    1.4,
+        background:           "linear-gradient(90deg, #e8443a, #e07b00, #c9a000, #2ba84a, #1a8fc9, #9b3fd4, #e8443a)",
+        backgroundSize:       "200% 100%",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor:  "transparent",
+        backgroundClip:       "text",
+        animation:            hov ? "toc-hl-shimmer 1s linear infinite" : "none",
+        transition:           "opacity 0.15s ease",
+        opacity:              hov ? 1 : 0.85,
+      }}>
+        Highlights
+      </span>
+    </button>
+  )
+}
+
 function TableOfContents({ backHref, items, activeId }: {
   backHref: string
   items: Array<{ label: string; id: string }>
@@ -903,6 +921,18 @@ function TableOfContents({ backHref, items, activeId }: {
         {items.map(({ label, id }) => {
           const isActive = activeId === id
           const isHov    = hovId === id
+
+          if (label === "Highlights") {
+            return (
+              <HighlightsButton
+                key={id}
+                id={id}
+                isActive={isActive}
+                onClick={() => { playClick(); document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }) }}
+              />
+            )
+          }
+
           return (
             <button
               key={id}
@@ -915,10 +945,10 @@ function TableOfContents({ backHref, items, activeId }: {
                 fontFamily:    "var(--font-sans)",
                 fontSize:      13,
                 fontWeight:    isActive ? 500 : 400,
-                color:         isHov ? "rgb(255,107,48)" : isActive ? "var(--c-primary)" : "var(--c-dim)",
                 letterSpacing: "-0.01em",
                 lineHeight:    1.4,
                 transition:    "color 0.18s ease",
+                color: isHov ? "rgb(255,107,48)" : isActive ? "var(--c-primary)" : "var(--c-dim)",
               }}>
                 {label}
               </span>
@@ -953,11 +983,22 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
           fontSize:      22,
           fontWeight:    500,
           color:         "var(--c-primary)",
-          letterSpacing: "-0.025em",
+          letterSpacing: "-0.03em",
           lineHeight:    1.2,
           margin:        `0 0 ${sec.body ? 16 : hasTopMedia || sec.bento || sec.accordion ? 28 : 0}px`,
         }}>
-          {sec.title}
+          {sec.href ? (
+            <Link href={sec.href} onClick={() => playClick()}
+              style={{ textDecoration: "none", color: "inherit", display: "inline-flex", alignItems: "center", gap: 10 }}
+              onMouseEnter={e => { e.currentTarget.style.opacity = "0.6"; (e.currentTarget.querySelector(".next-arrow") as HTMLElement).style.transform = "translateX(4px)" }}
+              onMouseLeave={e => { e.currentTarget.style.opacity = "1"; (e.currentTarget.querySelector(".next-arrow") as HTMLElement).style.transform = "translateX(0px)" }}
+            >
+              {sec.title}
+              <svg className="next-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ transition: "transform 0.2s ease", flexShrink: 0 }}>
+                <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </Link>
+          ) : sec.title}
         </h2>
       )}
 
@@ -979,7 +1020,9 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
       {sec.bento && <Bento items={sec.bento} />}
 
       {sec.beforeAfter && (
-        <BeforeAfterSlider before={sec.beforeAfter[0]} after={sec.beforeAfter[1]} />
+        <div style={{ marginTop: 32 }}>
+          <BeforeAfterSlider before={sec.beforeAfter[0]} after={sec.beforeAfter[1]} />
+        </div>
       )}
 
       {!sec.beforeAfter && hasTopMedia && (
@@ -1014,7 +1057,7 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
 
       {sec.contents && (
         sec.accordion
-          ? <div style={{ marginTop: (hasTopMedia || sec.bento) ? 36 : 0 }}>
+          ? <div style={{ marginTop: (hasTopMedia || sec.bento || sec.body) ? 36 : 0 }}>
               <AccordionContents contents={sec.contents} />
             </div>
           : (() => {
@@ -1098,14 +1141,11 @@ function SpecValue({ value }: { value: string | string[] }) {
 export default function CaseStudyLayout({
   title, category: _category, year: _year, role, team, overview, specs, cover,
   sections, lockedSections, password, passwordDesc,
-  backHref = "/", banner,
+  backHref = "/", banner, nextProject,
 }: Props) {
   const [unlocked, setUnlocked] = useState(false)
   const [pwInput,  setPwInput]  = useState("")
   const [pwError,  setPwError]  = useState(false)
-  const [activeId, setActiveId] = useState("sec-overview")
-
-  const paragraphs = overview.split("\n\n").filter(Boolean)
   const allSpecs: Spec[] = [
     { label: "Role", value: role },
     ...(team ? [{ label: "Team", value: team }] : []),
@@ -1114,9 +1154,11 @@ export default function CaseStudyLayout({
 
   const tocItems = [
     { label: "Overview", id: "sec-overview" },
-    ...sections.map((s, si) => ({ label: s.label, id: `sec-s${si}` })),
-    ...(unlocked && lockedSections ? lockedSections.map((s, si) => ({ label: s.label, id: `sec-l${si}` })) : []),
+    ...sections.map((s, si) => ({ label: s.label, id: `sec-s${si}`, hide: s.hideToc })).filter(t => !t.hide),
+    ...(unlocked && lockedSections ? lockedSections.map((s, si) => ({ label: s.label, id: `sec-l${si}`, hide: s.hideToc })).filter(t => !t.hide) : []),
   ]
+
+  const [activeId, setActiveId] = useState(tocItems[0]?.id ?? "")
 
   const tocIds = tocItems.map(t => t.id).join(",")
 
@@ -1146,9 +1188,8 @@ export default function CaseStudyLayout({
 
   return (
     <>
-    <FloatingNav />
     <MobileBackBar href={backHref} />
-    <div style={{ minHeight: "100dvh", display: "flex", justifyContent: "center" }}>
+    <div style={{ display: "flex", justifyContent: "center" }}>
       <div
         className="rsp-cs-grid"
         style={{
@@ -1166,7 +1207,7 @@ export default function CaseStudyLayout({
           style={{
             position:      "sticky",
             top:           0,
-            height:        "100dvh",
+            height:        "fit-content",
             display:       "flex",
             flexDirection: "row",
             alignItems:    "flex-start",
@@ -1177,45 +1218,60 @@ export default function CaseStudyLayout({
           <div style={{ flex: 1, minWidth: 0 }}>
             <TableOfContents backHref={backHref} items={tocItems} activeId={activeId} />
           </div>
-          <div style={{ paddingTop: 56, display: "flex", flexDirection: "column", justifyContent: "center", height: "100dvh" }}>
+          <div style={{ paddingTop: 56, display: "flex", flexDirection: "column", justifyContent: "center" }}>
             <NoodleAnimation />
           </div>
         </div>
 
         {/* Main content */}
-        <main className="rsp-pb rsp-cs-main" style={{ width: "100%", paddingTop: 56, paddingBottom: 120, minWidth: 0 }}>
+        <main className="rsp-cs-main" style={{ width: "100%", paddingTop: 56, paddingBottom: 40, minWidth: 0 }}>
 
-          {/* Title */}
+          {/* Header */}
           <motion.div
+            id="sec-overview"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={FADE}
-            style={{ marginBottom: cover ? 40 : 0 }}
+            style={{
+              marginBottom: 40,
+            }}
           >
             <h1 className="rsp-cs-h1" style={{
               fontFamily:    "var(--font-sans)",
-              fontSize:      36,
-              fontWeight:    600,
+              fontSize:      22,
+              fontWeight:    500,
               color:         "var(--c-primary)",
-              letterSpacing: "-0.03em",
-              lineHeight:    1.1,
-              margin:        "0 0 16px",
+              letterSpacing: "-0.025em",
+              lineHeight:    1.2,
+              margin:        "0 0 10px",
             }}>
               {title}
             </h1>
 
+            <p style={{
+              fontFamily:    "var(--font-sans)",
+              fontSize:      15,
+              fontWeight:    400,
+              color:         "var(--c-body)",
+              letterSpacing: "-0.01em",
+              lineHeight:    1.7,
+              margin:        "0 0 24px",
+            }}>
+              {overview}
+            </p>
+
+
             <div style={{
               display:             "grid",
               gridTemplateColumns: `repeat(${Math.min(allSpecs.length, 5)}, 1fr)`,
-              gap:                 32,
-              paddingTop:          16,
+              gap:                 24,
             }}>
               {allSpecs.map(s => (
-                <div key={s.label} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <div key={s.label} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                   <span style={{
                     fontFamily:    "var(--font-sans)",
                     fontSize:      10,
-                    fontWeight:    600,
+                    fontWeight:    500,
                     letterSpacing: "0.08em",
                     textTransform: "uppercase" as const,
                     color:         "var(--c-secondary)",
@@ -1228,7 +1284,7 @@ export default function CaseStudyLayout({
             </div>
           </motion.div>
 
-          {banner && <div style={{ marginTop: 24 }}>{banner}</div>}
+          {banner && <div style={{ marginBottom: 24 }}>{banner}</div>}
 
           {cover && (
             <motion.div
@@ -1238,7 +1294,7 @@ export default function CaseStudyLayout({
               style={{
                 borderRadius:    18,
                 overflow:        "hidden",
-                marginTop:       banner ? 20 : 36,
+                marginBottom:    40,
                 border:          "1px solid var(--border)",
                 backgroundColor: "var(--surface)",
                 maxHeight:       540,
@@ -1250,40 +1306,6 @@ export default function CaseStudyLayout({
             </motion.div>
           )}
 
-          {/* Project Summary */}
-          <div id="sec-overview" style={{ marginTop: 52, paddingTop: 48, marginBottom: 52 }}>
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={VIEWPORT}
-              transition={{ duration: 0.4 }}
-            >
-              <SectionLabel text="Project Summary" />
-            </motion.div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-              {paragraphs.map((p, i) => (
-                <motion.p
-                  key={i}
-                  initial={{ opacity: 0, y: 14 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={VIEWPORT}
-                  transition={{ ...FADE, delay: i * 0.08 }}
-                  style={{
-                    fontFamily:    "var(--font-sans)",
-                    fontSize:      20,
-                    fontWeight:    500,
-                    color:         "var(--c-primary)",
-                    letterSpacing: "-0.02em",
-                    lineHeight:    1.6,
-                    margin:        0,
-                  }}
-                >
-                  {p}
-                </motion.p>
-              ))}
-            </div>
-          </div>
 
           {/* Sections */}
           {sections.map((sec, si) => (
@@ -1349,7 +1371,7 @@ export default function CaseStudyLayout({
                     backgroundColor: "transparent",
                     fontFamily:      "var(--font-sans)",
                     fontSize:        13,
-                    fontWeight:      600,
+                    fontWeight:      500,
                     letterSpacing:   "-0.01em",
                     color:           "var(--c-primary)",
                     flexShrink:      0,
@@ -1378,7 +1400,33 @@ export default function CaseStudyLayout({
         </main>
       </div>
     </div>
-    <MarqueeFooter />
+    {nextProject && (
+      <div style={{ borderTop: "1px solid var(--divider)", padding: "48px", display: "flex", justifyContent: "center" }}>
+        <div style={{ width: "100%", maxWidth: 1200, padding: "0 48px" }}>
+          <span style={{ fontFamily: "var(--font-sans)", fontSize: 11, fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--c-secondary)" }}>
+            {nextProject.label}
+          </span>
+          <Link
+            href={nextProject.href}
+            onClick={() => playClick()}
+            style={{ display: "block", textDecoration: "none", marginTop: 12 }}
+          >
+            <p style={{
+              fontFamily: "var(--font-sans)", fontSize: "clamp(22px, 3vw, 36px)",
+              fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.03em",
+              lineHeight: 1.2, margin: 0,
+              transition: "opacity 0.15s ease",
+            }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = "0.6")}
+              onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+            >
+              {nextProject.title} →
+            </p>
+          </Link>
+        </div>
+      </div>
+    )}
+    <div style={{ overflow: "hidden" }}><MarqueeFooter /></div>
     </>
   )
 }

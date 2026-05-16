@@ -1,6 +1,7 @@
 "use client"
 
 // Sticker peel effect based on the work of @BalintFerenczy on Twitter
+// SVG light/fuzzy filter effect based on the work of @jh3yy on Twitter
 
 import { useRef, useEffect, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
@@ -19,30 +20,33 @@ interface StickerDef {
   size: number; top: number; right?: number | string; left?: number | string; rotate: number; defaultOn: boolean
 }
 
+
+
 const ALL_STICKERS: StickerDef[] = [
   { id: "thunder", src: "/Thunder.svg",    label: "Thunder", size: 86,  top:  80, left: "calc(50% - 280px - 86px - 16px)", rotate: -15, defaultOn: true  },
   { id: "cloud",   src: "/Cloud.svg",      label: "Cloud",   size: 84,  top: 260, left: "calc(50% - 280px - 20px)", rotate:  18, defaultOn: true  },
-  { id: "spark",   src: "/Spark.svg",      label: "Spark",   size: 76,  top: 320, left: "calc(50% + 280px + 16px)", rotate:  22, defaultOn: false },
-  { id: "green",   src: "/Green.svg",      label: "Green",   size: 100, top:  95, left: "calc(50% + 280px + 16px)", rotate: -12, defaultOn: true  },
-  { id: "bang",    src: "/Bang.svg",       label: "Bang",    size: 80,  top: 260, left: "calc(50% + 190px)", rotate:  -8, defaultOn: true  },
-  { id: "figma",   src: "/Figma.svg",      label: "Figma",   size: 76,  top: 280, right:  50, rotate:   8, defaultOn: false },
-  { id: "claude",  src: "/Claude.svg",     label: "Claude",  size: 80,  top: 300, right: 160, rotate: -10, defaultOn: false },
-  { id: "vercel",  src: "/Vercel.svg",     label: "Vercel",  size: 76,  top: 200, right: 240, rotate:  12, defaultOn: false },
-  { id: "hello",   src: "/HelloWorld.svg", label: "Hello",   size: 92,  top: 100, right: 240, rotate:  16, defaultOn: false },
-  { id: "tumpeng",   src: "/Tumpeng.svg",   label: "Tumpeng",   size: 90,  top: 160, right: 280, rotate:   6, defaultOn: false },
-  { id: "rickshaw",  src: "/Rickshaw.svg",  label: "Rickshaw",  size: 96,  top: 300, right: 220, rotate: -8,  defaultOn: false },
-  { id: "friedrice", src: "/FriedRice.svg", label: "Fried Rice",size: 88,  top: 120, right: 320, rotate:  12, defaultOn: false },
-  { id: "satay",     src: "/Satay.svg",     label: "Satay",     size: 82,  top: 260, right: 300, rotate:  -5, defaultOn: false },
+  { id: "spark",   src: "/Spark.svg",      label: "Spark",   size: 76,  top: 100, left: "calc(50% + 290px)", rotate:  22, defaultOn: true  },
+  { id: "green",   src: "/Green.svg",      label: "Green",   size: 100, top:  95, left: "calc(50% + 280px + 16px)", rotate: -12, defaultOn: false },
+  { id: "bang",    src: "/Bang.svg",       label: "Bang",    size: 80,  top: 260, left: "calc(50% + 210px)", rotate:  -8, defaultOn: true  },
+  { id: "figma",      src: "/Figma.svg",      label: "Figma",      size: 76, top: 280, left: "calc(50% + 280px + 100px)", rotate:   8, defaultOn: false },
+  { id: "claude",    src: "/Claude.svg",     label: "Claude",     size: 80, top: 300, left: "calc(50% + 280px + 200px)", rotate: -10, defaultOn: false },
+  { id: "vercel",    src: "/Vercel.svg",     label: "Vercel",     size: 76, top: 200, left: "calc(50% + 280px + 280px)", rotate:  12, defaultOn: false },
+  { id: "hello",     src: "/HelloWorld.svg", label: "Hello",      size: 92, top: 100, left: "calc(50% + 280px + 280px)", rotate:  16, defaultOn: false },
+  { id: "tumpeng",   src: "/Tumpeng.svg",   label: "Tumpeng",    size: 90, top: 160, left: "calc(50% + 280px + 320px)", rotate:   6, defaultOn: false },
+  { id: "rickshaw",  src: "/Rickshaw.svg",  label: "Rickshaw",   size: 96, top: 300, left: "calc(50% + 280px + 260px)", rotate:  -8, defaultOn: false },
+  { id: "friedrice", src: "/FriedRice.svg", label: "Fried Rice", size: 88, top: 120, left: "calc(50% + 280px + 360px)", rotate:  12, defaultOn: false },
+  { id: "satay",     src: "/Satay.svg",     label: "Satay",      size: 82, top: 260, left: "calc(50% + 280px + 340px)", rotate:  -5, defaultOn: false },
 ]
 
-function Sticker({ src, size, top, right, left, rotate, uid, spawnAt, appearDelay = 0 }: {
+function Sticker({ src, size, top, right, left, rotate, uid, spawnAt, appearDelay = 0, stickerEffect = false }: {
   src: string; size: number; top: number; right?: number | string; left?: number | string
-  rotate: number; uid: string; spawnAt?: { x: number; y: number }; appearDelay?: number
+  rotate: number; uid: string; spawnAt?: { x: number; y: number }; appearDelay?: number; stickerEffect?: boolean
 }) {
-  const draggableRef = useRef<HTMLDivElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const isDragging   = useRef(false)
-  const dragOffset   = useRef({ x: 0, y: 0 })
+  const draggableRef  = useRef<HTMLDivElement>(null)
+  const containerRef  = useRef<HTMLDivElement>(null)
+  const pointLightRef = useRef<SVGFEPointLightElement>(null)
+  const isDragging    = useRef(false)
+  const dragOffset    = useRef({ x: 0, y: 0 })
   const [hovered, setHovered] = useState(false)
   const [active,  setActive]  = useState(false)
 
@@ -55,6 +59,11 @@ function Sticker({ src, size, top, right, left, rotate, uid, spawnAt, appearDela
         el.style.left  = (e.clientX - dragOffset.current.x - parentRect.left) + "px"
         el.style.top   = (e.clientY - dragOffset.current.y - parentRect.top)  + "px"
       }
+      if (stickerEffect && pointLightRef.current && draggableRef.current) {
+        const rect = draggableRef.current.getBoundingClientRect()
+        pointLightRef.current.setAttribute("x", String(e.clientX - rect.left))
+        pointLightRef.current.setAttribute("y", String(e.clientY - rect.top))
+      }
     }
     function onMouseUp() {
       isDragging.current = false
@@ -66,7 +75,7 @@ function Sticker({ src, size, top, right, left, rotate, uid, spawnAt, appearDela
       window.removeEventListener("mousemove", onMouseMove)
       window.removeEventListener("mouseup",   onMouseUp)
     }
-  }, [])
+  }, [stickerEffect])
 
   // If spawned from palette, immediately start dragging from cursor position
   useEffect(() => {
@@ -122,7 +131,8 @@ function Sticker({ src, size, top, right, left, rotate, uid, spawnAt, appearDela
   const transition = peeled ? `all ${PEEL_EASING}` : `all ${HOVER_EASING}`
   const imgStyle: React.CSSProperties = { width: size, display: "block", transform: `rotate(${rotate}deg)`, userSelect: "none" }
 
-  const fillId = `st-fi-${uid}`
+  const fillId    = `st-fi-${uid}`
+  const filterId  = `st-eff-${uid}`
 
   return (
     <>
@@ -133,6 +143,27 @@ function Sticker({ src, size, top, right, left, rotate, uid, spawnAt, appearDela
             <feFlood floodColor="rgb(179,179,179)" result="flood" />
             <feComposite operator="in" in="flood" in2="shape" />
           </filter>
+          {stickerEffect && (
+            <filter id={filterId} x="-20%" y="-20%" width="140%" height="140%">
+              <feMorphology in="SourceAlpha" result="dilate" operator="dilate" radius="0" />
+              <feFlood floodColor="#ffffff" result="outlinecolor" />
+              <feTurbulence baseFrequency="0.63" seed="120" numOctaves="4" type="fractalNoise" result="turb" />
+              <feComposite in="turb" in2="dilate" operator="in" result="outline" />
+              <feComposite in="outlinecolor" in2="dilate" operator="in" result="outlineflat" />
+              <feMerge result="merged">
+                <feMergeNode in="outlineflat" />
+                <feMergeNode in="outline" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+              <feGaussianBlur in="SourceAlpha" stdDeviation="2.9" result="blur" />
+              <feSpecularLighting result="lighting" in="blur" surfaceScale="11" specularConstant="8.1" specularExponent="110" lightingColor="hsla(0,0%,80%,0.5)">
+                <fePointLight ref={pointLightRef} x="-202" y="-331" z="23" />
+              </feSpecularLighting>
+              <feComposite in="lighting" in2="SourceAlpha" operator="in" result="composite" />
+              <feComposite in="merged" in2="composite" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint" />
+              <feDropShadow dx="2" dy="2" stdDeviation="0" floodColor="hsl(0,0%,0%)" floodOpacity="0.17" />
+            </filter>
+          )}
         </defs>
       </svg>
 
@@ -156,7 +187,7 @@ function Sticker({ src, size, top, right, left, rotate, uid, spawnAt, appearDela
           style={{ position: "relative" }}
         >
           {/* Main sticker body */}
-          <div style={{ clipPath: mainClip, transition, willChange: "clip-path" }}>
+          <div style={{ clipPath: mainClip, transition, willChange: "clip-path", ...(stickerEffect ? { filter: `url(#${filterId})`, overflow: "visible" } : {}) }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={src} alt="" draggable={false} style={imgStyle} />
           </div>
@@ -179,6 +210,7 @@ function Sticker({ src, size, top, right, left, rotate, uid, spawnAt, appearDela
     </>
   )
 }
+
 
 export default function FuzzyStickers() {
   const [ready, setReady] = useState(false)
@@ -207,13 +239,15 @@ export default function FuzzyStickers() {
   }
 
   return (
-    <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+    <>
+    <div style={{ position: "absolute", inset: 0, pointerEvents: "none", overflow: "visible" }}>
       {ready && ALL_STICKERS.filter(s => active.has(s.id)).map((s, i) => (
         <Sticker
           key={s.id} uid={s.id} src={s.src} size={s.size}
           top={s.top} right={s.right} left={s.left} rotate={s.rotate}
           spawnAt={spawnMap[s.id]}
           appearDelay={spawnMap[s.id] ? 0 : i * 80}
+          stickerEffect
         />
       ))}
 
@@ -273,5 +307,6 @@ export default function FuzzyStickers() {
         </button>
       </div>
     </div>
+    </>
   )
 }

@@ -133,8 +133,9 @@ export default function HomePage() {
                   lineHeight:    1.9,
                   color:         "var(--c-dim)",
                   margin:        0,
+                  marginTop:     12,
                 }}>
-                  Previously taking care of pixels at<InlineLogoChip src="/amdchip.svg" alt="AMD" link="https://www.amd.com" size={48} />&amp;<InlineLogoChip src="/safechip.svg" alt="Safe Software" link="https://www.safe.com" size={60} />
+                  Previously taking care of pixels at<InlineLogoChip src="/amdchip.svg" alt="AMD" link="https://www.amd.com" size={56} />&amp;<InlineLogoChip src="/safechip.svg" alt="Safe Software" link="https://www.safe.com" size={72} />
                 </p>
               </FadeUp>
             </div>
