@@ -65,9 +65,9 @@ function Card({
     <motion.div
       drag
       dragConstraints={containerRef}
-      dragMomentum={false}
-      dragElastic={0}
-      dragTransition={{ bounceStiffness: 320, bounceDamping: 40 }}
+      dragMomentum={true}
+      dragElastic={0.12}
+      dragTransition={{ power: 0.3, timeConstant: 200, bounceStiffness: 280, bounceDamping: 36 }}
       onPointerDown={handlePointerDown}
       onDragStart={() => { setDragging(true); onActivate() }}
       onDragEnd={() => setDragging(false)}

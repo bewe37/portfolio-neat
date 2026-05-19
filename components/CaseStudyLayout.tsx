@@ -1326,9 +1326,9 @@ export default function CaseStudyLayout({
                 <p style={{
                   fontFamily:    "var(--font-sans)",
                   fontSize:      16,
-                  fontWeight:    500,
-                  color:         "var(--c-secondary)",
-                  lineHeight:    1.75,
+                  fontWeight:    400,
+                  color:         "var(--c-body)",
+                  lineHeight:    1.85,
                   margin:        "0 0 32px",
                   letterSpacing: "-0.01em",
                 }}>
