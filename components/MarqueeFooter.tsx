@@ -65,7 +65,7 @@ function InteractiveDots({ mouse }: { mouse: React.RefObject<{ x: number; y: num
       const isSunset = document.body.classList.contains("sunset")
       if (isDark)   return { base: "rgb(58, 58, 58)", glow: "rgb(198, 198, 198)" }
       if (isSunset) return { base: "rgb(89, 64, 29)",  glow: "rgb(202, 167, 111)" }
-      return          { base: "rgb(206, 206, 206)",        glow: "rgb(118, 118, 118)"    }
+      return          { base: "rgb(58, 58, 58)",       glow: "rgb(198, 198, 198)" }
     }
 
     let t = 0

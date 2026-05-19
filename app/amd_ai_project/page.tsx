@@ -139,19 +139,12 @@ contents: [
           ],
         },
         {
-          label: "Overall Structure",
-          hideToc: true,
-          title: "Layout built around how users scan.",
-          body:  "Before diving into each piece, it helps to see how they fit together. Key system information lives on the right as persistent widgets. The center is reserved for contextual actions, with AMD Chat as the primary entry point. This keeps the layout familiar while making room for everything new.",
-          beforeAfter: ["/StructureBefore.png", "/StructureAfter.png"],
-        },
-        {
           label: "Contextual Chat",
           hideToc: true,
           contents: [
             {
               title:  "Describe the problem, get a fix.",
-              body:   "AMD Software is a configure-and-forget tool. Users open it, adjust something, and close it — they don't live in it. The chat is designed around that same behavior: one message, one answer, done. Just describe what you're experiencing and the AI reads your live hardware data, figures out what's actually wrong, and hands you a one-tap fix on the spot.",
+              body:   "AMD Software is a configure-and-forget tool. Users open it, adjust something, and close it. They don't live in it. The chat is designed around that same behavior: one message, one answer, done. Just describe what you're experiencing and the AI reads your live hardware data, figures out what's actually wrong, and hands you a one-tap fix on the spot.",
               videos: ["/DemoAmdChat1.mp4"],
             },
             {
@@ -177,6 +170,13 @@ contents: [
               videos: ["/ManuallyAddedWidget.mp4"],
             },
           ],
+        },
+        {
+          label: "Overall Structure",
+          hideToc: true,
+          title: "Layout built around how users scan.",
+          body:  "Key system information lives on the right as persistent widgets. The center is reserved for contextual actions, with AMD Chat as the primary entry point. This keeps the layout familiar while making room for everything new.",
+          beforeAfter: ["/StructureBefore.png", "/StructureAfter.png"],
         },
         {
           label: "In-Game Mode",

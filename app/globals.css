@@ -27,12 +27,12 @@
 :root {
   --font-sans:  'Uncut Sans', sans-serif;
   --bg:          rgb(250,249,247);
-  --footer-bg:   rgb(228,228,226);
-  --footer-dot:  rgba(0,0,0,0.25);
-  --footer-glow: rgba(0,0,0,0.75);
-  --footer-text: rgba(22,22,22,0.88);
-  --footer-text-dim: rgba(22,22,22,0.5);
-  --footer-divider: rgba(0,0,0,0.15);
+  --footer-bg:   rgb(38,38,38);
+  --footer-dot:  rgba(255,255,255,0.18);
+  --footer-glow: rgba(255,255,255,0.85);
+  --footer-text: rgba(255,255,255,0.88);
+  --footer-text-dim: rgba(255,255,255,0.5);
+  --footer-divider: rgba(255,255,255,0.15);
   --surface:     rgb(237, 237, 237);
   --dot-color:   rgba(0,0,0,0.07);
   --c-primary:   rgba(22, 22, 22, 0.88);
