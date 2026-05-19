@@ -37,7 +37,7 @@ export default function AmdProject() {
           ],
         },
         {
-          label: "Context",
+          label: "Audit",
           title: "Identifying the problems",
           images: ["/colorMismatch.png", "/inconsistentStyling.png"],
           body:   "Two problems showed up immediately. Colors were applied inconsistently across teams, creating unclear states and a broken visual hierarchy. Component styling had the same issue. Buttons alone varied across screens in size, corner radius, spacing, and interaction states. The product had grown without any visual governance, and with a full redesign on the horizon, these problems were about to get a lot harder to fix.",
@@ -70,9 +70,19 @@ export default function AmdProject() {
           label: "Component Library",
           contents: [
             {
-              images: ["/ComponentAnatomy.png", "/CommonComponents.png"],
-              title:  "Finding what repeats.",
-              body:   "Before building anything, I audited the approved designs and identified the elements that appeared most often: buttons, inputs, tags, toggles. Starting from what repeated meant I could build a shared base layer rather than designing each screen from scratch.",
+              image:  "/ComponentAnatomy.png",
+              title:  "Identifying common components.",
+              body:   "As we explored different design styles, I started building the foundational components of the design system, beginning with essentials like buttons and the navigation bar.",
+            },
+            {
+              image:  "/CommonComponents.png",
+              title:  "Dissecting the designs.",
+              body:   "As the project progressed and designs began receiving approval from stakeholders, I gradually expanded the design system to include additional UI patterns and refined them further. Complex UI components often need to be further broken down to improve flexibility and maintainability.",
+            },
+            {
+              image:  "/ApplyFoundationalDesignTokens.png",
+              title:  "Applying foundational design tokens.",
+              body:   "Foundational design tokens define core properties such as spacing, radius, and typography. As the system matured, I progressively defined the rules behind each token — for example, which radius value belongs to which level of nesting, and how spacing scales across component sizes. By applying these tokens consistently, updates became easier to make at scale without breaking visual harmony across the product.",
             },
             {
               image: "/Slots.jpg",
@@ -89,7 +99,7 @@ export default function AmdProject() {
         },
         {
           label: "Outcome",
-          title: "Consistent, maintainable mockups.",
+          title: "Built it. Then got the team to actually use it.",
           images: ["/DesignSystemImpact.png", "/DesignSpecs.png"],
           body:   "By the end of the internship, the team had a working system they could actually build with. Updates propagated cleanly across mockups, designers stopped guessing at spacing values, and the redesign had a consistent foundation to grow from.\n\nBeyond building the system, I took on getting the team to actually use it. That meant running walkthroughs, answering questions during handoff, and making sure designers felt confident reaching for the system instead of going off on their own. Adoption was the real measure of whether the work landed.",
         },
@@ -97,7 +107,7 @@ export default function AmdProject() {
           label: "Oh, and there's more.",
           title: "Rethinking the Overlay as a Control Surface",
           href: "/amd_ai_project",
-          body: "The design system was built to support this. A full redesign of the AMD Software overlay, turning a read-only metrics display into something users could actually act on.",
+          body: "The design system was built to support this major redesign initiative. A full redesign of the AMD Software overlay, turning a read-only metrics display into something users could actually act on.",
           image: "/DSHighlight.png",
         },
       ]}
