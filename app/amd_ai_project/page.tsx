@@ -38,7 +38,7 @@ export default function AmdAiProject() {
             {
               title: "Built for mid-session.",
               body:  "Recording, graphics tuning, and your most-used settings surface the moment you need them, without ever leaving your game.",
-              videos: ["/InGameHighlight.mp4"],
+              videos: ["/Record&Optimize.mp4"],
               objectPosition: "left center",
             },
           ],
