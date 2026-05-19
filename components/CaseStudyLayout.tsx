@@ -808,7 +808,7 @@ function NoodleAnimation() {
 const SPARKLE_COLORS = ["#e8443a", "#e07b00", "#c9a000", "#2ba84a", "#1a8fc9", "#9b3fd4"]
 const SPARKLE_COUNT  = 8
 
-function HighlightsButton({ id, isActive, onClick }: { id: string; isActive: boolean; onClick: () => void }) {
+function HighlightsButton({ id, isActive, onClick, prefix }: { id: string; isActive: boolean; onClick: () => void; prefix?: string }) {
   const [burst, setBurst] = useState(false)
   const [hov, setHov]     = useState(false)
 
@@ -865,6 +865,19 @@ function HighlightsButton({ id, isActive, onClick }: { id: string; isActive: boo
           100% { background-position: 200% 50%; }
         }
       `}</style>
+      {prefix && (
+        <span style={{
+          fontFamily:    "var(--font-sans)",
+          fontSize:      13,
+          fontWeight:    isActive ? 500 : 400,
+          letterSpacing: "-0.01em",
+          lineHeight:    1.4,
+          color:         isActive ? "var(--c-primary)" : "var(--c-dim)",
+          transition:    "color 0.18s ease",
+        }}>
+          {prefix}
+        </span>
+      )}
       <span style={{
         fontFamily:    "var(--font-sans)",
         fontSize:      13,
@@ -922,12 +935,13 @@ function TableOfContents({ backHref, items, activeId }: {
           const isActive = activeId === id
           const isHov    = hovId === id
 
-          if (label === "Highlights") {
+          if (label === "Highlights" || label === "Overview / Highlights") {
             return (
               <HighlightsButton
                 key={id}
                 id={id}
                 isActive={isActive}
+                prefix={label === "Overview / Highlights" ? "Overview / " : undefined}
                 onClick={() => { playClick(); document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }) }}
               />
             )

@@ -51,7 +51,7 @@ export default function AmdProject() {
               body:  "I defined primitive tokens as the raw color palette and mapped them to semantic tokens applied across components. Components reference intent-driven values instead of hardcoded hex codes, so a single update propagates everywhere it matters.",
             },
             {
-              images: ["/Tokens1.png", "/ColorStructure.png"],
+              image: "/Tokens1.png",
               body:   "Once the primitives were set, I mapped them to semantic tokens named by purpose or state. Components always reference role-based values, which made global updates straightforward and kept the system from drifting as it grew.",
             },
             {
@@ -85,6 +85,11 @@ export default function AmdProject() {
               body:   "Foundational design tokens define core properties such as spacing, radius, and typography. As the system matured, I progressively defined the rules behind each token — for example, which radius value belongs to which level of nesting, and how spacing scales across component sizes. By applying these tokens consistently, updates became easier to make at scale without breaking visual harmony across the product.",
             },
             {
+              image:  "/ColorStructure.png",
+              title:  "Applying proper color structure.",
+              body:   "With the help of pre-defined color tokens, I could easily assign colors to components according to their semantic role.",
+            },
+            {
               image: "/Slots.jpg",
               title: "Supporting multiple variants.",
               body:  "Instead of creating endless variants that would complicate the system, I chose to use the slot method. By treating slots as flexible placeholders, I gave the components room to adapt their content while still maintaining a consistent and polished appearance.",
@@ -107,7 +112,7 @@ export default function AmdProject() {
           label: "Oh, and there's more.",
           title: "Rethinking the Overlay as a Control Surface",
           href: "/amd_ai_project",
-          body: "The design system was built to support this major redesign initiative. A full redesign of the AMD Software overlay, turning a read-only metrics display into something users could actually act on.",
+          body: "The design system was built to support this major redesign initiative! A full redesign of the AMD Software overlay, turning a read-only metrics display into something users could actually act on.",
           image: "/DSHighlight.png",
         },
       ]}
