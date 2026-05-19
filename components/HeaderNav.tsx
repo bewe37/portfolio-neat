@@ -6,9 +6,8 @@ import Link from "next/link"
 import { playClick } from "@/lib/click-sound"
 
 const LINKS = [
-  { href: "/",       label: "Work",   external: false },
-  { href: "/about",  label: "About",  external: false },
-  { href: "https://drive.google.com/file/d/183_FgYoQBjhv5QLawsPr_fUt_K5gf6hi/view?usp=drive_link", label: "Resume", external: true },
+  { href: "/",      label: "Work" },
+  { href: "/about", label: "About" },
 ]
 
 export default function HeaderNav() {
@@ -32,7 +31,6 @@ export default function HeaderNav() {
 
   return (
     <nav ref={navRef} style={{ display: "inline-flex", alignItems: "center", gap: 4, position: "relative" }}>
-      {/* Sliding pill */}
       {pill && (
         <span
           aria-hidden
@@ -51,14 +49,13 @@ export default function HeaderNav() {
         />
       )}
 
-      {LINKS.map(({ href, label, external }, i) => {
+      {LINKS.map(({ href, label }, i) => {
         const active = i === activeIdx
         return (
           <span key={href} ref={el => { wrapRefs.current[i] = el }} style={{ position: "relative", zIndex: 1 }}>
             <Link
               href={href}
               onClick={() => playClick()}
-              {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
               style={{
                 display:        "block",
                 fontFamily:     "var(--font-sans)",

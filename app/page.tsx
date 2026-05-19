@@ -59,8 +59,7 @@ const PROJECTS = [
     date: "May - Dec 2025",
     description: "Designing a conversational AI assistant embedded in AMD's Adrenalin software for millions of gamers.",
     href: "/amd_ai_project",
-    cover: "/AMDThumbnail2.png",
-    images: ["/amdMainImage.png", "/InGameWidget.png"],
+    cover: "/AMDThumbnailCS.png",
   },
   {
     title: "The Design System That Kept AMD's Team Aligned",
@@ -69,7 +68,6 @@ const PROJECTS = [
     description: "Building a scalable component library that unified design and engineering across AMD's product suite.",
     href: "/amd_project",
     cover: "/AMDCaseStudyH2.png",
-    images: ["/DSHighlight.png", "/comp 1.png"],
   },
   {
     title: "Reducing Clutter Without Losing Context",
@@ -78,7 +76,6 @@ const PROJECTS = [
     description: "Streamlining FME's annotation workflow so users can focus on insight, not interface noise.",
     href: "/fme_annotation_project",
     cover: "/SafeCaseStudyH2.png",
-    images: ["/AnnotationCanvas.png", "/AnnotationNavigator.png"],
   },
   {
     title: "Simplifying Donation Tracking at Scale",
@@ -87,7 +84,6 @@ const PROJECTS = [
     description: "Designing a clear, humane dashboard for nonprofits to manage donor relationships at scale.",
     href: "/blueprint",
     cover: "/YUBlueprintThumbnail.png",
-    images: ["/blueprintpeak.png", "/CardPeak.png"],
   },
 ]
 

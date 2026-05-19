@@ -17,7 +17,7 @@ const HOVER_EASING = `1s linear(0,0.008 1.1%,0.031 2.2%,0.129 4.8%,0.257 7.2%,0.
 
 interface StickerDef {
   id: string; src: string; label: string
-  size: number; top: number; right?: number | string; left?: number | string; rotate: number; defaultOn: boolean
+  size: number; top: number; left?: number | string; rotate: number; defaultOn: boolean
 }
 
 
@@ -38,12 +38,11 @@ const ALL_STICKERS: StickerDef[] = [
   { id: "satay",     src: "/Satay.svg",     label: "Satay",      size: 82, top: 260, left: "calc(50% + 280px + 340px)", rotate:  -5, defaultOn: false },
 ]
 
-function Sticker({ src, size, top, right, left, rotate, uid, spawnAt, appearDelay = 0, stickerEffect = false }: {
-  src: string; size: number; top: number; right?: number | string; left?: number | string
+function Sticker({ src, size, top, left, rotate, uid, spawnAt, appearDelay = 0, stickerEffect = false }: {
+  src: string; size: number; top: number; left?: number | string
   rotate: number; uid: string; spawnAt?: { x: number; y: number }; appearDelay?: number; stickerEffect?: boolean
 }) {
   const draggableRef  = useRef<HTMLDivElement>(null)
-  const containerRef  = useRef<HTMLDivElement>(null)
   const pointLightRef = useRef<SVGFEPointLightElement>(null)
   const isDragging    = useRef(false)
   const dragOffset    = useRef({ x: 0, y: 0 })
@@ -178,10 +177,9 @@ function Sticker({ src, size, top, right, left, rotate, uid, spawnAt, appearDela
           stiffness: 400,
           damping: 18,
         }}
-        style={{ position: "absolute", top, right, left, cursor: isDragging.current ? "grabbing" : "grab", zIndex: 20, userSelect: "none", pointerEvents: "auto" }}
+        style={{ position: "absolute", top, left, cursor: isDragging.current ? "grabbing" : "grab", zIndex: 20, userSelect: "none", pointerEvents: "auto" }}
       >
         <div
-          ref={containerRef}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => { setHovered(false); if (!isDragging.current) setActive(false) }}
           style={{ position: "relative" }}
@@ -239,12 +237,11 @@ export default function FuzzyStickers() {
   }
 
   return (
-    <>
     <div style={{ position: "absolute", inset: 0, pointerEvents: "none", overflow: "visible" }}>
       {ready && ALL_STICKERS.filter(s => active.has(s.id)).map((s, i) => (
         <Sticker
           key={s.id} uid={s.id} src={s.src} size={s.size}
-          top={s.top} right={s.right} left={s.left} rotate={s.rotate}
+          top={s.top} left={s.left} rotate={s.rotate}
           spawnAt={spawnMap[s.id]}
           appearDelay={spawnMap[s.id] ? 0 : i * 80}
           stickerEffect
@@ -307,6 +304,5 @@ export default function FuzzyStickers() {
         </button>
       </div>
     </div>
-    </>
   )
 }

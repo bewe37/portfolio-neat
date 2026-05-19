@@ -106,7 +106,7 @@ function MediaBox({ src, video }: { src: string; video?: boolean }) {
       border: "1px solid var(--border)",
     }}>
       {video
-        ? <video src={src} autoPlay muted loop playsInline preload="none" style={{ width: "100%", display: "block" }} />
+        ? <video src={src} autoPlay muted loop playsInline preload="metadata" style={{ width: "100%", display: "block" }} />
         /* eslint-disable-next-line @next/next/no-img-element */
         : <img src={src} alt="" draggable={false} style={{ width: "100%", display: "block" }} />
       }
@@ -359,7 +359,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
           {block.body && (
             <p style={{
               fontFamily:    "var(--font-sans)",
-              fontSize:      isNumbered ? 22 : (!block.title ? 18 : 15),
+              fontSize:      isNumbered ? 22 : (!block.title ? 18 : 16),
               fontWeight:    isNumbered ? 400 : (!block.title ? 500 : 400),
               color:         isNumbered ? "var(--c-primary)" : (!block.title ? "var(--c-primary)" : "var(--c-body)"),
               margin:        (!isNumbered && block.title) ? "6px 0 0" : 0,
@@ -1250,11 +1250,11 @@ export default function CaseStudyLayout({
 
             <p style={{
               fontFamily:    "var(--font-sans)",
-              fontSize:      15,
+              fontSize:      16,
               fontWeight:    400,
               color:         "var(--c-body)",
               letterSpacing: "-0.01em",
-              lineHeight:    1.7,
+              lineHeight:    1.85,
               margin:        "0 0 24px",
             }}>
               {overview}
