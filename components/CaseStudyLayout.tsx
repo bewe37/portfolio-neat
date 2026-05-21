@@ -139,7 +139,7 @@ function Bento({ items }: { items: BentoItem[] }) {
           backgroundColor: "var(--surface)",
         }}>
           {item.video && (
-            <video src={item.video} autoPlay muted loop playsInline preload="none" style={{ width: "100%", display: "block" }} />
+            <video src={item.video} autoPlay muted loop playsInline preload="metadata" style={{ width: "100%", display: "block" }} />
           )}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {item.image && <img src={item.image} alt={item.label ?? ""} draggable={false} style={{ width: "100%", display: "block" }} />}
@@ -575,7 +575,7 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
               {src && (
                 <div style={{ borderRadius: 8, overflow: "hidden", border: "1px solid var(--border)", backgroundColor: "var(--surface)" }}>
                   {src.video
-                    ? <video src={src.src} autoPlay muted loop playsInline preload="none" style={{ width: "100%", display: "block" }} />
+                    ? <video src={src.src} autoPlay muted loop playsInline preload="metadata" style={{ width: "100%", display: "block" }} />
                     /* eslint-disable-next-line @next/next/no-img-element */
                     : <img src={src.src} alt="" draggable={false} style={{ width: "100%", display: "block" }} />
                   }
@@ -607,7 +607,7 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
                 {src && (
                   <div style={{ borderRadius: 8, overflow: "hidden", backgroundColor: "var(--surface)", border: "1px solid var(--border)", height: 260 }}>
                     {src.video
-                      ? <video src={src.src} autoPlay muted loop playsInline preload="none" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: objPos, display: "block" }} />
+                      ? <video src={src.src} autoPlay muted loop playsInline preload="metadata" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: objPos, display: "block" }} />
                       /* eslint-disable-next-line @next/next/no-img-element */
                       : <img src={src.src} alt="" draggable={false} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: objPos, display: "block" }} />
                     }
@@ -671,36 +671,24 @@ function MultiHighlight({ contents, marginTop }: { contents: ContentBlock[]; mar
 
 
 function MobileBackBar({ href }: { href: string }) {
-  const [isMobile, setIsMobile] = useState(false)
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 768)
-    check()
-    window.addEventListener("resize", check)
-    return () => window.removeEventListener("resize", check)
-  }, [])
-  if (!isMobile) return null
   return (
-    <>
-      <style>{`.rsp-cs-main { padding-top: 72px !important; }`}</style>
-      <Link
-        href={href}
-        onClick={() => playClick()}
-        style={{
-          position: "fixed", top: 8, left: 0, right: 0, zIndex: 1002,
-          display: "flex", alignItems: "center", gap: 8,
-          padding: "20px 20px 4px",
-          background: "var(--bg)",
-          fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500,
-          letterSpacing: "-0.01em", color: "var(--c-secondary)",
-          textDecoration: "none",
-        }}
-      >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-        Back
-      </Link>
-    </>
+    <Link
+      href={href}
+      onClick={() => playClick()}
+      className="rsp-back-mobile"
+      style={{
+        display: "none", alignItems: "center", gap: 8,
+        padding: "20px 20px 12px",
+        fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500,
+        letterSpacing: "-0.01em", color: "var(--c-secondary)",
+        textDecoration: "none",
+      }}
+    >
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+      Back
+    </Link>
   )
 }
 

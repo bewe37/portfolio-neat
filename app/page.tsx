@@ -156,7 +156,43 @@ export default function HomePage() {
             50%       { transform: translateY(5px); }
           }
         `}</style>
+
+        {/* Mobile: bio + arrow stacked center */}
+        <div className="rsp-hero-bottom-mobile" style={{
+          display:        "none",
+          position:       "absolute",
+          bottom:         36,
+          left:           0,
+          right:          0,
+          zIndex:         3,
+          flexDirection:  "column",
+          alignItems:     "center",
+          gap:            16,
+          pointerEvents:  "none",
+          userSelect:     "none",
+        }}>
+          <p style={{
+            fontFamily:    "var(--font-sans)",
+            fontSize:      12,
+            fontWeight:    400,
+            lineHeight:    1.7,
+            letterSpacing: "-0.01em",
+            color:         "var(--c-dim)",
+            margin:        0,
+            textAlign:     "center",
+          }}>
+            Designing for the love of craft.<br />
+            Previously at AMD.
+          </p>
+          <svg width="22" height="22" viewBox="0 0 16 16" fill="none"
+            style={{ animation: "scrollBounce 2s ease-in-out infinite", display: "block", color: "rgba(255,255,255,0.55)" }}>
+            <path d="M8 3v10M8 13l-4-4M8 13l4-4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+
+        {/* Desktop: arrow center + bio bottom-left */}
         <button
+          className="rsp-hero-arrow-desktop"
           onClick={() => document.getElementById("work")?.scrollIntoView({ behavior: "smooth" })}
           style={{
             position:      "absolute",
@@ -180,8 +216,8 @@ export default function HomePage() {
           </svg>
         </button>
 
-        {/* Bottom left — desc */}
-        <div style={{
+        {/* Bottom left — desc (desktop only) */}
+        <div className="rsp-hero-bio-desktop" style={{
           position:      "absolute",
           bottom:        "clamp(24px, 3vw, 40px)",
           left:          0,

@@ -42,7 +42,7 @@ export default function MarqueeFooter() {
       padding:    "clamp(32px, 4vw, 48px) clamp(20px, 4vw, 48px)",
       marginTop:  "auto",
     }}>
-      <div style={{
+      <div className="rsp-footer-grid" style={{
         maxWidth:       1200,
         margin:         "0 auto",
         display:        "grid",

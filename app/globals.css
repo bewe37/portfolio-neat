@@ -324,6 +324,9 @@ a {
   /* Footer */
   .rsp-footer-inner  { padding: 36px 24px 44px !important; min-height: 320px !important; }
   .rsp-footer-bottom { flex-direction: column !important; align-items: flex-start !important; gap: 16px !important; }
+  .rsp-footer-grid   { grid-template-columns: 1fr !important; gap: 28px !important; align-items: flex-start !important; }
+  .rsp-footer-grid > div:nth-child(2) { align-items: flex-start !important; }
+  .rsp-footer-grid > div:last-child   { justify-content: flex-start !important; }
 
   /* Companion — center at bottom on mobile */
   .companion-anchor { right: 50% !important; transform: translateX(50%) !important; }
@@ -355,6 +358,11 @@ a {
   /* Photo gallery: swap polaroid for simple grid */
   .rsp-gallery-desktop { display: none !important; }
   .rsp-gallery-mobile  { display: block !important; }
+
+  /* Hero bottom: show mobile bio+arrow, hide desktop versions */
+  .rsp-hero-bottom-mobile  { display: flex !important; }
+  .rsp-hero-arrow-desktop  { display: none !important; }
+  .rsp-hero-bio-desktop    { display: none !important; }
 
   /* Experience: company left + role right on same row, then period + desc stacked */
   .rsp-exp-item {

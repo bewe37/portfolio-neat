@@ -281,7 +281,7 @@ export default function HeroParticles({ hovered }: { hovered: boolean }) {
   return (
     <canvas
       ref={canvasRef}
-      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", background: "transparent", touchAction: "none" }}
+      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", background: "transparent", touchAction: "pan-y" }}
     />
   )
 }
