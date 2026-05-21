@@ -171,19 +171,6 @@ export default function HomePage() {
           pointerEvents:  "none",
           userSelect:     "none",
         }}>
-          <p style={{
-            fontFamily:    "var(--font-sans)",
-            fontSize:      12,
-            fontWeight:    400,
-            lineHeight:    1.7,
-            letterSpacing: "-0.01em",
-            color:         "var(--c-dim)",
-            margin:        0,
-            textAlign:     "center",
-          }}>
-            Designing for the love of craft.<br />
-            Previously at AMD.
-          </p>
           <svg width="22" height="22" viewBox="0 0 16 16" fill="none"
             style={{ animation: "scrollBounce 2s ease-in-out infinite", display: "block", color: "rgba(255,255,255,0.55)" }}>
             <path d="M8 3v10M8 13l-4-4M8 13l4-4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>

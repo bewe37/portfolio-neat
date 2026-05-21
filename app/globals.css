@@ -162,20 +162,20 @@ a {
 
 /* ── Page transition ──────────────────────────────────────── */
 @keyframes page-transition-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 .page-transition {
-  animation: page-transition-in 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: page-transition-in 0.3s ease both;
 }
 
 @keyframes fade-up-in {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 .fade-up {
-  animation: fade-up-in 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  opacity: 0;
+  animation: fade-up-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: inherit;
 }
 
 

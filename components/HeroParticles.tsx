@@ -92,6 +92,24 @@ interface Particle {
   alpha: number
 }
 
+// module-level cache so the image is only fetched once across re-mounts
+let cachedRosePoints: [number, number][] | null = null
+let roseLoadPromise: Promise<[number, number][]> | null = null
+
+function loadRosePoints(): Promise<[number, number][]> {
+  if (cachedRosePoints) return Promise.resolve(cachedRosePoints)
+  if (roseLoadPromise) return roseLoadPromise
+  roseLoadPromise = new Promise(resolve => {
+    const img = new Image()
+    img.onload = () => {
+      cachedRosePoints = sampleFlower(img)
+      resolve(cachedRosePoints)
+    }
+    img.src = "/roses.png"
+  })
+  return roseLoadPromise
+}
+
 export default function HeroParticles({ hovered }: { hovered: boolean }) {
   const canvasRef  = useRef<HTMLCanvasElement>(null)
   const hoveredRef = useRef(false)
@@ -170,9 +188,7 @@ export default function HeroParticles({ hovered }: { hovered: boolean }) {
       canvas!.height = H * dpr
       // only rebuild particles if width changed — height-only changes are mobile chrome bar showing/hiding
       if (widthChanged || newW !== prevW) {
-        const img = new Image()
-        img.onload = () => buildParticles(sampleFlower(img), W, H)
-        img.src = "/roses.png"
+        loadRosePoints().then(pts => buildParticles(pts, W, H))
       }
     }
     function debouncedResize() {
