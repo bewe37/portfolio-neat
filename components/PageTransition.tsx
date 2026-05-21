@@ -12,25 +12,28 @@ function isCaseStudyPath(p: string) {
 
 export default function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const prevPathname = useRef(pathname)
+  const prevPathname = useRef<string | null>(null)
 
   useEffect(() => {
-    const wasCase = isCaseStudyPath(prevPathname.current)
+    const prev = prevPathname.current
+    prevPathname.current = pathname
+
+    // skip on mount
+    if (prev === null) return
+
+    const wasCase = isCaseStudyPath(prev)
     const isCase  = isCaseStudyPath(pathname)
 
     if (wasCase && !isCase) {
-      // leaving a case study — restore dark mode with transition
-      document.body.classList.add("theme-switching")
-      document.body.classList.add("dark")
-      localStorage.setItem("theme", "dark")
-      setTimeout(() => document.body.classList.remove("theme-switching"), 600)
-    } else if (!isCase) {
-      // non-case-study navigation — ensure dark mode, no transition needed
-      document.body.classList.add("dark")
-      localStorage.setItem("theme", "dark")
+      // wait for exit fade then restore dark as new page fades in
+      setTimeout(() => {
+        document.body.classList.add("theme-switching")
+        document.body.classList.add("dark")
+        localStorage.setItem("theme", "dark")
+        setTimeout(() => document.body.classList.remove("theme-switching"), 500)
+      }, 350)
     }
-
-    prevPathname.current = pathname
+    // no-op for all other transitions — dark mode is already set
   }, [pathname])
 
   return (

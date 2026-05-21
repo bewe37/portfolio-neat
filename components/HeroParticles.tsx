@@ -159,24 +159,27 @@ export default function HeroParticles({ hovered }: { hovered: boolean }) {
     }
 
     let resizeTimer: ReturnType<typeof setTimeout> | null = null
-    function resize() {
+    function resize(widthChanged: boolean) {
       const rect = canvas!.getBoundingClientRect()
       const newW = Math.round(rect.width)
       const newH = Math.round(rect.height)
-      // skip if dimensions unchanged (mobile scroll causes spurious resize events)
       if (newW === W && newH === H) return
+      const prevW = W
       W = newW; H = newH
       canvas!.width  = W * dpr
       canvas!.height = H * dpr
-      const img = new Image()
-      img.onload = () => buildParticles(sampleFlower(img), W, H)
-      img.src = "/roses.png"
+      // only rebuild particles if width changed — height-only changes are mobile chrome bar showing/hiding
+      if (widthChanged || newW !== prevW) {
+        const img = new Image()
+        img.onload = () => buildParticles(sampleFlower(img), W, H)
+        img.src = "/roses.png"
+      }
     }
     function debouncedResize() {
       if (resizeTimer) clearTimeout(resizeTimer)
-      resizeTimer = setTimeout(resize, 200)
+      resizeTimer = setTimeout(() => resize(false), 250)
     }
-    resize()
+    resize(true)
     const ro = new ResizeObserver(debouncedResize)
     ro.observe(canvas)
 
@@ -290,7 +293,7 @@ export default function HeroParticles({ hovered }: { hovered: boolean }) {
   return (
     <canvas
       ref={canvasRef}
-      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", background: "transparent", touchAction: "pan-y" }}
+      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", background: "transparent", touchAction: "pan-y", pointerEvents: "none" }}
     />
   )
 }
