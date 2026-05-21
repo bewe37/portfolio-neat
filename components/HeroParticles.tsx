@@ -119,6 +119,7 @@ export default function HeroParticles({ hovered }: { hovered: boolean }) {
   const transRef   = useRef(0)
   const timeRef    = useRef(0)
   const lastTRef   = useRef<number | null>(null)
+  const mouseRef   = useRef<{ x: number; y: number } | null>(null)
   const roseMapRef = useRef<{
     cx: number; cy: number; scale: number
     minX: number; minY: number; spanX: number; spanY: number
@@ -274,6 +275,20 @@ export default function HeroParticles({ hovered }: { hovered: boolean }) {
             idleY += (tdy / tdist) * push * repelR
           }
 
+          // Mouse repulsion in idle
+          const mouse = mouseRef.current
+          if (mouse) {
+            const mdx = idleX - mouse.x
+            const mdy = idleY - mouse.y
+            const mdist = Math.hypot(mdx, mdy) || 1
+            const repelR = 90
+            if (mdist < repelR) {
+              const push = Math.pow((repelR - mdist) / repelR, 2) * 60
+              idleX += (mdx / mdist) * push
+              idleY += (mdy / mdist) * push
+            }
+          }
+
           p.x += (idleX - p.x) * 0.008
           p.y += (idleY - p.y) * 0.008
         }
@@ -293,6 +308,20 @@ export default function HeroParticles({ hovered }: { hovered: boolean }) {
       ctx.globalAlpha = 1
     }
 
+    function onMouseMove(e: MouseEvent) {
+      const rect = canvas!.getBoundingClientRect()
+      const x = e.clientX - rect.left
+      const y = e.clientY - rect.top
+      if (x >= 0 && y >= 0 && x <= rect.width && y <= rect.height) {
+        mouseRef.current = { x, y }
+      } else {
+        mouseRef.current = null
+      }
+    }
+    function onMouseLeave() { mouseRef.current = null }
+    window.addEventListener("mousemove", onMouseMove)
+    window.addEventListener("mouseleave", onMouseLeave)
+
     const io = new IntersectionObserver(([e]) => {
       visibleRef.current = e.isIntersecting
       if (e.isIntersecting && !rafRef.current) {
@@ -303,7 +332,13 @@ export default function HeroParticles({ hovered }: { hovered: boolean }) {
     io.observe(canvas)
 
     rafRef.current = requestAnimationFrame(loop)
-    return () => { cancelAnimationFrame(rafRef.current); ro.disconnect(); io.disconnect(); if (resizeTimer) clearTimeout(resizeTimer) }
+    return () => {
+      cancelAnimationFrame(rafRef.current)
+      ro.disconnect(); io.disconnect()
+      window.removeEventListener("mousemove", onMouseMove)
+      window.removeEventListener("mouseleave", onMouseLeave)
+      if (resizeTimer) clearTimeout(resizeTimer)
+    }
   }, [])
 
   return (

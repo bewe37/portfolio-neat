@@ -134,12 +134,16 @@ export default function HomePage() {
               `}</style>
               <span
                 style={{
-                  fontFamily:    "var(--font-serif)",
-                  fontStyle:     "italic",
-                  fontWeight:    400,
-                  pointerEvents: "auto",
-                  cursor:        "default",
-                  animation:     heroHovered ? "none" : "beautifulPulse 3s ease-in-out infinite",
+                  fontFamily:      "var(--font-serif)",
+                  fontStyle:       "italic",
+                  fontWeight:      400,
+                  pointerEvents:   "auto",
+                  cursor:          "default",
+                  animation:       heroHovered ? "none" : "beautifulPulse 3s ease-in-out infinite",
+                  textDecoration:  "underline",
+                  textUnderlineOffset: "4px",
+                  textDecorationThickness: "1px",
+                  textDecorationColor: "currentColor",
                 }}
                 onMouseEnter={() => setHeroHovered(true)}
                 onMouseLeave={() => setHeroHovered(false)}
