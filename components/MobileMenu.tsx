@@ -1,8 +1,7 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { gsap } from "gsap"
 import { ArrowUpRight } from "@phosphor-icons/react"
 import Link from "next/link"
 import { playClick } from "@/lib/click-sound"
@@ -17,44 +16,20 @@ const NAV_ITEMS = [
 
 export default function MobileMenu() {
   const [open, setOpen] = useState(false)
-  const bar1  = useRef<HTMLSpanElement>(null)
-  const bar2  = useRef<HTMLSpanElement>(null)
-  const bar3  = useRef<HTMLSpanElement>(null)
-  const tlRef = useRef<gsap.core.Timeline | null>(null)
 
-  // GSAP hamburger → X animation
-  useEffect(() => {
-    tlRef.current?.kill()
-    const tl = gsap.timeline()
-    tlRef.current = tl
-
-    if (open) {
-      tl.to(bar2.current, { opacity: 0, scaleX: 0.4, duration: 0.14, ease: "power2.out" }, 0)
-        .to(bar1.current, { y: 6.5, rotation: 45,  duration: 0.28, ease: "power3.out" }, 0)
-        .to(bar3.current, { y: -6.5, rotation: -45, duration: 0.28, ease: "power3.out" }, 0)
-    } else {
-      tl.to(bar1.current, { y: 0, rotation: 0,  duration: 0.26, ease: "power3.out" }, 0)
-        .to(bar3.current, { y: 0, rotation: 0,  duration: 0.26, ease: "power3.out" }, 0)
-        .to(bar2.current, { opacity: 1, scaleX: 1, duration: 0.18, ease: "power2.out" }, 0.1)
-    }
-  }, [open])
-
-  // Lock body scroll when menu is open
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : ""
     return () => { document.body.style.overflow = "" }
   }, [open])
 
-  useEffect(() => () => { tlRef.current?.kill() }, [])
-
-  const barStyle: React.CSSProperties = {
+  const barBase: React.CSSProperties = {
     display: "block",
     width: 22,
     height: 1.5,
     background: "var(--c-primary)",
     borderRadius: 2,
     transformOrigin: "center",
-    willChange: "transform, opacity",
+    transition: "transform 0.26s cubic-bezier(0.22,1,0.36,1), opacity 0.18s ease",
   }
 
   return (
@@ -82,9 +57,9 @@ export default function MobileMenu() {
           justifyContent: "center",
         }}
       >
-        <span ref={bar1} style={barStyle} />
-        <span ref={bar2} style={barStyle} />
-        <span ref={bar3} style={barStyle} />
+        <span style={{ ...barBase, transform: open ? "translateY(6.5px) rotate(45deg)" : "none" }} />
+        <span style={{ ...barBase, opacity: open ? 0 : 1, transform: open ? "scaleX(0.4)" : "none" }} />
+        <span style={{ ...barBase, transform: open ? "translateY(-6.5px) rotate(-45deg)" : "none" }} />
       </button>
 
       <AnimatePresence>

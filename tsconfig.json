@@ -30,5 +30,11 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "components/HeroWaveGL.tsx",
+    "components/HeroDither.tsx",
+    "components/DitherBackground.tsx",
+    "public/dither-main"
+  ]
 }

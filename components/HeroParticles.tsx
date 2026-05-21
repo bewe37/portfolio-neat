@@ -96,6 +96,7 @@ export default function HeroParticles({ hovered }: { hovered: boolean }) {
   const canvasRef  = useRef<HTMLCanvasElement>(null)
   const hoveredRef = useRef(false)
   const rafRef     = useRef(0)
+  const visibleRef = useRef(true)
   const ptsRef     = useRef<Particle[]>([])
   const transRef   = useRef(0)
   const timeRef    = useRef(0)
@@ -173,6 +174,7 @@ export default function HeroParticles({ hovered }: { hovered: boolean }) {
     let cachedColor = getComputedStyle(document.body).getPropertyValue("--particle-color").trim() || "rgba(22,22,22,0.88)"
 
     function loop(ts: number) {
+      if (!visibleRef.current) { rafRef.current = 0; return }
       rafRef.current = requestAnimationFrame(loop)
 
       if (lastTRef.current === null) lastTRef.current = ts
@@ -263,8 +265,17 @@ export default function HeroParticles({ hovered }: { hovered: boolean }) {
       ctx.globalAlpha = 1
     }
 
+    const io = new IntersectionObserver(([e]) => {
+      visibleRef.current = e.isIntersecting
+      if (e.isIntersecting && !rafRef.current) {
+        lastTRef.current = null
+        rafRef.current = requestAnimationFrame(loop)
+      }
+    }, { threshold: 0 })
+    io.observe(canvas)
+
     rafRef.current = requestAnimationFrame(loop)
-    return () => { cancelAnimationFrame(rafRef.current); ro.disconnect() }
+    return () => { cancelAnimationFrame(rafRef.current); ro.disconnect(); io.disconnect() }
   }, [])
 
   return (

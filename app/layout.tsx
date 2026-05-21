@@ -1,6 +1,5 @@
 import type { Metadata } from "next"
 import "./globals.css"
-import ShadowBg from "@/components/ShadowBg"
 import PageTransition from "@/components/PageTransition"
 import SharedNav from "@/components/SharedNav"
 import { Geist } from "next/font/google";
@@ -19,7 +18,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
       </head>
       <body className="dark">
-        <ShadowBg />
         <SharedNav />
         <PageTransition>{children}</PageTransition>
       </body>

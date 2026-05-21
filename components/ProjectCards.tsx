@@ -50,7 +50,7 @@ function CarouselCover({ videos, hovered }: { videos: string[]; hovered: boolean
           loop
           muted
           playsInline
-          preload="metadata"
+          preload="none"
           style={{
             ...coverStyle(hovered),
             position: i === 0 ? "relative" : "absolute",
@@ -77,7 +77,7 @@ function ProjectCard({ project, onLightbox }: { project: Project; onLightbox?: (
         {project.carousel ? (
           <CarouselCover videos={project.carousel} hovered={hovered} />
         ) : project.coverNode ? project.coverNode : isVideo ? (
-          <video src={project.cover} autoPlay loop muted playsInline preload="metadata" style={coverStyle(hovered)} />
+          <video src={project.cover} autoPlay loop muted playsInline preload="none" style={coverStyle(hovered)} />
         ) : (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={project.cover} alt={project.title} draggable={false} style={coverStyle(hovered)} />
