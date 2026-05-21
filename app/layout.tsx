@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import "./globals.css"
 import PageTransition from "@/components/PageTransition"
 import SharedNav from "@/components/SharedNav"
+import MobileMenu from "@/components/MobileMenu"
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="dark">
         <SharedNav />
+        <MobileMenu />
         <PageTransition>{children}</PageTransition>
       </body>
     </html>

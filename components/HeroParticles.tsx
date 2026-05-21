@@ -158,17 +158,26 @@ export default function HeroParticles({ hovered }: { hovered: boolean }) {
       })
     }
 
+    let resizeTimer: ReturnType<typeof setTimeout> | null = null
     function resize() {
       const rect = canvas!.getBoundingClientRect()
-      W = rect.width; H = rect.height
+      const newW = Math.round(rect.width)
+      const newH = Math.round(rect.height)
+      // skip if dimensions unchanged (mobile scroll causes spurious resize events)
+      if (newW === W && newH === H) return
+      W = newW; H = newH
       canvas!.width  = W * dpr
       canvas!.height = H * dpr
       const img = new Image()
       img.onload = () => buildParticles(sampleFlower(img), W, H)
       img.src = "/roses.png"
     }
+    function debouncedResize() {
+      if (resizeTimer) clearTimeout(resizeTimer)
+      resizeTimer = setTimeout(resize, 200)
+    }
     resize()
-    const ro = new ResizeObserver(resize)
+    const ro = new ResizeObserver(debouncedResize)
     ro.observe(canvas)
 
     let cachedColor = getComputedStyle(document.body).getPropertyValue("--particle-color").trim() || "rgba(22,22,22,0.88)"
@@ -275,7 +284,7 @@ export default function HeroParticles({ hovered }: { hovered: boolean }) {
     io.observe(canvas)
 
     rafRef.current = requestAnimationFrame(loop)
-    return () => { cancelAnimationFrame(rafRef.current); ro.disconnect(); io.disconnect() }
+    return () => { cancelAnimationFrame(rafRef.current); ro.disconnect(); io.disconnect(); if (resizeTimer) clearTimeout(resizeTimer) }
   }, [])
 
   return (

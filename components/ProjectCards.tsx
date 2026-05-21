@@ -89,7 +89,7 @@ function ProjectCard({ project, onLightbox }: { project: Project; onLightbox?: (
           <video src={project.cover} autoPlay loop muted playsInline preload="metadata" style={coverStyle(hovered)} />
         ) : (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={project.cover} alt={project.title} draggable={false} style={coverStyle(hovered)} />
+          <img src={project.cover} alt={project.title} draggable={false} loading="eager" width={800} height={600} style={coverStyle(hovered)} />
         )}
         {project.badge && (
           <div style={{

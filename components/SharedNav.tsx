@@ -3,7 +3,6 @@
 import { usePathname } from "next/navigation"
 import { useState, useCallback } from "react"
 import HeaderNav from "@/components/HeaderNav"
-import MobileMenu from "@/components/MobileMenu"
 import Link from "next/link"
 
 function Sparkle({ spinning }: { spinning: boolean }) {
@@ -102,7 +101,6 @@ export default function SharedNav() {
         <span className="rsp-hide-mobile" style={{ display: "inline-flex", alignItems: "center", gap: 4, pointerEvents: "auto" }}>
           <HeaderNav />
         </span>
-        <MobileMenu />
       </div>
     </div>
   )
