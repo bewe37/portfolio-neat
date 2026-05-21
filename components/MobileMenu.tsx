@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion"
 import { gsap } from "gsap"
 import { ArrowUpRight } from "@phosphor-icons/react"
 import Link from "next/link"
-import ThemeToggle from "@/components/ThemeToggle"
 import { playClick } from "@/lib/click-sound"
 
 const MotionLink = motion(Link)
@@ -69,7 +68,7 @@ export default function MobileMenu() {
         style={{
           position: "fixed",
           top: 20,
-          left: 20,
+          right: 20,
           zIndex: 1002,
           background: "var(--bg)",
           border: "1px solid var(--border)",
@@ -159,29 +158,6 @@ export default function MobileMenu() {
                 </MotionLink>
               ))}
 
-              {/* Theme toggle row */}
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.26, ease: [0.22, 1, 0.36, 1], delay: 0.06 + NAV_ITEMS.length * 0.05 }}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  paddingTop: 18,
-                }}
-              >
-                <span style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: 20,
-                  fontWeight: 500,
-                  color: "var(--c-dim)",
-                  letterSpacing: "-0.02em",
-                }}>
-                  Theme
-                </span>
-                <ThemeToggle />
-              </motion.div>
             </motion.div>
           </>
         )}

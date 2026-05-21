@@ -189,7 +189,8 @@ function CompanionFloat({
 
 export default function CompanionParallax() {
   const wrapperRef = useRef<HTMLDivElement>(null)
-  const [myBuddy,  setMyBuddy] = useState<string | null>(null)
+  const [myBuddy,    setMyBuddy]    = useState<string | null>(null)
+  const [customSrc,  setCustomSrc]  = useState<string | null>(null)
 
   const { scrollYProgress } = useScroll({
     target:  wrapperRef,
@@ -197,8 +198,12 @@ export default function CompanionParallax() {
   })
 
   useEffect(() => {
-    setMyBuddy(localStorage.getItem("buddyId"))
-    const sync = () => setMyBuddy(localStorage.getItem("buddyId"))
+    function sync() {
+      const id = localStorage.getItem("buddyId")
+      setMyBuddy(id)
+      if (id === "custom") setCustomSrc(localStorage.getItem("customBuddyData"))
+    }
+    sync()
     window.addEventListener("buddySelected", sync)
     return () => window.removeEventListener("buddySelected", sync)
   }, [])
@@ -286,6 +291,42 @@ export default function CompanionParallax() {
               index={i}
             />
           ))}
+          {myBuddy === "custom" && customSrc && (
+            <motion.div
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.65, delay: BUDDIES.length * 0.09, ease: [0.16, 1, 0.3, 1] }}
+              style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", paddingTop: 80, minWidth: 0 }}
+            >
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
+                <div style={{
+                  position: "relative",
+                  width: 32 * SPRITE_SCALE + 24, height: 32 * SPRITE_SCALE + 24,
+                  borderRadius: 16,
+                  border: "1.5px solid rgba(255,107,48,0.45)",
+                  background: "rgba(255,107,48,0.07)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  boxShadow: "0 0 0 3px rgba(255,107,48,0.14), 0 12px 36px rgba(0,0,0,0.5)",
+                }}>
+                  <div style={{ position: "absolute", inset: 0, borderRadius: 16, backgroundImage: "radial-gradient(rgba(255,255,255,0.055) 1px, transparent 1px)", backgroundSize: "8px 8px", pointerEvents: "none" }} />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={customSrc} alt="Your companion" style={{ width: 32 * SPRITE_SCALE, height: 32 * SPRITE_SCALE, imageRendering: "pixelated", display: "block" }} />
+                  <div style={{
+                    position: "absolute", top: -10, right: -8,
+                    background: "rgb(255,107,48)", color: "#fff",
+                    fontSize: 8, fontWeight: 700, letterSpacing: "0.09em",
+                    textTransform: "uppercase" as const,
+                    padding: "3px 7px", borderRadius: 99, fontFamily: "var(--font-sans)",
+                    whiteSpace: "nowrap" as const, boxShadow: "0 2px 10px rgba(255,107,48,0.5)",
+                  }}>Yours</div>
+                </div>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 700, color: "rgba(255,107,48,0.9)", letterSpacing: "-0.02em", margin: 0, textAlign: "center" }}>
+                  Custom
+                </p>
+              </div>
+            </motion.div>
+          )}
         </div>
 
         {/* ── Mobile 2×3 grid (no parallax) ── */}
@@ -345,6 +386,37 @@ export default function CompanionParallax() {
               }}>{buddy.name}</p>
             </motion.div>
           ))}
+          {myBuddy === "custom" && customSrc && (
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: BUDDIES.length * 0.07, ease: [0.16, 1, 0.3, 1] }}
+              style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}
+            >
+              <div style={{
+                position: "relative", width: 32 * 3 + 20, height: 32 * 3 + 20,
+                borderRadius: 14, border: "1.5px solid rgba(255,107,48,0.45)",
+                background: "rgba(255,107,48,0.07)", display: "flex",
+                alignItems: "center", justifyContent: "center",
+                boxShadow: "0 0 0 3px rgba(255,107,48,0.14)",
+              }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={customSrc} alt="Your companion" style={{ width: 32 * 3, height: 32 * 3, imageRendering: "pixelated", display: "block" }} />
+                <div style={{
+                  position: "absolute", top: -9, right: -6,
+                  background: "rgb(255,107,48)", color: "#fff",
+                  fontSize: 8, fontWeight: 700, letterSpacing: "0.09em",
+                  textTransform: "uppercase" as const,
+                  padding: "2px 6px", borderRadius: 99, fontFamily: "var(--font-sans)",
+                  boxShadow: "0 2px 8px rgba(255,107,48,0.5)",
+                }}>Yours</div>
+              </div>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 700, color: "rgba(255,107,48,0.9)", letterSpacing: "-0.01em", margin: 0, textAlign: "center" }}>
+                Custom
+              </p>
+            </motion.div>
+          )}
         </div>
 
       </div>

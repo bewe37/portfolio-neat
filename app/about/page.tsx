@@ -36,15 +36,15 @@ export default function AboutPage() {
         className="rsp-px"
       >
         <FadeUp delay={0}>
-          <section style={{ padding: "48px 0 64px", maxWidth: 1200, margin: "0 auto", width: "100%" }}>
+          <section style={{ padding: "80px 0 64px", maxWidth: 1200, margin: "0 auto", width: "100%" }}>
 
             {/* ── Gallery ──────────────────────────────────────────── */}
-            <div style={{ marginBottom: 48 }}>
+            <div style={{ marginBottom: 32 }}>
               <PhotoGallery />
             </div>
 
             {/* ── Content rows ─────────────────────────────────────── */}
-            <div style={{ display: "flex", flexDirection: "column", borderTop: "1px solid var(--divider)" }}>
+            <div style={{ display: "flex", flexDirection: "column" }}>
 
               <div style={{ ...ROW }} className="rsp-stack">
                 <p style={LABEL}>Hi there!</p>

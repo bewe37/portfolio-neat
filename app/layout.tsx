@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={cn("font-sans", geist.variable)}>
       <head>
       </head>
-      <body>
+      <body className="dark">
         <ShadowBg />
         <SharedNav />
         <PageTransition>{children}</PageTransition>

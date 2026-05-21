@@ -1,12 +1,12 @@
 "use client"
 
-import { useRef, useLayoutEffect, useState } from "react"
+import { useRef, useLayoutEffect, useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { playClick } from "@/lib/click-sound"
 
 const LINKS = [
-  { href: "/",      label: "Work" },
+  { href: "/", label: "Work" },
   { href: "/about", label: "About" },
 ]
 
@@ -15,10 +15,13 @@ export default function HeaderNav() {
   const navRef    = useRef<HTMLElement>(null)
   const wrapRefs  = useRef<(HTMLSpanElement | null)[]>([])
   const [pill, setPill] = useState<{ left: number; width: number } | null>(null)
+  const [contactOpen, setContactOpen] = useState(false)
+  const contactRef = useRef<HTMLDivElement>(null)
 
-  const activeIdx = LINKS.findIndex(({ href }) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href)
-  )
+  const activeIdx = LINKS.findIndex(({ href }) => {
+    if (href === "/") return pathname === "/"
+    return pathname.startsWith(href)
+  })
 
   useLayoutEffect(() => {
     const nav  = navRef.current
@@ -28,6 +31,18 @@ export default function HeaderNav() {
     const wrapRect = wrap.getBoundingClientRect()
     setPill({ left: wrapRect.left - navRect.left, width: wrapRect.width })
   }, [activeIdx])
+
+  // Close on outside click
+  useEffect(() => {
+    if (!contactOpen) return
+    const handler = (e: MouseEvent) => {
+      if (contactRef.current && !contactRef.current.contains(e.target as Node)) {
+        setContactOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handler)
+    return () => document.removeEventListener("mousedown", handler)
+  }, [contactOpen])
 
   return (
     <nav ref={navRef} style={{ display: "inline-flex", alignItems: "center", gap: 4, position: "relative" }}>
@@ -69,7 +84,7 @@ export default function HeaderNav() {
                 borderRadius:   6,
                 whiteSpace:     "nowrap",
               }}
-              onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.color = "rgb(255,107,48)" }}
+              onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.color = "var(--c-primary)" }}
               onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.color = "var(--c-dim)" }}
             >
               {label}
@@ -77,6 +92,90 @@ export default function HeaderNav() {
           </span>
         )
       })}
+
+      {/* Contact dropdown */}
+      <div ref={contactRef} style={{ position: "relative", zIndex: 1 }}>
+        <button
+          onClick={() => { playClick(); setContactOpen(o => !o) }}
+          style={{
+            display:        "block",
+            fontFamily:     "var(--font-sans)",
+            fontSize:       14,
+            fontWeight:     500,
+            letterSpacing:  "-0.01em",
+            color:          contactOpen ? "var(--c-primary)" : "var(--c-dim)",
+            transition:     "color 0.18s ease",
+            background:     contactOpen ? "var(--surface)" : "none",
+            border:         "none",
+            padding:        "4px 10px",
+            borderRadius:   6,
+            cursor:         "pointer",
+            whiteSpace:     "nowrap",
+          }}
+          onMouseEnter={e => { if (!contactOpen) (e.currentTarget as HTMLElement).style.color = "var(--c-primary)" }}
+          onMouseLeave={e => { if (!contactOpen) (e.currentTarget as HTMLElement).style.color = "var(--c-dim)" }}
+        >
+          Contact
+        </button>
+
+        {contactOpen && (
+          <div style={{
+            position:        "absolute",
+            top:             "calc(100% + 8px)",
+            right:           0,
+            zIndex:          200,
+            background:      "var(--surface)",
+            border:          "1px solid var(--divider)",
+            borderRadius:    10,
+            padding:         "4px",
+            minWidth:        160,
+            boxShadow:       "0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10)",
+            animation:       "fadeSlideDown 0.18s cubic-bezier(0.22,1,0.36,1)",
+          }}>
+            <style>{`
+              @keyframes fadeSlideDown {
+                from { opacity: 0; transform: translateY(-6px); }
+                to   { opacity: 1; transform: translateY(0); }
+              }
+            `}</style>
+            {[
+              { label: "email",    href: "mailto:bryanwinata112@gmail.com" },
+              { label: "linkedin", href: "https://linkedin.com/in/gbryanw" },
+              { label: "twitter",  href: "https://twitter.com/gbryanwt" },
+            ].map(({ label, href }) => (
+              <a
+                key={label}
+                href={href}
+                target={href.startsWith("http") ? "_blank" : undefined}
+                rel="noopener noreferrer"
+                onClick={() => setContactOpen(false)}
+                style={{
+                  display:        "block",
+                  fontFamily:     "var(--font-sans)",
+                  fontSize:       13,
+                  fontWeight:     400,
+                  color:          "var(--c-secondary)",
+                  letterSpacing:  "-0.01em",
+                  textDecoration: "none",
+                  padding:        "7px 12px",
+                  borderRadius:   7,
+                  transition:     "background 0.12s ease, color 0.12s ease",
+                }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLElement).style.background = "var(--surface-hover, rgba(128,128,128,0.1))"
+                  ;(e.currentTarget as HTMLElement).style.color = "var(--c-primary)"
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLElement).style.background = "transparent"
+                  ;(e.currentTarget as HTMLElement).style.color = "var(--c-secondary)"
+                }}
+              >
+                {label}
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
     </nav>
   )
 }

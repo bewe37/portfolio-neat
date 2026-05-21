@@ -36,6 +36,7 @@
   --surface:     rgb(237, 237, 237);
   --dot-color:   rgba(0,0,0,0.07);
   --c-primary:   rgba(22, 22, 22, 0.88);
+  --particle-color: rgba(255,255,255,0.92);
   --c-high:      rgba(0,0,0,0.78);
   --c-mid:       rgba(10, 10, 10, 0.65);
   --c-body:      rgba(0,0,0,0.55);
@@ -61,14 +62,15 @@ body.dark {
   --footer-divider: rgba(255,255,255,0.15);
   --surface:     rgb(31, 31, 31);
   --dot-color:   rgba(255,255,255,0.055);
-  --c-primary:   rgba(255,255,255,0.92);
-  --c-high:      rgba(255,255,255,0.82);
-  --c-mid:       rgba(255,255,255,0.70);
-  --c-body:      rgba(255,255,255,0.60);
-  --c-secondary: rgba(255,255,255,0.50);
-  --c-dim:       rgba(255,255,255,0.42);
-  --c-faint:     rgba(255,255,255,0.35);
-  --c-ghost:     rgba(255,255,255,0.20);
+  --c-primary:   rgba(255,255,255,0.95);
+  --particle-color: rgba(255,255,255,0.92);
+  --c-high:      rgba(255,255,255,0.92);
+  --c-mid:       rgba(255,255,255,0.85);
+  --c-body:      rgba(255,255,255,0.78);
+  --c-secondary: rgba(255,255,255,0.68);
+  --c-dim:       rgba(255,255,255,0.55);
+  --c-faint:     rgba(255,255,255,0.42);
+  --c-ghost:     rgba(255,255,255,0.28);
   --divider:     rgba(255,255,255,0.07);
   --border:      rgba(255,255,255,0.09);
   --border-mid:  rgba(255,255,255,0.14);
@@ -87,6 +89,7 @@ body.sunset {
   --surface:     rgb(247,237,208);
   --dot-color:   rgba(160,110,20,0.09);
   --c-primary:   rgba(20,10,0,1.0);
+  --particle-color: rgba(20,10,0,1.0);
   --c-high:      rgba(20,10,0,1.0);
   --c-mid:       rgba(20,10,0,0.92);
   --c-body:      rgba(20,10,0,0.85);
@@ -146,32 +149,10 @@ a {
   text-decoration: none;
 }
 
-/* ── Hero grid texture ────────────────────────────────────── */
+/* ── Hero grid texture (removed) ─────────────────────────── */
 .hero-grid {
   position: relative;
   overflow: visible;
-}
-.hero-grid::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(0,0,0,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,0,0,0.025) 1px, transparent 1px);
-  background-size: 40px 40px;
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%),
-                      linear-gradient(to bottom, transparent 0%, black 12%, black 78%, transparent 100%);
-  -webkit-mask-composite: source-in;
-  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%),
-              linear-gradient(to bottom, transparent 0%, black 12%, black 78%, transparent 100%);
-  mask-composite: intersect;
-  pointer-events: none;
-  z-index: 0;
-}
-body.dark .hero-grid::before {
-  background-image:
-    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
 }
 .hero-grid > * {
   position: relative;

@@ -2,15 +2,14 @@
 
 import { useState } from "react"
 import { AnimatePresence } from "framer-motion"
-import { InlineLogoChip, NameFlipChip } from "@/components/HeroTextWithPen"
 import ProjectCards from "@/components/ProjectCards"
 import MarqueeFooter from "@/components/MarqueeFooter"
-import WrenchWord from "@/components/WrenchWord"
-import { EasyWord } from "@/components/HeroInteractions"
-import FuzzyStickers from "@/components/FuzzyStickers"
 import FadeUp from "@/components/FadeUp"
 import OnboardingLightbox from "@/components/OnboardingLightbox"
 import CompanionThumbnail from "@/components/CompanionThumbnail"
+import dynamic from "next/dynamic"
+
+const HeroParticles = dynamic(() => import("@/components/HeroParticles"), { ssr: false })
 
 const VIBE_PROJECTS = [
   {
@@ -40,16 +39,6 @@ const VIBE_PROJECTS = [
     href: "https://gbryanwt.com/",
     cover: "/PortfolioThumbnail.mp4",
   },
-  {
-    title: "Adopt a Buddy",
-    category: "Vibe Coded",
-    date: "It's alive →",
-    description: "Pick a pixel-art companion to follow you around the portfolio. An onboarding flow for a feature that shouldn't exist but does.",
-    href: "#companion",
-    cover: "",
-    coverNode: <CompanionThumbnail />,
-    lightbox: true,
-  },
 ]
 
 const PROJECTS = [
@@ -59,7 +48,8 @@ const PROJECTS = [
     date: "May - Dec 2025",
     description: "Designing a conversational AI assistant embedded in AMD's Adrenalin software for millions of gamers.",
     href: "/amd_ai_project",
-    cover: "/AMDThumbnailCS.png",
+    cover: "/ThumbnailTest.mp4",
+    badge: "/amdchip.svg",
   },
   {
     title: "The Design System That Kept AMD's Team Aligned",
@@ -90,56 +80,140 @@ const PROJECTS = [
 
 export default function HomePage() {
   const [companionOpen, setCompanionOpen] = useState(false)
+  const [heroHovered, setHeroHovered] = useState(false)
 
   return (
     <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
+
+      {/* ── Hero — full bleed ──────────────────────────────────────────── */}
+      <section style={{
+        position:  "relative",
+        width:     "100%",
+        height:    "100dvh",
+        minHeight: 560,
+        overflow:  "hidden",
+      }}>
+        {/* Particles fill the whole hero */}
+        <div style={{ position: "absolute", inset: 0, zIndex: 1 }}>
+          <HeroParticles hovered={heroHovered} />
+        </div>
+
+        {/* Center — tagline */}
+        <div style={{
+          position:       "absolute",
+          inset:          0,
+          zIndex:         2,
+          display:        "flex",
+          alignItems:     "center",
+          justifyContent: "center",
+          pointerEvents:  "none",
+          userSelect:     "none",
+        }}>
+          <FadeUp delay={0.15} style={{ width: "auto" }}>
+            <p style={{
+              fontFamily:    "var(--font-sans)",
+              fontSize:      "clamp(15px, 1.6vw, 22px)",
+              fontWeight:    400,
+              letterSpacing: "-0.02em",
+              lineHeight:    1.4,
+              color:         "var(--c-mid)",
+              margin:        0,
+              pointerEvents: "none",
+              transition:    "opacity 0.5s ease",
+              opacity:       heroHovered ? 0 : 1,
+            }}>
+              Making complex things{" "}
+              <style>{`
+                @keyframes beautifulPulse {
+                  0%, 100% { opacity: 1; }
+                  50%       { opacity: 0.45; }
+                }
+              `}</style>
+              <span
+                style={{
+                  fontStyle:     "italic",
+                  fontWeight:    300,
+                  pointerEvents: "auto",
+                  cursor:        "default",
+                  animation:     heroHovered ? "none" : "beautifulPulse 3s ease-in-out infinite",
+                }}
+                onMouseEnter={() => setHeroHovered(true)}
+                onMouseLeave={() => setHeroHovered(false)}
+              >
+                beautiful
+              </span>
+            </p>
+          </FadeUp>
+        </div>
+
+        {/* Scroll indicator — bottom center */}
+        <style>{`
+          @keyframes scrollBounce {
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(5px); }
+          }
+        `}</style>
+        <button
+          onClick={() => document.getElementById("work")?.scrollIntoView({ behavior: "smooth" })}
+          style={{
+            position:      "absolute",
+            bottom:        48,
+            left:          "50%",
+            transform:     "translateX(-50%)",
+            zIndex:        3,
+            background:    "none",
+            border:        "none",
+            padding:       0,
+            cursor:        "pointer",
+            color:         "rgba(255,255,255,0.55)",
+            transition:    "color 0.15s ease",
+          }}
+          onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.9)")}
+          onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.55)")}
+        >
+          <svg width="22" height="22" viewBox="0 0 16 16" fill="none"
+            style={{ animation: "scrollBounce 2s ease-in-out infinite", display: "block" }}>
+            <path d="M8 3v10M8 13l-4-4M8 13l4-4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+
+        {/* Bottom left — bio */}
+        <FadeUp delay={0.3}>
+          <div style={{
+            position:      "absolute",
+            bottom:        "clamp(24px, 3vw, 36px)",
+            left:          "clamp(20px, 4vw, 48px)",
+            zIndex:        3,
+            pointerEvents: "none",
+            userSelect:    "none",
+          }}>
+            <p style={{
+              fontFamily:    "var(--font-sans)",
+              fontSize:      12,
+              fontWeight:    400,
+              lineHeight:    1.7,
+              letterSpacing: "-0.01em",
+              color:         "var(--c-ghost)",
+              margin:        0,
+            }}>
+              Product designer, Toronto.<br />
+              Previously at AMD &amp; Safe Software.
+            </p>
+          </div>
+        </FadeUp>
+
+      </section>
+
       <main
         style={{ width: "100%", padding: "0 48px", display: "flex", flexDirection: "column" }}
         className="rsp-px"
       >
-        {/* ── Grid texture: nav + hero + selected work label ──────────── */}
         <div style={{ maxWidth: 1200, margin: "0 auto", width: "100%" }}>
-        <div className="hero-grid" style={{ position: "relative" }}>
-          <div className="rsp-hide-mobile" style={{ position: "absolute", inset: 0, zIndex: 10, pointerEvents: "none" }}><FuzzyStickers /></div>
 
-          {/* ── Hero ──────────────────────────────────────────────────── */}
-          <section style={{ padding: "24px 0 8px", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12, padding: "100px 0 0 0", textAlign: "center" }}>
-              <FadeUp delay={0.1}>
-                <NameFlipChip label="Georgius" tileH={28} />
-              </FadeUp>
-              <FadeUp delay={0.3} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
-                <p style={{
-                  fontFamily:    "var(--font-sans)",
-                  fontSize:      17,
-                  fontWeight:    400,
-                  letterSpacing: "-0.01em",
-                  lineHeight:    1.9,
-                  color:         "var(--c-primary)",
-                  margin:        0,
-                  maxWidth: 560,
-                }}>
-                  I&apos;m a product designer based in Toronto. Passionate about turning why is this so confusing into wait, that was <EasyWord /> Mostly through obsessive <WrenchWord />
-                </p>
-                <p style={{
-                  fontFamily:    "var(--font-sans)",
-                  fontSize:      15,
-                  fontWeight:    400,
-                  letterSpacing: "-0.01em",
-                  lineHeight:    1.9,
-                  color:         "var(--c-dim)",
-                  margin:        0,
-                  marginTop:     12,
-                }}>
-                  Previously taking care of pixels at<InlineLogoChip src="/amdchip.svg" alt="AMD" link="https://www.amd.com" size={56} />&amp;<InlineLogoChip src="/safechip.svg" alt="Safe Software" link="https://www.safe.com" size={72} />
-                </p>
-              </FadeUp>
-            </div>
-          </section>
-
-          {/* ── Selected Work label (inside grid) ─────────────────────── */}
+        {/* ── Work container ───────────────────────────────────────────── */}
+        <div id="work" style={{ position: "relative" }}>
           <FadeUp delay={0.5}>
-            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", paddingTop: 140 }}>
+            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", paddingTop: 120, paddingBottom: 16 }}>
               <p style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.01em", margin: 0 }}>
                 Selected work
               </p>
@@ -149,29 +223,26 @@ export default function HomePage() {
             </div>
           </FadeUp>
 
-        </div>{/* end hero-grid */}
+          <FadeUp delay={0.6}>
+            <section style={{ paddingBottom: 64, display: "flex", flexDirection: "column", gap: 24 }}>
+              <ProjectCards projects={PROJECTS} />
+            </section>
+          </FadeUp>
 
-        {/* ── Project cards (outside grid) ────────────────────────────── */}
-        <FadeUp delay={0.6}>
-          <section style={{ padding: "16px 0 64px", display: "flex", flexDirection: "column", gap: 24 }}>
-            <ProjectCards projects={PROJECTS} />
-          </section>
-        </FadeUp>
-
-        {/* ── Vibe-coded section ───────────────────────────────────────── */}
-        <FadeUp delay={0.7}>
-          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", paddingBottom: 16 }}>
-            <p style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.01em", margin: 0 }}>
-              Built on Vibes ~
-            </p>
-            <p style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 400, color: "var(--c-faint)", letterSpacing: "-0.01em", margin: 0 }}>
-              Claude, Paper, Motion & React
-            </p>
-          </div>
-          <section style={{ padding: "0 0 96px", display: "flex", flexDirection: "column", gap: 24 }}>
-            <ProjectCards projects={VIBE_PROJECTS} onLightbox={() => setCompanionOpen(true)} />
-          </section>
-        </FadeUp>
+          <FadeUp delay={0.7}>
+            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", paddingBottom: 16 }}>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.01em", margin: 0 }}>
+                Built on Vibes ~
+              </p>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 400, color: "var(--c-faint)", letterSpacing: "-0.01em", margin: 0 }}>
+                Claude, Paper, Motion & React
+              </p>
+            </div>
+            <section style={{ paddingBottom: 96, display: "flex", flexDirection: "column", gap: 24 }}>
+              <ProjectCards projects={VIBE_PROJECTS} onLightbox={() => setCompanionOpen(true)} />
+            </section>
+          </FadeUp>
+        </div>
 
         </div>{/* end maxWidth wrapper */}
 

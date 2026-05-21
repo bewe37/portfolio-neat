@@ -57,12 +57,12 @@ function applyTheme(theme: Theme) {
 }
 
 export default function ThemeToggle() {
-  const [theme,   setTheme]   = useState<Theme>("light")
+  const [theme,   setTheme]   = useState<Theme>("dark")
   const [hovered, setHovered] = useState(false)
 
   useEffect(() => {
     const saved = localStorage.getItem("theme") as Theme | null
-    const initial: Theme = saved ?? "light"
+    const initial: Theme = saved ?? "dark"
     setTheme(initial)
     document.body.classList.remove("dark", "sunset")
     if (initial !== "light") document.body.classList.add(initial)

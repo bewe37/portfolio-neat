@@ -15,6 +15,7 @@ interface Project {
   lightbox?: boolean
   coverNode?: React.ReactNode
   carousel?: string[]
+  badge?: string
 }
 
 const coverStyle = (hovered: boolean): React.CSSProperties => ({
@@ -80,6 +81,20 @@ function ProjectCard({ project, onLightbox }: { project: Project; onLightbox?: (
         ) : (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={project.cover} alt={project.title} draggable={false} style={coverStyle(hovered)} />
+        )}
+        {project.badge && (
+          <div style={{
+            position:   "absolute",
+            bottom:     12,
+            right:      12,
+            opacity:    hovered ? 1 : 0,
+            transform:  hovered ? "translateY(0)" : "translateY(4px)",
+            transition: "opacity 0.25s ease, transform 0.25s ease",
+            pointerEvents: "none",
+          }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={project.badge} alt="" style={{ height: 22, width: "auto", display: "block" }} />
+          </div>
         )}
       </div>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
