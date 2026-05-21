@@ -115,7 +115,16 @@ export default function HeaderNav() {
           onMouseEnter={e => { if (!contactOpen) (e.currentTarget as HTMLElement).style.color = "var(--c-primary)" }}
           onMouseLeave={e => { if (!contactOpen) (e.currentTarget as HTMLElement).style.color = "var(--c-dim)" }}
         >
-          Contact
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+            Contact
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"
+              style={{
+                transition: "transform 0.18s ease",
+                transform: contactOpen ? "rotate(180deg)" : "rotate(0deg)",
+              }}>
+              <path d="M2 3.5l3 3 3-3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </span>
         </button>
 
         {contactOpen && (
@@ -139,9 +148,9 @@ export default function HeaderNav() {
               }
             `}</style>
             {[
-              { label: "email",    href: "mailto:bryanwinata112@gmail.com" },
-              { label: "linkedin", href: "https://linkedin.com/in/gbryanw" },
-              { label: "twitter",  href: "https://twitter.com/gbryanwt" },
+              { label: "Email",    href: "mailto:bryanwinata112@gmail.com" },
+              { label: "LinkedIn", href: "https://linkedin.com/in/gbryanw" },
+              { label: "Twitter",  href: "https://twitter.com/gbryanwt" },
             ].map(({ label, href }) => (
               <a
                 key={label}

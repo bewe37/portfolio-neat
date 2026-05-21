@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { playClick } from "@/lib/click-sound"
 
 interface Project {
@@ -36,17 +36,26 @@ const carouselBtnStyle: React.CSSProperties = {
 
 function CarouselCover({ videos, hovered }: { videos: string[]; hovered: boolean }) {
   const [active, setActive] = useState(0)
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([])
 
-  const prev = (e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); setActive(i => (i - 1 + videos.length) % videos.length) }
-  const next = (e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); setActive(i => (i + 1) % videos.length) }
+  const go = (next: number) => {
+    videoRefs.current[active]?.pause()
+    setActive(next)
+    // play after state update
+    setTimeout(() => videoRefs.current[next]?.play(), 0)
+  }
+
+  const prev = (e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); go((active - 1 + videos.length) % videos.length) }
+  const next = (e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); go((active + 1) % videos.length) }
 
   return (
     <div style={{ width: "100%", height: "100%", position: "relative" }}>
       {videos.map((src, i) => (
         <video
           key={src}
+          ref={el => { videoRefs.current[i] = el }}
           src={src}
-          autoPlay={active === i}
+          autoPlay={i === 0}
           loop
           muted
           playsInline
@@ -73,7 +82,7 @@ function ProjectCard({ project, onLightbox }: { project: Project; onLightbox?: (
 
   const inner = (
     <>
-      <div style={{ width: "100%", aspectRatio: "4/3", borderRadius: 10, overflow: "hidden", backgroundColor: "var(--surface)", position: "relative" }}>
+      <div style={{ width: "100%", aspectRatio: "4/3", borderRadius: 8, overflow: "hidden", backgroundColor: "var(--surface)", position: "relative" }}>
         {project.carousel ? (
           <CarouselCover videos={project.carousel} hovered={hovered} />
         ) : project.coverNode ? project.coverNode : isVideo ? (
@@ -99,13 +108,13 @@ function ProjectCard({ project, onLightbox }: { project: Project; onLightbox?: (
       </div>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
         <p style={{
-          fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 500,
+          fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 500,
           color: hovered ? "var(--c-mid)" : "var(--c-faint)",
           letterSpacing: "-0.01em", margin: 0, transition: "color 0.2s ease",
         }}>
           {project.title}
         </p>
-        <span style={{ fontFamily: "var(--font-sans)", fontSize: 11, fontWeight: 400, color: "var(--c-faint)", letterSpacing: "-0.01em", flexShrink: 0 }}>
+        <span style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 400, color: "var(--c-faint)", letterSpacing: "-0.01em", flexShrink: 0 }}>
           {project.date}
         </span>
       </div>
@@ -159,7 +168,7 @@ function ProjectCard({ project, onLightbox }: { project: Project; onLightbox?: (
 
 export default function ProjectCards({ projects, onLightbox }: { projects: Project[]; onLightbox?: () => void }) {
   return (
-    <div className="rsp-stack" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+    <div className="rsp-stack" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
       {projects.map((p, i) => (
         <ProjectCard key={p.href || p.title || i} project={p} onLightbox={p.lightbox ? onLightbox : undefined} />
       ))}

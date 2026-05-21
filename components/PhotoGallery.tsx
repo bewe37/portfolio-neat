@@ -170,7 +170,7 @@ export default function PhotoGallery() {
         style={{
           position:        "relative",
           height:          CONTAINER_H,
-          borderRadius:    16,
+          borderRadius:    8,
           overflow:        "hidden",
           backgroundColor: "var(--surface)",
           backgroundImage: "radial-gradient(circle, var(--dot-color) 1px, transparent 1px)",

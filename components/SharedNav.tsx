@@ -13,23 +13,21 @@ function Sparkle({ spinning }: { spinning: boolean }) {
       style={{
         flexShrink: 0,
         animation: spinning
-          ? "sparkle-click 0.6s ease-out, sparkle-spin 6s linear infinite 0.6s"
+          ? "sparkle-click 0.5s cubic-bezier(0.22,1,0.36,1)"
           : "sparkle-spin 6s linear infinite",
       }}
     >
       <style>{`
         @keyframes sparkle-spin {
-          0%   { transform: rotate(0deg)   scale(1);    opacity: 0.5; }
-          25%  { transform: rotate(90deg)  scale(1.15); opacity: 1;   }
-          50%  { transform: rotate(180deg) scale(1);    opacity: 0.5; }
-          75%  { transform: rotate(270deg) scale(1.15); opacity: 1;   }
-          100% { transform: rotate(360deg) scale(1);    opacity: 0.5; }
+          from { transform: rotate(0deg);   opacity: 0.5; }
+          25%  { opacity: 1; }
+          50%  { opacity: 0.5; }
+          75%  { opacity: 1; }
+          to   { transform: rotate(360deg); opacity: 0.5; }
         }
         @keyframes sparkle-click {
-          0%   { transform: rotate(0deg)   scale(1);   opacity: 0.5; }
-          30%  { transform: rotate(180deg) scale(1.4); opacity: 1;   }
-          60%  { transform: rotate(320deg) scale(1.2); opacity: 1;   }
-          100% { transform: rotate(360deg) scale(1);   opacity: 0.5; }
+          from { transform: rotate(0deg); }
+          to   { transform: rotate(360deg); }
         }
       `}</style>
       <path
@@ -72,9 +70,9 @@ export default function SharedNav() {
         maxWidth:       1200,
         margin:         "0 auto",
         display:        "flex",
-        alignItems:     "center",
+        alignItems:     "flex-start",
         justifyContent: "space-between",
-        paddingTop:     24,
+        paddingTop:     28,
         paddingBottom:  24,
       }}>
         {/* Name — left */}
@@ -92,13 +90,15 @@ export default function SharedNav() {
             color:          "var(--c-primary)",
             textDecoration: "none",
             pointerEvents:  "auto",
+            paddingTop:     4,
+            paddingBottom:  4,
           }}
         >
           <Sparkle spinning={spinning} />
           Georgius Bryan
         </Link>
 
-        {/* Nav + theme — right */}
+        {/* Nav — right */}
         <span className="rsp-hide-mobile" style={{ display: "inline-flex", alignItems: "center", gap: 4, pointerEvents: "auto" }}>
           <HeaderNav />
         </span>

@@ -39,7 +39,7 @@ export default function AboutPage() {
           <section style={{ padding: "80px 0 64px", maxWidth: 1200, margin: "0 auto", width: "100%" }}>
 
             {/* ── Gallery ──────────────────────────────────────────── */}
-            <div style={{ marginBottom: 32 }}>
+            <div style={{ marginBottom: 24 }}>
               <PhotoGallery />
             </div>
 

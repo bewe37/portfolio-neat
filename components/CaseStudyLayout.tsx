@@ -133,7 +133,7 @@ function Bento({ items }: { items: BentoItem[] }) {
       {items.map((item, i) => (
         <div key={i} style={{
           gridColumn:      item.span === 2 ? "span 2" : "span 1",
-          borderRadius:    14,
+          borderRadius:    8,
           overflow:        "hidden",
           border:          "1px solid var(--border)",
           backgroundColor: "var(--surface)",
@@ -158,7 +158,7 @@ function StatCallout({ stat }: { stat: StatBlock }) {
   return (
     <div style={{
       padding:         "32px 36px",
-      borderRadius:    16,
+      borderRadius:    10,
       marginBottom:    28,
       border:          "1px solid var(--border)",
       backgroundColor: "var(--surface)",
@@ -201,7 +201,7 @@ function Cards({ cards }: { cards: CardItem[] }) {
       {cards.map((card, i) => (
         <div key={i} style={{
           padding:         "22px 26px",
-          borderRadius:    14,
+          borderRadius:    10,
           border:          "1px solid var(--border)",
           backgroundColor: "var(--surface)",
         }}>
@@ -321,7 +321,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
         transition={{ ...FADE, delay: bi * 0.05 }}
         style={{
           padding:         isNumbered ? "24px 24px" : "24px 24px",
-          borderRadius:    18,
+          borderRadius:    10,
           border:          "1px solid var(--border)",
           backgroundColor: "var(--surface)",
           textAlign:       "left",
@@ -383,7 +383,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
   if (block.note) {
     const noteCard = (
       <div className="sticky-note" style={{
-        borderRadius: 12,
+        borderRadius: 10,
         overflow:     "hidden",
         transform:    "rotate(-0.6deg)",
         ...(block.image ? { position: "sticky", top: 80 } : {}),
@@ -482,7 +482,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
           alignItems:      "flex-start",
           gap:             12,
           padding:         "20px 20px",
-          borderRadius:    12,
+          borderRadius:    10,
           border:          "1px solid var(--border)",
           backgroundColor: "var(--surface)",
         }}>
@@ -889,9 +889,9 @@ function HighlightsButton({ id, isActive, onClick, prefix }: { id: string; isAct
         WebkitBackgroundClip: "text",
         WebkitTextFillColor:  "transparent",
         backgroundClip:       "text",
-        animation:            hov ? "toc-hl-shimmer 1s linear infinite" : "none",
+        animation:            (hov || isActive) ? "toc-hl-shimmer 1s linear infinite" : "none",
         transition:           "opacity 0.15s ease",
-        opacity:              hov ? 1 : 0.85,
+        opacity:              (hov || isActive) ? 1 : 0.85,
       }}>
         Highlights
       </span>
@@ -906,29 +906,84 @@ function TableOfContents({ backHref, items, activeId }: {
 }) {
   const [hovId, setHovId] = useState<string | null>(null)
   const [hovHome, setHovHome] = useState(false)
+  const [isDark, setIsDark] = useState(true)
+
+  useEffect(() => {
+    setIsDark(document.body.classList.contains("dark"))
+  }, [])
+
+  const handleThemeToggle = () => {
+    const next = !isDark
+    setIsDark(next)
+    document.body.classList.add("theme-switching")
+    if (next) {
+      document.body.classList.add("dark")
+      localStorage.setItem("theme", "dark")
+    } else {
+      document.body.classList.remove("dark")
+      localStorage.setItem("theme", "light")
+    }
+    setTimeout(() => document.body.classList.remove("theme-switching"), 600)
+  }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", paddingTop: 56 }}>
-      <Link
-        href={backHref}
-        onClick={() => playClick()}
-        onMouseEnter={() => setHovHome(true)}
-        onMouseLeave={() => setHovHome(false)}
-        style={{
-          fontFamily:     "var(--font-sans)",
-          fontSize:       13,
-          fontWeight:     400,
-          color:          hovHome ? "rgb(255,107,48)" : "var(--c-dim)",
-          letterSpacing:  "-0.01em",
-          lineHeight:     1.4,
-          textDecoration: "none",
-          transition:     "color 0.18s ease",
-          padding:        "5px 0",
-          display:        "block",
-        }}
-      >
-        Home
-      </Link>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <Link
+          href={backHref}
+          onClick={() => playClick()}
+          onMouseEnter={() => setHovHome(true)}
+          onMouseLeave={() => setHovHome(false)}
+          style={{
+            fontFamily:     "var(--font-sans)",
+            fontSize:       13,
+            fontWeight:     400,
+            color:          hovHome ? "var(--c-primary)" : "var(--c-dim)",
+            letterSpacing:  "-0.01em",
+            lineHeight:     1.4,
+            textDecoration: "none",
+            transition:     "color 0.18s ease",
+            padding:        "5px 0",
+            display:        "block",
+          }}
+        >
+          Home
+        </Link>
+        <button
+          onClick={handleThemeToggle}
+          title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+          style={{
+            background: "none",
+            border:     "none",
+            cursor:     "pointer",
+            padding:    "5px 0 5px 8px",
+            color:      "var(--c-dim)",
+            transition: "color 0.15s ease",
+            display:    "flex",
+            alignItems: "center",
+            position:   "relative",
+            width:      14,
+            height:     14,
+          }}
+          onMouseEnter={e => (e.currentTarget.style.color = "var(--c-primary)")}
+          onMouseLeave={e => (e.currentTarget.style.color = "var(--c-dim)")}
+        >
+          {/* Sun */}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+            style={{ position: "absolute", transition: "opacity 0.3s ease, transform 0.3s ease", opacity: isDark ? 1 : 0, transform: isDark ? "rotate(0deg) scale(1)" : "rotate(45deg) scale(0.6)" }}>
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          {/* Moon */}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+            style={{ position: "absolute", transition: "opacity 0.3s ease, transform 0.3s ease", opacity: isDark ? 0 : 1, transform: isDark ? "rotate(-45deg) scale(0.6)" : "rotate(0deg) scale(1)" }}>
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+      </div>
       <div style={{ height: 1, backgroundColor: "var(--divider)", margin: "16px 0" }} />
       <nav style={{ display: "flex", flexDirection: "column", gap: 1 }}>
         {items.map(({ label, id }) => {
@@ -962,7 +1017,7 @@ function TableOfContents({ backHref, items, activeId }: {
                 letterSpacing: "-0.01em",
                 lineHeight:    1.4,
                 transition:    "color 0.18s ease",
-                color: isHov ? "rgb(255,107,48)" : isActive ? "var(--c-primary)" : "var(--c-dim)",
+                color: isHov ? "var(--c-primary)" : isActive ? "var(--c-primary)" : "var(--c-dim)",
               }}>
                 {label}
               </span>
@@ -970,6 +1025,7 @@ function TableOfContents({ backHref, items, activeId }: {
           )
         })}
       </nav>
+
     </div>
   )
 }
@@ -1306,7 +1362,7 @@ export default function CaseStudyLayout({
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...FADE, delay: 0.1 }}
               style={{
-                borderRadius:    18,
+                borderRadius:    8,
                 overflow:        "hidden",
                 marginBottom:    40,
                 border:          "1px solid var(--border)",
@@ -1352,7 +1408,7 @@ export default function CaseStudyLayout({
               <div style={{
                 display: "flex", gap: 0, alignItems: "stretch", maxWidth: 380,
                 border: `1px solid ${pwError ? "rgb(220,60,50)" : "var(--border)"}`,
-                borderRadius: 12, overflow: "hidden",
+                borderRadius: 10, overflow: "hidden",
                 backgroundColor: "var(--surface)",
                 transition: "border-color 0.2s",
                 boxShadow: "0 2px 8px rgba(0,0,0,0.05)",

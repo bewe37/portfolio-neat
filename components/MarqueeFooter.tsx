@@ -20,7 +20,8 @@ export default function MarqueeFooter() {
     return () => clearInterval(tick)
   }, [])
 
-  const dim   = "rgba(255,255,255,0.45)"
+  const dim   = "rgba(255,255,255,0.55)"
+  const dimLo = "rgba(255,255,255,0.38)"
   const hover = "rgba(255,255,255,0.90)"
 
   const label: React.CSSProperties = {
@@ -52,10 +53,10 @@ export default function MarqueeFooter() {
 
         {/* Col 1 — tagline */}
         <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <span style={{ ...label, color: "rgba(255,255,255,0.70)" }}>
+          <span style={{ ...label, color: dim }}>
             Sleep is a design constraint.
           </span>
-          <span style={{ ...label, color: "rgba(255,255,255,0.42)" }}>
+          <span style={{ ...label, color: dimLo }}>
             Available for hire if you catch me awake.
           </span>
         </div>
@@ -63,7 +64,7 @@ export default function MarqueeFooter() {
         {/* Col 2 — location + copyright, centered */}
         <div style={{ display: "flex", flexDirection: "column", gap: 2, alignItems: "center" }}>
           <span style={label}>Toronto · {time}</span>
-          <span style={{ ...label, color: "rgba(255,255,255,0.28)", fontSize: 11 }}>
+          <span style={{ ...label, color: dimLo, fontSize: 11 }}>
             © {year} Georgius Bryan
           </span>
         </div>

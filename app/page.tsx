@@ -58,6 +58,7 @@ const PROJECTS = [
     description: "Building a scalable component library that unified design and engineering across AMD's product suite.",
     href: "/amd_project",
     cover: "/AMDCaseStudyH2.png",
+    badge: "/amdchip.svg",
   },
   {
     title: "Reducing Clutter Without Losing Context",
@@ -66,6 +67,7 @@ const PROJECTS = [
     description: "Streamlining FME's annotation workflow so users can focus on insight, not interface noise.",
     href: "/fme_annotation_project",
     cover: "/SafeCaseStudyH2.png",
+    badge: "/safechip.svg",
   },
   {
     title: "Simplifying Donation Tracking at Scale",
@@ -74,6 +76,7 @@ const PROJECTS = [
     description: "Designing a clear, humane dashboard for nonprofits to manage donor relationships at scale.",
     href: "/blueprint",
     cover: "/YUBlueprintThumbnail.png",
+    badge: "/bpLogo.svg",
   },
 ]
 
@@ -177,30 +180,32 @@ export default function HomePage() {
           </svg>
         </button>
 
-        {/* Bottom left — bio */}
-        <FadeUp delay={0.3}>
-          <div style={{
-            position:      "absolute",
-            bottom:        "clamp(24px, 3vw, 36px)",
-            left:          "clamp(20px, 4vw, 48px)",
-            zIndex:        3,
-            pointerEvents: "none",
-            userSelect:    "none",
-          }}>
+        {/* Bottom left — desc */}
+        <div style={{
+          position:      "absolute",
+          bottom:        "clamp(24px, 3vw, 40px)",
+          left:          0,
+          right:         0,
+          zIndex:        3,
+          pointerEvents: "none",
+          userSelect:    "none",
+          padding:       "0 clamp(20px, 4vw, 48px)",
+        }}>
+          <div style={{ maxWidth: 1200, margin: "0 auto", paddingLeft: 17 }}>
             <p style={{
               fontFamily:    "var(--font-sans)",
               fontSize:      12,
               fontWeight:    400,
               lineHeight:    1.7,
               letterSpacing: "-0.01em",
-              color:         "var(--c-ghost)",
+              color:         "var(--c-dim)",
               margin:        0,
             }}>
-              Product designer, Toronto.<br />
-              Previously at AMD &amp; Safe Software.
+              Designing for the love of craft.<br />
+              Previously at AMD.
             </p>
           </div>
-        </FadeUp>
+        </div>
 
       </section>
 
