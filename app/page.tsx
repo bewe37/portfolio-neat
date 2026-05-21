@@ -86,13 +86,13 @@ export default function HomePage() {
   const [heroHovered, setHeroHovered] = useState(false)
 
   return (
-    <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
+    <div style={{ minHeight: "100svh", display: "flex", flexDirection: "column" }}>
 
       {/* ── Hero — full bleed ──────────────────────────────────────────── */}
       <section style={{
         position:  "relative",
         width:     "100%",
-        height:    "100dvh",
+        height:    "100svh",
         minHeight: 560,
         overflow:  "hidden",
       }}>
