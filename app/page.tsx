@@ -134,8 +134,9 @@ export default function HomePage() {
               `}</style>
               <span
                 style={{
+                  fontFamily:    "var(--font-serif)",
                   fontStyle:     "italic",
-                  fontWeight:    300,
+                  fontWeight:    400,
                   pointerEvents: "auto",
                   cursor:        "default",
                   animation:     heroHovered ? "none" : "beautifulPulse 3s ease-in-out infinite",

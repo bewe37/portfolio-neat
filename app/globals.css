@@ -26,6 +26,7 @@
 
 :root {
   --font-sans:  'Uncut Sans', sans-serif;
+  --font-serif: var(--font-serif, 'Playfair Display', serif);
   --bg:          rgb(255,255,255);
   --footer-bg:   rgb(38,38,38);
   --footer-dot:  rgba(255,255,255,0.18);
