@@ -1,7 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useContext, createContext, useCallback } from "react"
+import { createPortal } from "react-dom"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import MarqueeFooter from "@/components/MarqueeFooter"
@@ -78,6 +79,108 @@ interface Props {
 const FADE     = { duration: 0.55, ease: [0.16, 1, 0.3, 1] as const }
 const VIEWPORT = { once: true, margin: "-48px" }
 
+// ── Lightbox ──────────────────────────────────────────────────────────────────
+
+interface LightboxItem { src: string; video: boolean }
+
+const LightboxContext = createContext<(item: LightboxItem) => void>(() => {})
+
+function Lightbox({ item, onClose }: { item: LightboxItem; onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose() }
+    document.addEventListener("keydown", onKey)
+    return () => document.removeEventListener("keydown", onKey)
+  }, [onClose])
+
+  if (typeof document === "undefined") return null
+
+  return createPortal(
+    <AnimatePresence>
+      <motion.div
+        key="lb-backdrop"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
+        onClick={onClose}
+        style={{
+          position:        "fixed",
+          inset:           0,
+          zIndex:          9999,
+          backgroundColor: "rgba(0,0,0,0.85)",
+          backdropFilter:  "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          display:         "flex",
+          alignItems:      "center",
+          justifyContent:  "center",
+          padding:         24,
+        }}
+      >
+        <motion.div
+          key="lb-media"
+          initial={{ opacity: 0, scale: 0.96, y: 8 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.96, y: 8 }}
+          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          onClick={e => e.stopPropagation()}
+          style={{
+            maxWidth:     "90vw",
+            maxHeight:    "90vh",
+            borderRadius: 10,
+            overflow:     "hidden",
+            boxShadow:    "0 32px 80px rgba(0,0,0,0.6)",
+            position:     "relative",
+          }}
+        >
+          {item.video
+            ? <video
+                src={item.src}
+                autoPlay
+                controls
+                loop
+                playsInline
+                style={{ display: "block", maxWidth: "90vw", maxHeight: "90vh" }}
+              />
+            /* eslint-disable-next-line @next/next/no-img-element */
+            : <img
+                src={item.src}
+                alt=""
+                style={{ display: "block", maxWidth: "90vw", maxHeight: "90vh", objectFit: "contain" }}
+              />
+          }
+        </motion.div>
+
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          style={{
+            position:        "fixed",
+            top:             20,
+            right:           20,
+            width:           36,
+            height:          36,
+            borderRadius:    "50%",
+            border:          "none",
+            backgroundColor: "rgba(255,255,255,0.12)",
+            color:           "white",
+            cursor:          "pointer",
+            display:         "flex",
+            alignItems:      "center",
+            justifyContent:  "center",
+            backdropFilter:  "blur(8px)",
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M1 1L13 13M13 1L1 13" stroke="white" strokeWidth="1.75" strokeLinecap="round"/>
+          </svg>
+        </button>
+      </motion.div>
+    </AnimatePresence>,
+    document.body
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 function SectionLabel({ text }: { text: string }) {
   return (
@@ -99,14 +202,19 @@ function SectionLabel({ text }: { text: string }) {
 }
 
 function MediaBox({ src, video }: { src: string; video?: boolean }) {
+  const openLightbox = useContext(LightboxContext)
   return (
-    <div style={{
-      borderRadius: 8, overflow: "hidden",
-      backgroundColor: "var(--surface)",
-      border: "1px solid var(--border)",
-    }}>
+    <div
+      onClick={() => openLightbox({ src, video: !!video })}
+      style={{
+        borderRadius: 8, overflow: "hidden",
+        backgroundColor: "var(--surface)",
+        border: "1px solid var(--border)",
+        cursor: "zoom-in",
+      }}
+    >
       {video
-        ? <video src={src} autoPlay muted loop playsInline preload="metadata" style={{ width: "100%", display: "block" }} />
+        ? <video src={src} autoPlay muted loop playsInline preload="metadata" style={{ width: "100%", display: "block", pointerEvents: "none" }} />
         /* eslint-disable-next-line @next/next/no-img-element */
         : <img src={src} alt="" draggable={false} style={{ width: "100%", display: "block" }} />
       }
@@ -128,28 +236,38 @@ function MediaGrid({ srcs, videos }: { srcs?: string[]; videos?: string[] }) {
 }
 
 function Bento({ items }: { items: BentoItem[] }) {
+  const openLightbox = useContext(LightboxContext)
   return (
     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-      {items.map((item, i) => (
-        <div key={i} style={{
-          gridColumn:      item.span === 2 ? "span 2" : "span 1",
-          borderRadius:    8,
-          overflow:        "hidden",
-          border:          "1px solid var(--border)",
-          backgroundColor: "var(--surface)",
-        }}>
-          {item.video && (
-            <video src={item.video} autoPlay muted loop playsInline preload="metadata" style={{ width: "100%", display: "block" }} />
-          )}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          {item.image && <img src={item.image} alt={item.label ?? ""} draggable={false} style={{ width: "100%", display: "block" }} />}
-          {item.label && (
-            <div style={{ padding: "6px 12px", fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "var(--c-faint)" }}>
-              {item.label}
-            </div>
-          )}
-        </div>
-      ))}
+      {items.map((item, i) => {
+        const mediaSrc = item.video ?? item.image
+        const isVideo  = !!item.video
+        return (
+          <div
+            key={i}
+            onClick={() => mediaSrc && openLightbox({ src: mediaSrc, video: isVideo })}
+            style={{
+              gridColumn:      item.span === 2 ? "span 2" : "span 1",
+              borderRadius:    8,
+              overflow:        "hidden",
+              border:          "1px solid var(--border)",
+              backgroundColor: "var(--surface)",
+              cursor:          mediaSrc ? "zoom-in" : undefined,
+            }}
+          >
+            {item.video && (
+              <video src={item.video} autoPlay muted loop playsInline preload="metadata" style={{ width: "100%", display: "block", pointerEvents: "none" }} />
+            )}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            {item.image && <img src={item.image} alt={item.label ?? ""} draggable={false} style={{ width: "100%", display: "block" }} />}
+            {item.label && (
+              <div style={{ padding: "6px 12px", fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "var(--c-faint)" }}>
+                {item.label}
+              </div>
+            )}
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -278,9 +396,10 @@ function BeforeAfterSlider({ before, after }: { before: string; after: string })
 
 function HighlightCarousel({ images }: { images: string[] }) {
   const [active, setActive] = useState(0)
+  const openLightbox = useContext(LightboxContext)
   return (
     <div style={{ marginTop: 20 }}>
-      <div style={{ overflow: "hidden" }}>
+      <div style={{ overflow: "hidden", cursor: "zoom-in" }} onClick={() => openLightbox({ src: images[active], video: false })}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={images[active]} alt="" style={{ width: "100%", display: "block" }} />
       </div>
@@ -1244,7 +1363,12 @@ export default function CaseStudyLayout({
     else setPwError(true)
   }
 
+  const [lbItem, setLbItem] = useState<LightboxItem | null>(null)
+  const openLightbox = useCallback((item: LightboxItem) => setLbItem(item), [])
+
   return (
+    <LightboxContext.Provider value={openLightbox}>
+    {lbItem && <Lightbox item={lbItem} onClose={() => setLbItem(null)} />}
     <>
     <MobileBackBar href={backHref} />
     <div style={{ display: "flex", justifyContent: "center" }}>
@@ -1486,5 +1610,6 @@ export default function CaseStudyLayout({
     )}
     <div style={{ overflow: "hidden" }}><MarqueeFooter /></div>
     </>
+    </LightboxContext.Provider>
   )
 }
