@@ -66,7 +66,7 @@ const PROJECTS = [
     date: "April – August 2024",
     description: "Streamlining FME's annotation workflow so users can focus on insight, not interface noise.",
     href: "/fme_annotation_project",
-    cover: "/SafeCaseStudyH2.png",
+    cover: "/AnnotationVid.mp4",
     badge: "/safechip.svg",
   },
   {
