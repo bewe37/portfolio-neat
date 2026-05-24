@@ -36,7 +36,7 @@ export default function AmdAiProject() {
           label: "The Problem",
           title: "A passive display in a product that needed action.",
           body: "The overlay had been reduced to a passive metrics display. To change any setting, users had to leave what they were doing and open the full application, which had its own navigation complexity and usability issues. The result was a product that felt frustrating to use at every level, with no fast path for the actions users needed most.",
-          image: "/frustrating.png",
+          image: "/Frustrating.png",
         },
         {
           label: "Highlights",

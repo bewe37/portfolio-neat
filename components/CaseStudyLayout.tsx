@@ -731,7 +731,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
           ...allImages.map(s => ({ src: s, video: false })),
         ]
         return (
-          <div style={{ display: "grid", gridTemplateColumns: `repeat(${allMedia.length}, 1fr)`, gap: 16, alignItems: "start" }}>
+          <div className="rsp-stack" style={{ display: "grid", gridTemplateColumns: `repeat(${allMedia.length}, 1fr)`, gap: 16, alignItems: "start" }}>
             {allMedia.map(({ src, video }, i) => (
               <div key={i} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 <div
@@ -1006,7 +1006,7 @@ function MobileBackBar({ href }: { href: string }) {
       className="rsp-back-mobile"
       style={{
         display: "none", alignItems: "center", gap: 8,
-        padding: "20px 20px 12px",
+        padding: "56px 20px 12px",
         fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500,
         letterSpacing: "-0.01em", color: "var(--c-primary)",
         textDecoration: "none",
@@ -1695,7 +1695,7 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
         />
       )}
       {!sec.beforeAfter && !sec.tabs && hasTopMedia && sec.imageLabels && (
-        <div style={{ display: "grid", gridTemplateColumns: `repeat(${topImages.length}, 1fr)`, gap: 16 }}>
+        <div className="rsp-stack" style={{ display: "grid", gridTemplateColumns: `repeat(${topImages.length}, 1fr)`, gap: 16 }}>
           {topImages.map((src, i) => (
             <div key={i} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <MediaBox src={src} />
@@ -1842,7 +1842,7 @@ export default function CaseStudyLayout({
   ]
 
   const tocItems = [
-    ...sections.map((s, si) => ({ label: s.label, id: `sec-s${si}`, hide: s.hideToc })).filter(t => !t.hide),
+    ...(!password || !unlocked ? sections.map((s, si) => ({ label: s.label, id: `sec-s${si}`, hide: s.hideToc })).filter(t => !t.hide) : []),
     ...(unlocked && lockedSections ? lockedSections.map((s, si) => ({ label: s.label, id: `sec-l${si}`, hide: s.hideToc })).filter(t => !t.hide) : []),
   ]
 

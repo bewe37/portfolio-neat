@@ -10,8 +10,9 @@ const MotionLink = motion(Link)
 
 
 const NAV_ITEMS = [
-  { label: "Work",  href: "/",      newTab: false },
-  { label: "About", href: "/about", newTab: false },
+  { label: "Work",       href: "/",                                                    newTab: false },
+  { label: "About",      href: "/about",                                               newTab: false },
+  { label: "Contact me", href: "https://www.linkedin.com/in/bryan-winata/", newTab: true  },
 ]
 
 export default function MobileMenu() {

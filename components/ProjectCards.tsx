@@ -92,7 +92,7 @@ function ProjectCard({ project, onLightbox }: { project: Project; onLightbox?: (
           <img src={project.cover} alt={project.title} draggable={false} loading="eager" width={800} height={600} style={coverStyle(hovered)} />
         )}
         {project.badge && (
-          <div style={{
+          <div className="project-badge" style={{
             position:   "absolute",
             bottom:     12,
             right:      12,
