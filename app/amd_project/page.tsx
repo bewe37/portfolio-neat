@@ -15,22 +15,32 @@ export default function AmdProject() {
       ]}
       sections={[
         {
+          label: "Overview",
+          body: "When I joined AMD's UX team, the product didn't have a shared design foundation. Designers organized files differently, colors were applied inconsistently, and components varied from screen to screen. The team was also preparing for a full software redesign, which meant the inconsistency wasn't just a current problem. It was about to be a much bigger one. I took on building the design system from the ground up, not as a cleanup effort, but as the structural layer the redesign would be built on top of.",
+        },
+        {
           label: "Goals",
           title: "What the system needed to do.",
           body: "With a clear direction established, I outlined three goals the design system would need to support:",
           contents: [
             {
               highlight: true,
+              minimal:   true,
+              icon:      "layers",
               title: "A consistent design foundation.",
               body: "Standardize components and bring visual consistency across the product.",
             },
             {
               highlight: true,
+              minimal:   true,
+              icon:      "zap",
               title: "Faster design-to-dev handover.",
               body: "Reduce back-and-forth with a shared system both sides can reference.",
             },
             {
               highlight: true,
+              minimal:   true,
+              icon:      "expand",
               title: "Built to scale.",
               body: "Support the upcoming redesign without needing to be rebuilt from scratch.",
             },
@@ -38,12 +48,15 @@ export default function AmdProject() {
         },
         {
           label: "Audit",
-          title: "Identifying the problems",
-          images: ["/colorMismatch.png", "/inconsistentStyling.png"],
-          body:   "Two problems showed up immediately. Colors were applied inconsistently across teams, creating unclear states and a broken visual hierarchy. Component styling had the same issue. Buttons alone varied across screens in size, corner radius, spacing, and interaction states. The product had grown without any visual governance, and with a full redesign on the horizon, these problems were about to get a lot harder to fix.",
+          title: "Two problems, one root cause.",
+          images:      ["/colorMismatch.png", "/inconsistentStyling.png"],
+          imageLabels: ["Inconsistent color application", "Inconsistent component styling"],
+          body:   "Two issues surfaced immediately. Colors had no shared source of truth — the same UI state could look different depending on who built it, creating a broken visual hierarchy that made the product feel unreliable. Components had the same problem. Buttons alone varied across screens in corner radius, spacing, and weight, with no documented standard to reference. Without a governance layer, every designer made independent decisions, and the product drifted further from consistency with each new screen.",
         },
         {
           label: "Design Foundation",
+          title: "Building from the ground up.",
+          body:  "Instead of patching these inconsistencies one by one, I stepped back to understand the deeper pattern behind them. This shift in perspective allowed me to move beyond surface-level fixes and focus on building a more intentional, system-driven solution.",
           contents: [
             {
               image: "/primitiveTokens.png",
@@ -82,7 +95,7 @@ export default function AmdProject() {
             {
               image:  "/ApplyFoundationalDesignTokens.png",
               title:  "Applying foundational design tokens.",
-              body:   "Foundational design tokens define core properties such as spacing, radius, and typography. As the system matured, I progressively defined the rules behind each token — for example, which radius value belongs to which level of nesting, and how spacing scales across component sizes. By applying these tokens consistently, updates became easier to make at scale without breaking visual harmony across the product.",
+              body:   "Foundational design tokens define core properties such as spacing, radius, and typography. As the system matured, I progressively defined the rules behind each token. For example, which radius value belongs to which level of nesting, and how spacing scales across component sizes. By applying these tokens consistently, updates became easier to make at scale without breaking visual harmony across the product.",
             },
             {
               image:  "/ColorStructure.png",
@@ -110,6 +123,7 @@ export default function AmdProject() {
         },
         {
           label: "Oh, and there's more.",
+          hideToc: true,
           title: "Rethinking the Overlay as a Control Surface",
           href: "/amd_ai_project",
           body: "The design system was built to support this major redesign initiative! A full redesign of the AMD Software overlay, turning a read-only metrics display into something users could actually act on.",

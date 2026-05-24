@@ -27,6 +27,9 @@ interface ContentBlock {
   title?: string
   body?: string
   highlight?: boolean
+  minimal?: boolean
+  icon?: string
+  imageLabels?: string[]
   note?: string
   insight?: string
   insightTitle?: string
@@ -53,7 +56,13 @@ interface Section {
   accordion?: boolean
   footnote?: string
   beforeAfter?: [string, string]
+  tabs?: { label: string; image: string }[]
+  imageLabels?: string[]
   hideToc?: boolean
+  dividerAfter?: boolean
+  dividerBefore?: boolean
+  dividerText?: string
+  lineBefore?: boolean
 }
 
 interface NextProject { label: string; title: string; href: string }
@@ -351,7 +360,16 @@ function Cards({ cards }: { cards: CardItem[] }) {
 
 function BeforeAfterSlider({ before, after }: { before: string; after: string }) {
   const [pct, setPct] = useState(50)
+  const [containerW, setContainerW] = useState<number | null>(null)
   const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const ro = new ResizeObserver(([entry]) => setContainerW(entry.contentRect.width))
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
 
   const update = (clientX: number) => {
     const el = ref.current
@@ -377,7 +395,7 @@ function BeforeAfterSlider({ before, after }: { before: string; after: string })
       <img src={after} alt="After" style={{ width: "100%", display: "block" }} />
       <div style={{ position: "absolute", inset: 0, overflow: "hidden", width: `${pct}%` }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={before} alt="Before" style={{ width: ref.current?.offsetWidth ?? "100%", maxWidth: "none", display: "block" }} />
+        <img src={before} alt="Before" style={{ position: "absolute", top: 0, left: 0, width: containerW ?? "100%", maxWidth: "none", display: "block" }} />
       </div>
       <div style={{ position: "absolute", top: 0, bottom: 0, left: `${pct}%`, transform: "translateX(-50%)", width: 2, backgroundColor: "white", pointerEvents: "none" }}>
         <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 32, height: 32, borderRadius: "50%", backgroundColor: "white", boxShadow: "0 2px 8px rgba(0,0,0,0.25)", display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>
@@ -386,6 +404,43 @@ function BeforeAfterSlider({ before, after }: { before: string; after: string })
       </div>
       <div style={{ position: "absolute", top: 10, left: 10, padding: "2px 6px", borderRadius: 4, backgroundColor: "rgba(0,0,0,0.4)", color: "white", fontSize: 9, fontWeight: 500, letterSpacing: "0.06em", pointerEvents: "none" }}>BLUEPRINT</div>
       <div style={{ position: "absolute", top: 10, right: 10, padding: "2px 6px", borderRadius: 4, backgroundColor: "rgba(0,0,0,0.4)", color: "white", fontSize: 9, fontWeight: 500, letterSpacing: "0.06em", pointerEvents: "none" }}>FINAL DESIGN</div>
+    </div>
+  )
+}
+
+function TabView({ tabs }: { tabs: { label: string; image: string }[] }) {
+  const [active, setActive] = useState(0)
+  const openLightbox = useContext(LightboxContext)
+  return (
+    <div>
+      <div style={{ display: "flex", gap: 4, marginBottom: 16 }}>
+        {tabs.map((tab, i) => (
+          <button
+            key={i}
+            onClick={() => setActive(i)}
+            style={{
+              padding:         "6px 14px",
+              borderRadius:    99,
+              border:          `1px solid ${i === active ? "var(--c-primary)" : "var(--border)"}`,
+              background:      i === active ? "var(--c-primary)" : "transparent",
+              color:           i === active ? "var(--bg)" : "var(--c-secondary)",
+              fontSize:        12,
+              fontWeight:      500,
+              fontFamily:      "var(--font-sans)",
+              letterSpacing:   "-0.01em",
+              cursor:          "pointer",
+              transition:      "all 0.15s ease",
+            }}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+      <div style={{ borderRadius: 8, overflow: "hidden", border: "1px solid var(--border)", cursor: "zoom-in" }}
+        onClick={() => openLightbox({ src: tabs[active].image, video: false })}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={tabs[active].image} alt={tabs[active].label} style={{ width: "100%", display: "block" }} />
+      </div>
     </div>
   )
 }
@@ -424,6 +479,85 @@ function HighlightCarousel({ images }: { images: string[] }) {
 }
 
 function renderContentBlock(block: ContentBlock, bi: number) {
+  if (block.highlight && block.minimal) {
+    return (
+      <motion.div
+        key={bi}
+        initial={{ opacity: 0, y: 14 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={VIEWPORT}
+        transition={{ ...FADE, delay: bi * 0.05 }}
+        style={{ display: "flex", flexDirection: "column", gap: 16, borderTop: "1px solid var(--border)", paddingTop: 20 }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          {block.icon && (
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
+              {block.icon === "target" && <>
+                <circle cx="9" cy="9" r="7.5" stroke="var(--c-primary)" strokeWidth="1.5" />
+                <circle cx="9" cy="9" r="3.5" stroke="var(--c-primary)" strokeWidth="1.5" />
+                <circle cx="9" cy="9" r="1.5" fill="var(--c-primary)" />
+              </>}
+              {block.icon === "spark" && <>
+                <path d="M9 1.5L10.6 6.8H16.2L11.6 9.9L13.2 15.2L9 12.1L4.8 15.2L6.4 9.9L1.8 6.8H7.4L9 1.5Z" stroke="var(--c-primary)" strokeWidth="1.5" strokeLinejoin="round" />
+              </>}
+              {block.icon === "layers" && <>
+                <rect x="2" y="6" width="14" height="9" rx="1.5" stroke="var(--c-primary)" strokeWidth="1.5" />
+                <path d="M5 6V4.5A1.5 1.5 0 0 1 6.5 3h5A1.5 1.5 0 0 1 13 4.5V6" stroke="var(--c-primary)" strokeWidth="1.5" />
+              </>}
+              {block.icon === "zap" && <>
+                <path d="M10.5 2L4 10h5.5L7.5 16L14 8H8.5L10.5 2Z" stroke="var(--c-primary)" strokeWidth="1.5" strokeLinejoin="round" />
+              </>}
+              {block.icon === "expand" && <>
+                <path d="M11 2h5v5M7 16H2v-5M16 7l-5 5M2 11l5-5" stroke="var(--c-primary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </>}
+              {block.icon === "stack" && <>
+                <rect x="2" y="11" width="14" height="4" rx="1" stroke="var(--c-primary)" strokeWidth="1.5" />
+                <rect x="4" y="6.5" width="10" height="3.5" rx="1" stroke="var(--c-primary)" strokeWidth="1.5" />
+                <rect x="6" y="3" width="6" height="3" rx="1" stroke="var(--c-primary)" strokeWidth="1.5" />
+              </>}
+              {block.icon === "compass" && <>
+                <circle cx="9" cy="9" r="7.5" stroke="var(--c-primary)" strokeWidth="1.5" />
+                <path d="M11.5 6.5L10 10L6.5 11.5L8 8L11.5 6.5Z" stroke="var(--c-primary)" strokeWidth="1.5" strokeLinejoin="round" />
+              </>}
+            </svg>
+          )}
+          {block.title && (
+            <p style={{
+              fontFamily:    "var(--font-sans)",
+              fontSize:      15,
+              fontWeight:    500,
+              color:         "var(--c-primary)",
+              letterSpacing: "-0.02em",
+              lineHeight:    1.4,
+              margin:        0,
+            }}>
+              {block.title}
+            </p>
+          )}
+        </div>
+        {block.body && (
+          <p style={{
+            fontFamily:    "var(--font-sans)",
+            fontSize:      15,
+            fontWeight:    400,
+            color:         "var(--c-body)",
+            letterSpacing: "-0.01em",
+            lineHeight:    1.7,
+            margin:        0,
+          }}>
+            {block.body}
+          </p>
+        )}
+        {block.images && block.images.length > 0 && (
+          <div style={{ borderRadius: 8, overflow: "hidden" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={block.images[0]} alt="" style={{ width: "100%", display: "block" }} />
+          </div>
+        )}
+      </motion.div>
+    )
+  }
+
   if (block.highlight) {
     const isNumbered  = block.title && /^\d+$/.test(block.title.trim())
     const hlImages    = block.images ?? (block.image ? [block.image] : [])
@@ -588,41 +722,111 @@ function renderContentBlock(block: ContentBlock, bi: number) {
           )}
         </div>
       )}
-      {hasMedia && (
+      {hasMedia && !block.insight && !block.imageLabels && (
         <MediaGrid srcs={allImages.length ? allImages : undefined} videos={allVideos.length ? allVideos : undefined} />
       )}
-      {block.insight && (
-        <div style={{
-          display:         "flex",
-          alignItems:      "flex-start",
-          gap:             12,
-          padding:         "20px 20px",
-          borderRadius:    10,
-          border:          "1px solid var(--border)",
-          backgroundColor: "var(--surface)",
-        }}>
-          <img src="/Spark.svg" alt="" style={{ width: 16, height: 16, flexShrink: 0, marginTop: 2 }} />
+      {hasMedia && !block.insight && block.imageLabels && (() => {
+        const allMedia = [
+          ...allVideos.map(s => ({ src: s, video: true  })),
+          ...allImages.map(s => ({ src: s, video: false })),
+        ]
+        return (
+          <div style={{ display: "grid", gridTemplateColumns: `repeat(${allMedia.length}, 1fr)`, gap: 16, alignItems: "start" }}>
+            {allMedia.map(({ src, video }, i) => (
+              <div key={i} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                <div
+                  onClick={() => {}}
+                  style={{
+                    borderRadius:    8,
+                    overflow:        "hidden",
+                    backgroundColor: "var(--surface)",
+                    border:          "1px solid var(--border)",
+                    aspectRatio:     "16/10",
+                    cursor:          "zoom-in",
+                  }}
+                >
+                  {video
+                    ? <video src={src} autoPlay muted loop playsInline style={{ width: "100%", height: "100%", display: "block", objectFit: "cover", pointerEvents: "none" }} />
+                    : <img src={src} alt="" draggable={false} style={{ width: "100%", height: "100%", display: "block", objectFit: "cover" }} />
+                  }
+                </div>
+                {block.imageLabels![i] && (
+                  <p style={{
+                    fontFamily:    "var(--font-sans)",
+                    fontSize:      13,
+                    fontWeight:    400,
+                    color:         "var(--c-secondary)",
+                    letterSpacing: "-0.01em",
+                    lineHeight:    1.5,
+                    margin:        0,
+                    textAlign:     "center",
+                  }}>
+                    {block.imageLabels![i]}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        )
+      })()}
+      {hasMedia && block.insight && (
+        <div className="rsp-stack" style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: 32, alignItems: "start" }}>
+          <MediaGrid srcs={allImages.length ? allImages : undefined} videos={allVideos.length ? allVideos : undefined} />
+          <div style={{
+            display:    "flex",
+            flexDirection: "column",
+            gap:        12,
+            borderTop:  "1px solid var(--border)",
+            paddingTop: 20,
+          }}>
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
+              <circle cx="9" cy="9" r="7.5" stroke="var(--c-primary)" strokeWidth="1.5" />
+              <line x1="9" y1="5" x2="9" y2="10.5" stroke="var(--c-primary)" strokeWidth="1.5" strokeLinecap="round" />
+              <circle cx="9" cy="13" r="1" fill="var(--c-primary)" />
+            </svg>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              {block.insightTitle && (
+                <p style={{
+                  fontFamily:    "var(--font-sans)",
+                  fontSize:      15,
+                  fontWeight:    500,
+                  color:         "var(--c-primary)",
+                  lineHeight:    1.4,
+                  margin:        0,
+                  letterSpacing: "-0.02em",
+                }}>
+                  {block.insightTitle}
+                </p>
+              )}
+              <p style={{
+                fontFamily:    "var(--font-sans)",
+                fontSize:      15,
+                fontWeight:    400,
+                color:         "var(--c-body)",
+                lineHeight:    1.7,
+                margin:        0,
+                letterSpacing: "-0.01em",
+              }}>
+                {block.insight}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+      {!hasMedia && block.insight && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, borderTop: "1px solid var(--border)", paddingTop: 20, marginTop: 8 }}>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
+            <circle cx="9" cy="9" r="7.5" stroke="var(--c-primary)" strokeWidth="1.5" />
+            <line x1="9" y1="5" x2="9" y2="10.5" stroke="var(--c-primary)" strokeWidth="1.5" strokeLinecap="round" />
+            <circle cx="9" cy="13" r="1" fill="var(--c-primary)" />
+          </svg>
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <p style={{
-              fontFamily:    "var(--font-sans)",
-              fontSize:      18,
-              fontWeight:    500,
-              color:         "var(--c-primary)",
-              lineHeight:    1.4,
-              margin:        0,
-              letterSpacing: "-0.02em",
-            }}>
-              {block.insightTitle}
-            </p>
-            <p style={{
-              fontFamily:    "var(--font-sans)",
-              fontSize:      16,
-              fontWeight:    400,
-              color:         "var(--c-body)",
-              lineHeight:    1.7,
-              margin:        0,
-              letterSpacing: "-0.01em",
-            }}>
+            {block.insightTitle && (
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 500, color: "var(--c-primary)", lineHeight: 1.4, margin: 0, letterSpacing: "-0.02em" }}>
+                {block.insightTitle}
+              </p>
+            )}
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 400, color: "var(--c-body)", lineHeight: 1.7, margin: 0, letterSpacing: "-0.01em" }}>
               {block.insight}
             </p>
           </div>
@@ -746,7 +950,7 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
                       {item.title}
                     </span>
                     {item.body && (
-                      <span style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 400, color: "var(--c-secondary)", lineHeight: 1.75, letterSpacing: "-0.01em", wordBreak: "break-word" }}>
+                      <span style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 400, color: "var(--c-primary)", lineHeight: 1.75, letterSpacing: "-0.01em", wordBreak: "break-word" }}>
                         {item.body}
                       </span>
                     )}
@@ -804,7 +1008,7 @@ function MobileBackBar({ href }: { href: string }) {
         display: "none", alignItems: "center", gap: 8,
         padding: "20px 20px 12px",
         fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500,
-        letterSpacing: "-0.01em", color: "var(--c-secondary)",
+        letterSpacing: "-0.01em", color: "var(--c-primary)",
         textDecoration: "none",
       }}
     >
@@ -1142,19 +1346,290 @@ function TableOfContents({ backHref, items, activeId }: {
   )
 }
 
+// ── Dither divider ─────────────────────────────────────────────────────────────
+// Particle system ported from dither-main: mouse repulsion + click shockwaves.
+
+const DD_BAYER_8X8 = [
+   0, 32,  8, 40,  2, 34, 10, 42,
+  48, 16, 56, 24, 50, 18, 58, 26,
+  12, 44,  4, 36, 14, 46,  6, 38,
+  60, 28, 52, 20, 62, 30, 54, 22,
+   3, 35, 11, 43,  1, 33,  9, 41,
+  51, 19, 59, 27, 49, 17, 57, 25,
+  15, 47,  7, 39, 13, 45,  5, 37,
+  63, 31, 55, 23, 61, 29, 53, 21,
+]
+
+interface DDShockwave { x: number; y: number; start: number }
+interface DDSystem {
+  count: number
+  baseX: Float32Array; baseY: Float32Array
+  dx:    Float32Array; dy:    Float32Array
+  lit:   Float32Array
+  dotSize: number
+}
+
+const DD_MOUSE_R      = 80
+const DD_MOUSE_R_SQ   = DD_MOUSE_R * DD_MOUSE_R
+const DD_MOUSE_FORCE  = 35
+const DD_EASING       = 0.12
+const DD_SNAP         = 0.01
+const DD_SW_SPEED     = 220
+const DD_SW_WIDTH     = 34
+const DD_SW_STRENGTH  = 18
+const DD_SW_DURATION  = 650
+
+function ddBayerDither(gray: Uint8Array, w: number, h: number): Float32Array {
+  const out: number[] = []
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const luma   = gray[y * w + x] / 255
+      const bv     = (DD_BAYER_8X8[(y & 7) * 8 + (x & 7)] + 1) / 65
+      if (luma > bv) out.push(x, y)
+    }
+  }
+  return new Float32Array(out)
+}
+
+function ddBuild(positions: Float32Array, scale: number, dotScale: number, ox: number, oy: number): DDSystem {
+  const count = positions.length / 2
+  const baseX = new Float32Array(count)
+  const baseY = new Float32Array(count)
+  for (let i = 0; i < count; i++) {
+    baseX[i] = ox + positions[i * 2]     * scale
+    baseY[i] = oy + positions[i * 2 + 1] * scale
+  }
+  return { count, baseX, baseY, dx: new Float32Array(count), dy: new Float32Array(count), lit: new Float32Array(count), dotSize: scale * dotScale }
+}
+
+function ddUpdate(sys: DDSystem, mx: number, my: number, active: boolean, sws: DDShockwave[], now: number): boolean {
+  const { count, baseX, baseY, dx, dy, lit } = sys
+  for (let k = sws.length - 1; k >= 0; k--) {
+    if (now - sws[k].start >= DD_SW_DURATION) sws.splice(k, 1)
+  }
+  let motion = false
+  for (let i = 0; i < count; i++) {
+    let fx = 0, fy = 0
+    if (active) {
+      const vx = baseX[i] + dx[i] - mx
+      const vy = baseY[i] + dy[i] - my
+      const d2 = vx * vx + vy * vy
+      if (d2 > 0.1 && d2 < DD_MOUSE_R_SQ) {
+        const d = Math.sqrt(d2)
+        const f = Math.pow(1 - d / DD_MOUSE_R, 3) * DD_MOUSE_FORCE
+        fx += (vx / d) * f; fy += (vy / d) * f
+      }
+    }
+    let peakLit = 0
+    for (const sw of sws) {
+      const elapsed = now - sw.start
+      const radius  = (elapsed / 1000) * DD_SW_SPEED
+      const life    = 1 - elapsed / DD_SW_DURATION
+      const sx = baseX[i] - sw.x, sy = baseY[i] - sw.y
+      const d  = Math.sqrt(sx * sx + sy * sy)
+      if (d >= 0.1) {
+        const band = Math.abs(d - radius)
+        if (band < DD_SW_WIDTH) {
+          const wf = (1 - band / DD_SW_WIDTH) * life * DD_SW_STRENGTH
+          fx += (sx / d) * wf; fy += (sy / d) * wf
+          const litVal = (1 - band / DD_SW_WIDTH) * life
+          if (litVal > peakLit) peakLit = litVal
+        }
+      }
+    }
+    if (peakLit > lit[i]) lit[i] = peakLit
+    else lit[i] *= 0.97
+    dx[i] += (fx - dx[i]) * DD_EASING
+    dy[i] += (fy - dy[i]) * DD_EASING
+    if (Math.abs(dx[i]) < DD_SNAP) dx[i] = 0
+    if (Math.abs(dy[i]) < DD_SNAP) dy[i] = 0
+    if (dx[i] !== 0 || dy[i] !== 0) motion = true
+  }
+  const litDecaying = lit.some(v => v > 0.01)
+  return motion || sws.length > 0 || active || litDecaying
+}
+
+function ddRender(ctx: CanvasRenderingContext2D, sys: DDSystem, color: string, dpr: number, sws?: DDShockwave[], mx?: number, my?: number, mouseActive?: boolean, linesOnly?: boolean) {
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+  const size = sys.dotSize * dpr
+  const now  = performance.now()
+
+  for (let i = 0; i < sys.count; i++) {
+    const px = sys.baseX[i] + sys.dx[i]
+    const py = sys.baseY[i] + sys.dy[i]
+
+    let brightness = 1
+
+    if (linesOnly) {
+      let maxB = sys.lit[i]
+      // mouse proximity glow
+      if (mouseActive && mx !== undefined && my !== undefined) {
+        const md = Math.sqrt((px - mx) ** 2 + (py - my) ** 2)
+        const mouseB = Math.max(0, 1 - md / DD_MOUSE_R)
+        if (mouseB > maxB) maxB = mouseB
+      }
+      brightness = 0.08 + maxB * 0.92
+    }
+
+    ctx.globalAlpha = brightness
+    ctx.fillStyle   = color
+    ctx.fillRect(px * dpr, py * dpr, size, size)
+  }
+  ctx.globalAlpha = 1
+}
+
+function DitherDivider({ text = "discovery", linesOnly = false }: { text?: string; linesOnly?: boolean }) {
+  const canvasRef  = useRef<HTMLCanvasElement>(null)
+  const sysRef     = useRef<DDSystem | null>(null)
+  const mouseRef   = useRef({ x: 0, y: 0, active: false })
+  const swRef      = useRef<DDShockwave[]>([])
+  const rafRef     = useRef(0)
+  const runningRef = useRef(false)
+
+  const startLoop = useCallback((canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, color: string, dpr: number, getColor?: () => string) => {
+    if (runningRef.current) return
+    runningRef.current = true
+    const tick = () => {
+      const sys = sysRef.current
+      if (!sys) { runningRef.current = false; return }
+      const needs = ddUpdate(sys, mouseRef.current.x, mouseRef.current.y, mouseRef.current.active, swRef.current, performance.now())
+      const c = getColor ? getColor() : color
+      ddRender(ctx, sys, c, dpr, swRef.current, mouseRef.current.x, mouseRef.current.y, mouseRef.current.active, linesOnly)
+      if (needs) { rafRef.current = requestAnimationFrame(tick) }
+      else        { runningRef.current = false }
+    }
+    rafRef.current = requestAnimationFrame(tick)
+  }, [linesOnly])
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+
+    const dpr = window.devicePixelRatio || 1
+    const getPrimaryColor = () => {
+      const cl = document.body.classList
+      if (cl.contains("sunset")) return "rgba(20,10,0,1.0)"
+      if (cl.contains("dark"))   return "rgba(255,255,255,0.95)"
+      return "rgba(10,10,10,0.92)"
+    }
+    const getColor = () => getPrimaryColor()
+
+    const build = () => {
+      const color = getColor()
+      const W = canvas.offsetWidth
+      const H = canvas.offsetHeight
+      canvas.width  = W * dpr
+      canvas.height = H * dpr
+
+      // Render text + lines to the same offscreen canvas so all dots are interactive
+      const DOT   = 2
+      const gridW = Math.ceil(W / DOT)
+      const gridH = Math.ceil(H / DOT)
+
+      const off    = document.createElement("canvas")
+      off.width    = gridW
+      off.height   = gridH
+      const offCtx = off.getContext("2d")!
+
+      offCtx.fillStyle = "#000"
+      offCtx.fillRect(0, 0, gridW, gridH)
+      offCtx.fillStyle = "#fff"
+
+      const cx = gridW / 2
+      const cy = gridH / 2
+
+      if (linesOnly) {
+        // Full-width single line, no text
+        offCtx.fillRect(0, Math.round(cy) - 1, gridW, 1)
+      } else {
+        // Measure text to know where the lines should stop
+        const fs = Math.round(gridH * 0.24)
+        offCtx.font          = `300 italic ${fs}px system-ui, sans-serif`
+        offCtx.letterSpacing = `${Math.round(fs * 0.1)}px`
+        const textW   = offCtx.measureText(text).width
+        const textGap = Math.round(gridW * 0.03)
+
+        // Left line
+        offCtx.fillRect(0, Math.round(cy) - 1, Math.round(cx - textW / 2 - textGap), 1)
+        // Right line
+        offCtx.fillRect(Math.round(cx + textW / 2 + textGap), Math.round(cy) - 1, Math.round(gridW - (cx + textW / 2 + textGap)), 1)
+
+        // Text on top
+        offCtx.textAlign    = "center"
+        offCtx.textBaseline = "middle"
+        offCtx.fillText(text, cx, cy)
+      }
+
+      const px   = offCtx.getImageData(0, 0, gridW, gridH).data
+      const gray = new Uint8Array(gridW * gridH)
+      for (let i = 0; i < gray.length; i++) gray[i] = px[i * 4]
+
+      const positions = ddBayerDither(gray, gridW, gridH)
+      sysRef.current  = ddBuild(positions, DOT, 1, 0, 0)
+      startLoop(canvas, ctx, color, dpr, getColor)
+    }
+
+    build()
+
+    const ro = new ResizeObserver(build)
+    ro.observe(canvas)
+
+    const onMove = (e: PointerEvent) => {
+      const r = canvas.getBoundingClientRect()
+      mouseRef.current = { x: e.clientX - r.left, y: e.clientY - r.top, active: true }
+      startLoop(canvas, ctx, getColor(), dpr, getColor)
+    }
+    const onLeave = () => { mouseRef.current.active = false; startLoop(canvas, ctx, getColor(), dpr, getColor) }
+    const onClick = (e: PointerEvent) => {
+      const r = canvas.getBoundingClientRect()
+      swRef.current.push({ x: e.clientX - r.left, y: e.clientY - r.top, start: performance.now() })
+      startLoop(canvas, ctx, getColor(), dpr, getColor)
+    }
+
+    const mo = new MutationObserver(build)
+    mo.observe(document.body, { attributes: true, attributeFilter: ["class"] })
+
+    canvas.addEventListener("pointermove", onMove)
+    canvas.addEventListener("pointerleave", onLeave)
+    canvas.addEventListener("pointerup", onClick)
+
+    return () => {
+      cancelAnimationFrame(rafRef.current)
+      runningRef.current = false
+      ro.disconnect()
+      mo.disconnect()
+      canvas.removeEventListener("pointermove", onMove)
+      canvas.removeEventListener("pointerleave", onLeave)
+      canvas.removeEventListener("pointerup", onClick)
+    }
+  }, [text, startLoop])
+
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{ display: "block", width: "100%", height: linesOnly ? 40 : 120, margin: linesOnly ? "0" : "56px 0 0", cursor: "crosshair" }}
+    />
+  )
+}
+
 function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
   const topImages   = sec.image ? [sec.image] : (sec.images ?? [])
   const hasTopMedia = topImages.length > 0 || (sec.videos?.length ?? 0) > 0
 
   return (
-    <motion.div
-      id={id}
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={VIEWPORT}
-      transition={{ ...FADE, delay: 0 }}
-      style={{ paddingTop: 56, paddingBottom: 56 }}
-    >
+    <>
+      {sec.dividerBefore && <DitherDivider text={sec.dividerText} />}
+      {sec.lineBefore && <DitherDivider linesOnly />}
+      <motion.div
+        id={id}
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={VIEWPORT}
+        transition={{ ...FADE, delay: 0 }}
+        style={{ paddingTop: 56, paddingBottom: sec.dividerAfter ? 0 : 56 }}
+      >
       <SectionLabel text={sec.label} />
 
       {sec.stat && <StatCallout stat={sec.stat} />}
@@ -1207,11 +1682,40 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
         </div>
       )}
 
-      {!sec.beforeAfter && hasTopMedia && (
+      {sec.tabs && (
+        <div style={{ marginTop: 32 }}>
+          <TabView tabs={sec.tabs} />
+        </div>
+      )}
+
+      {!sec.beforeAfter && !sec.tabs && hasTopMedia && !sec.imageLabels && (
         <MediaGrid
           srcs={topImages.length ? topImages : undefined}
           videos={sec.videos?.length ? sec.videos : undefined}
         />
+      )}
+      {!sec.beforeAfter && !sec.tabs && hasTopMedia && sec.imageLabels && (
+        <div style={{ display: "grid", gridTemplateColumns: `repeat(${topImages.length}, 1fr)`, gap: 16 }}>
+          {topImages.map((src, i) => (
+            <div key={i} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <MediaBox src={src} />
+              {sec.imageLabels![i] && (
+                <p style={{
+                  fontFamily:    "var(--font-sans)",
+                  fontSize:      13,
+                  fontWeight:    400,
+                  color:         "var(--c-secondary)",
+                  letterSpacing: "-0.01em",
+                  lineHeight:    1.5,
+                  margin:        0,
+                  textAlign:     "center",
+                }}>
+                  {sec.imageLabels![i]}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
       )}
 
       {sec.cards && <Cards cards={sec.cards} />}
@@ -1272,6 +1776,8 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
         </p>
       )}
 
+      {sec.dividerAfter && <DitherDivider text={sec.dividerText} />}
+
       {sec.experience && (
         <div style={{ borderTop: "1px solid var(--divider)", marginTop: 8 }}>
           {sec.experience.map((exp, ei) => (
@@ -1297,6 +1803,7 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
         </div>
       )}
     </motion.div>
+    </>
   )
 }
 
@@ -1307,11 +1814,11 @@ function SpecValue({ value }: { value: string | string[] }) {
       {items.map((v, i) => (
         <span key={i} style={{
           fontFamily:    "var(--font-sans)",
-          fontSize:      13,
-          fontWeight:    500,
-          color:         "var(--c-secondary)",
+          fontSize:      16,
+          fontWeight:    400,
+          color:         "var(--c-body)",
           letterSpacing: "-0.01em",
-          lineHeight:    1.55,
+          lineHeight:    1.85,
         }}>
           {v}
         </span>
@@ -1321,7 +1828,7 @@ function SpecValue({ value }: { value: string | string[] }) {
 }
 
 export default function CaseStudyLayout({
-  title, category: _category, year: _year, role, team, overview, specs, cover,
+  title, category, year: _year, role, team, overview, specs, cover,
   sections, lockedSections, password, passwordDesc,
   backHref = "/", banner, nextProject,
 }: Props) {
@@ -1335,7 +1842,6 @@ export default function CaseStudyLayout({
   ]
 
   const tocItems = [
-    { label: "Overview", id: "sec-overview" },
     ...sections.map((s, si) => ({ label: s.label, id: `sec-s${si}`, hide: s.hideToc })).filter(t => !t.hide),
     ...(unlocked && lockedSections ? lockedSections.map((s, si) => ({ label: s.label, id: `sec-l${si}`, hide: s.hideToc })).filter(t => !t.hide) : []),
   ]
@@ -1346,20 +1852,18 @@ export default function CaseStudyLayout({
 
   useEffect(() => {
     const ids = tocItems.map(t => t.id)
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter(e => e.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
-        if (visible.length > 0) setActiveId(visible[0].target.id)
-      },
-      { rootMargin: "0px 0px -60% 0px", threshold: 0 }
-    )
-    ids.forEach(id => {
-      const el = document.getElementById(id)
-      if (el) observer.observe(el)
-    })
-    return () => observer.disconnect()
+    const onScroll = () => {
+      let best = ids[0]
+      for (const id of ids) {
+        const el = document.getElementById(id)
+        if (!el) continue
+        if (el.getBoundingClientRect().top <= window.innerHeight * 0.4) best = id
+      }
+      setActiveId(best)
+    }
+    window.addEventListener("scroll", onScroll, { passive: true })
+    onScroll()
+    return () => window.removeEventListener("scroll", onScroll)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tocIds])
 
@@ -1381,9 +1885,9 @@ export default function CaseStudyLayout({
         className="rsp-cs-grid"
         style={{
           width:               "100%",
-          maxWidth:            1200,
+          maxWidth:            1360,
           display:             "grid",
-          gridTemplateColumns: "280px 1fr",
+          gridTemplateColumns: "260px 1fr",
           alignItems:          "start",
           padding:             "0 48px",
         }}
@@ -1399,7 +1903,7 @@ export default function CaseStudyLayout({
             flexDirection: "row",
             alignItems:    "flex-start",
             gap:           16,
-            paddingRight:  24,
+            paddingRight:  12,
           }}
         >
           <div style={{ flex: 1, minWidth: 0 }}>
@@ -1423,45 +1927,64 @@ export default function CaseStudyLayout({
               marginBottom: 40,
             }}
           >
+            {category && (
+              <span style={{
+                fontFamily:    "var(--font-sans)",
+                fontSize:      13,
+                fontWeight:    400,
+                color:         "var(--c-secondary)",
+                display:       "block",
+                marginBottom:  6,
+              }}>
+                {category}
+              </span>
+            )}
             <h1 className="rsp-cs-h1" style={{
               fontFamily:    "var(--font-sans)",
-              fontSize:      22,
+              fontSize:      26,
               fontWeight:    500,
               color:         "var(--c-primary)",
               letterSpacing: "-0.025em",
               lineHeight:    1.2,
-              margin:        "0 0 10px",
+              margin:        "0 0 24px",
             }}>
               {title}
             </h1>
 
-            <p style={{
-              fontFamily:    "var(--font-sans)",
-              fontSize:      16,
-              fontWeight:    400,
-              color:         "var(--c-body)",
-              letterSpacing: "-0.01em",
-              lineHeight:    1.85,
-              margin:        "0 0 24px",
-            }}>
-              {overview}
-            </p>
-
+            {cover && (
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ ...FADE, delay: 0.1 }}
+                style={{
+                  borderRadius:    8,
+                  overflow:        "hidden",
+                  marginBottom:    24,
+                  border:          "1px solid var(--border)",
+                  backgroundColor: "var(--surface)",
+                  maxHeight:       540,
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={cover} alt={title} draggable={false}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              </motion.div>
+            )}
 
             <div style={{
               display:             "grid",
               gridTemplateColumns: `repeat(${Math.min(allSpecs.length, 5)}, 1fr)`,
               gap:                 24,
+              marginBottom:        32,
             }}>
+
               {allSpecs.map(s => (
                 <div key={s.label} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                   <span style={{
-                    fontFamily:    "var(--font-sans)",
-                    fontSize:      10,
-                    fontWeight:    500,
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase" as const,
-                    color:         "var(--c-secondary)",
+                    fontFamily: "var(--font-sans)",
+                    fontSize:   14,
+                    fontWeight: 400,
+                    color:      "var(--c-secondary)",
                   }}>
                     {s.label}
                   </span>
@@ -1473,29 +1996,8 @@ export default function CaseStudyLayout({
 
           {banner && <div style={{ marginBottom: 24 }}>{banner}</div>}
 
-          {cover && (
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ...FADE, delay: 0.1 }}
-              style={{
-                borderRadius:    8,
-                overflow:        "hidden",
-                marginBottom:    40,
-                border:          "1px solid var(--border)",
-                backgroundColor: "var(--surface)",
-                maxHeight:       540,
-              }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={cover} alt={title} draggable={false}
-                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-            </motion.div>
-          )}
-
-
-          {/* Sections */}
-          {sections.map((sec, si) => (
+          {/* Sections — hidden once NDA content is unlocked */}
+          {(!password || !unlocked) && sections.map((sec, si) => (
             <SectionBlock key={si} sec={sec} id={`sec-s${si}`} />
           ))}
 
@@ -1590,7 +2092,7 @@ export default function CaseStudyLayout({
     {nextProject && (
       <div style={{ borderTop: "1px solid var(--divider)", padding: "48px", display: "flex", justifyContent: "center" }}>
         <div style={{ width: "100%", maxWidth: 1200, padding: "0 48px" }}>
-          <span style={{ fontFamily: "var(--font-sans)", fontSize: 11, fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--c-secondary)" }}>
+          <span style={{ fontFamily: "var(--font-sans)", fontSize: 11, fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--c-primary)" }}>
             {nextProject.label}
           </span>
           <Link

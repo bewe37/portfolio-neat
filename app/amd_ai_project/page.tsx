@@ -5,7 +5,7 @@ export default function AmdAiProject() {
 
     <CaseStudyLayout
       title="Rethinking the Overlay as a Control Surface"
-      category="Product Design"
+      category="AMD"
       year="2025"
       role="Product Design Intern"
       cover="/AMDThumbnailTop.png"
@@ -14,10 +14,30 @@ export default function AmdAiProject() {
         { label: "Scope",    value: "Feature Design (AI Integration)" },
         { label: "Duration", value: "May – December 2025" },
       ]}
-      sections={[]}
+      sections={[
+        {
+          label: "Context",
+          title: "What is the Overlay?",
+          body: "AMD Software ships with every Radeon GPU and gives users control over their system performance, graphics settings, and recording tools. The Overlay is a core part of AMD Software — a lightweight layer that floats on top of any game or application, designed for quick access without ever leaving what you're doing.\n\nOver a few product updates, the overlay had been stripped back to a passive metrics display. Users could see data, but couldn't act on it. My role was to rethink it as an interactive control surface, and to explore how AI could make that experience more accessible without replacing the direct controls users needed most.\n\nThis case study is password protected under NDA. Reach out if you'd like access.",
+          image: "/FullOverlayView.png",
+        },
+      ]}
       password="amdx"
       passwordDesc="This case study is protected under NDA. If you'd like to learn more about the work, feel free to reach out directly and I'd be happy to walk you through it."
       lockedSections={[
+        {
+          label: "Context",
+          title: "A new direction for AMD Software.",
+          body:  "In the summer of 2025, I joined AMD as a Product Design Intern contributing to one of the largest redesigns AMD Software had undertaken in recent years. My focus was reworking the Overlay View, a lightweight interface that sits on top of any application, designed for quick, in-session control.",
+          image: "/FullOverlayView.png",
+          footnote: "This case study covers the In-Session Overlay. The Full Application was developed in parallel by a separate workstream.",
+        },
+        {
+          label: "The Problem",
+          title: "A passive display in a product that needed action.",
+          body: "The overlay had been reduced to a passive metrics display. To change any setting, users had to leave what they were doing and open the full application, which had its own navigation complexity and usability issues. The result was a product that felt frustrating to use at every level, with no fast path for the actions users needed most.",
+          image: "/frustrating.png",
+        },
         {
           label: "Highlights",
           title: "A conversational overlay built for real-time control.",
@@ -36,49 +56,26 @@ export default function AmdAiProject() {
               objectPosition: "left center",
             },
             {
-              title: "Curate it yourself, no AI needed.",
-              body:  "Browse the widget library and add controls manually — no assistant required.",
-              videos: ["/ManuallyAddedWidget.mp4"],
-              objectPosition: "left center",
-            },
-            {
               title: "Built for mid-session.",
-              body:  "Recording, graphics tuning, and your most-used settings — without ever leaving your game.",
+              body:  "Recording, graphics tuning, and your most-used settings, without ever leaving your game.",
               videos: ["/InGameIntegration.mp4"],
               objectPosition: "left center",
             },
           ],
         },
         {
-          label: "Context",
-          title: "A new direction for AMD Software.",
-          body:  "For a product used by millions of gamers and creators, AMD Software had a problem: it was hard to use. Years of incremental updates had left behind a dense, technically overwhelming interface that frustrated casual and advanced users alike. Rather than patching issues one by one, the team committed to a full-scale redesign, rebuilding the experience around how users actually work. The redesign split the experience into two layers:",
-contents: [
-            {
-              highlight: true,
-              title: "Full View",
-              body: "The complete configuration layer for deeper settings and context.",
-              image: "/full-view-viz.svg",
-            },
-            {
-              highlight: true,
-              title: "Overlay View",
-              body: "Stays on top of any application for quick, in-session control.",
-              image: "/overlay-view-viz.svg",
-            },
-          ],
-          footnote: "This case study covers the In-Session Overlay. The Full Application was developed in parallel by a separate workstream.",
-        },
-        {
-          label: "Problem Space",
+          label: "Research",
+          lineBefore: true,
           title: "The overlay then and now.",
-          body:  "Two versions ago, the overlay gave users direct access to the controls they needed most. Compact, fast, and built around the reality that users don't stop mid-session to dig through a settings panel. Over successive updates, controls were gradually removed in favor of a cleaner, metrics-focused display. By the current version, it had been reduced to a read-only dashboard, useful for monitoring, but no longer a tool for doing.",
-          images: ["/OldOverlay.png", "/MetricsIssue.png"],
+          body:  "Two versions ago, the overlay put controls within reach. Over successive updates, they were stripped out in favor of a cleaner metrics display. By the current version, it had become a read-only dashboard. Useful for monitoring, but no longer a tool for doing.",
+          images:      ["/OldOverlay.png", "/MetricsIssue.png"],
+          imageLabels: ["Previous overlay with direct controls", "Current version, metrics only"],
         },
         {
-          label: "Problem Space",
+          label: "Research",
           hideToc: true,
-          body:  "To understand the full scope, the team ran moderated usability sessions with 6 users. Two friction points surfaced consistently.",
+          title: "Why not just use the full view?",
+          body:  "The full application had its own problems. We ran moderated usability sessions with 6 users to understand the scope, and two friction points surfaced consistently.",
           contents: [
             {
               title: "Complex navigation.",
@@ -87,7 +84,7 @@ contents: [
             },
             {
               title: "Settings only experts could parse.",
-              body:  "This wasn't a new problem. Even the original overlay used terminology that casual users struggled to parse. But as more features moved into the full application, settings became more numerous and granular, making it harder to know what each option did or how it would affect your system without prior technical knowledge.",
+              body:  "As more features moved into the full application, settings became more numerous and granular. Users struggled to know what each option did or how it would affect their system without prior technical knowledge.",
               image: "/TechnicalTerms.png",
             },
           ],
@@ -99,11 +96,17 @@ contents: [
           contents: [
             {
               highlight: true,
-              body: "Restore the quick controls users lost so they can act without ever leaving the session.",
+              minimal:   true,
+              icon:      "target",
+              title:     "Restore direct control.",
+              body:      "Bring back the quick controls users lost so they can act without ever leaving the session.",
             },
             {
               highlight: true,
-              body: "Use AI to make technical settings accessible, with no prior knowledge required.",
+              minimal:   true,
+              icon:      "spark",
+              title:     "Make settings accessible.",
+              body:      "Use AI to surface the right fix in plain language, no technical knowledge required.",
             },
           ],
         },
@@ -115,32 +118,35 @@ contents: [
             {
               image:        "/InitialChat.png",
               insightTitle: "The familiar pattern came with a hidden cost.",
-              insight:      "The overlay is built for fast, in-session actions. But with AI as the only entry point, every interaction required a conversation as users had to describe actions they could've just tapped.",
+              insight:      "Fast actions shouldn't require a conversation. With AI as the only entry point, users had to describe things they could've just tapped.",
             },
           ],
         },
         {
-          label: "The Solution",
+          label: "Design Decision",
           title: "Time to rethink.",
           body:  "The overlay needed more than a chatbot. Direct controls had to come back, not as a replacement for AI, but as the foundation that makes it actually useful.",
           contents: [
             {
               highlight: true,
-              title: "Contextual Chat",
-              body:  "Ask a question, get a direct answer or a one-tap fix. No thread, no history.",
-              images: ["/chat.svg"],
+              minimal:   true,
+              title:     "Contextual Chat",
+              body:      "Ask a question, get a direct answer or a one-tap fix. No thread, no history.",
+              images:    ["/CardChat.png"],
             },
             {
               highlight: true,
-              title: "Pinned Widgets",
-              body:  "Controls you care about stay pinned and instantly accessible every session.",
-              images: ["/pinned.svg"],
+              minimal:   true,
+              title:     "Pinned Widgets",
+              body:      "Controls you care about stay pinned and instantly accessible every session.",
+              images:    ["/CardPin.png"],
             },
             {
               highlight: true,
-              title: "Manual Discovery",
-              body:  "Browse and add controls yourself, no assistant required to get started.",
-              images: ["/discover.svg"],
+              minimal:   true,
+              title:     "Manual Discovery",
+              body:      "Browse and add controls yourself, no assistant required to get started.",
+              images:    ["/CardManual.png"],
             },
           ],
         },
@@ -149,49 +155,44 @@ contents: [
           hideToc: true,
           contents: [
             {
-              title:  "Describe the problem, get a fix.",
-              body:   "AMD Software is a configure-and-forget tool. Users open it, adjust something, and close it. They don't live in it. The chat is designed around that same behavior: one message, one answer, done. Just describe what you're experiencing and the AI reads your live hardware data, figures out what's actually wrong, and hands you a one-tap fix on the spot.",
-              videos: ["/DemoAmdChat1.mp4"],
-            },
-            {
-              title: "Responses you can keep.",
-              body:  "Any response from the AI can be pinned directly as a widget. It shows up every time you open the overlay, no need to ask again.",
-              videos: ["/Pinning.mp4"],
-              objectPosition: "left center",
+              title:  "Not just text. A response built around what you need.",
+              body:   "The chat is built around one principle: don't make users think. Describe what's wrong and the AI reads live hardware data to figure out the cause. Depending on what it finds, the response takes one of two forms. If the issue is performance-related, it surfaces the relevant metrics directly in the chat so users can see what's actually happening. If there's a feature that addresses it, the response includes an action button to enable it on the spot. No navigation, no settings hunting.",
+              images:      ["/Metrics.png", "/Features.png"],
+              imageLabels: ["Hardware metrics response", "Feature suggestion with action"],
             },
           ],
         },
         {
-          label: "Widgets Panel",
+          label: "Pinning",
           hideToc: true,
           contents: [
             {
-              title: "Pinned controls, always accessible.",
-              body:  "I introduced a dedicated widgets panel so pinned controls stay accessible every time the overlay opens. No digging required.",
-              image: "/Pinned Widgets.png",
+              title:  "Save the answer, not just the moment.",
+              body:   "Every AI response can be pinned directly as a widget. Instead of repeating the same question next session, the control is already there. The chat stays focused on one-off queries while the panel builds up over time into something personal.",
+              videos:      ["/ChatPin.mp4"],
+              images:      ["/Pinned Widgets.png"],
+              imageLabels: ["Pin directly from the chat", "Lives in your panel every session"],
             },
+          ],
+        },
+        {
+          label: "Manual Discovery",
+          hideToc: true,
+          contents: [
             {
-              title:  "Manual widget customization.",
-              body:   "Users can also add widgets manually, without going through AI at all. Browse, pick what you need, pin it.",
+              title:  "For users who know what they want.",
+              body:   "Not everyone needs the AI to get started. Power users can skip the chat entirely, browse the widget library by category, find the control, and add it directly to their panel.",
               videos: ["/ManuallyAddedWidget.mp4"],
             },
           ],
         },
         {
-          label: "Overall Structure",
-          hideToc: true,
-          title: "Layout built around how users scan.",
-          body:  "Key system information lives on the right as persistent widgets. The center is reserved for contextual actions, with AMD Chat as the primary entry point. This keeps the layout familiar while making room for everything new.",
-          beforeAfter: ["/StructureBefore.png", "/StructureAfter.png"],
-        },
-        {
           label: "In-Game Mode",
           hideToc: true,
-          body: "Gaming sessions move fast. The regular overlay works when you have a moment, but mid-game you need the most common controls immediately accessible, not buried behind a panel. So I designed a dedicated in-game mode built around that reality.",
+          title: "Designed for the pace of play.",
+          body: "Gaming sessions move fast. Mid-game, you need the most common controls immediately accessible, not buried behind a panel. So I designed a dedicated in-game mode with a modal exclusive to this context. One click surfaces the most-reached-for controls and features without breaking focus.",
           contents: [
             {
-              title: "Most-used controls, one click away.",
-              body:  "Instead of asking the AI to do something or having to navigate the panel, I added a modal that puts the most-reached-for controls and features one click away.",
               image: "/In-Game Widgets.png",
             },
             {
@@ -207,9 +208,35 @@ contents: [
           ],
         },
         {
-          label: "What's Next",
-          title: "Building toward the Full View.",
-          body: "With the overlay designs presented to stakeholders and receiving their support, the work didn't stop there. While the engineering team prepared the foundation for the overlay, the design team shifted focus to the Full View, the deeper configuration layer where users manage more complex settings and long-term control. Redesigning it is the natural next step, ensuring the two layers of AMD Software work together as a cohesive experience.",
+          label: "Final Design",
+          hideToc: true,
+          title: "The full picture.",
+          body:  "Two modes, one overlay. The default view gives users a persistent panel of pinned controls and AMD Chat as the primary entry point. The in-game mode builds on that with an additional modal, surfacing the most-reached-for controls one tap away without interrupting the session.",
+          tabs: [
+            { label: "Default View",  image: "/DefaultView.png" },
+            { label: "In-Game View",  image: "/InGameView.png" },
+          ],
+        },
+        {
+          label: "Outcome",
+          title: "From exploration to direction.",
+          body: "The overlay designs were presented to stakeholders and received their support, but the real impact was in how the work reframed the team's thinking.",
+          contents: [
+            {
+              highlight: true,
+              minimal:   true,
+              icon:      "stack",
+              title:     "AI as a layer, not the foundation.",
+              body:      "Early explorations positioned AI as the primary interface. The design process made a clearer argument: direct control had to come first, and AI worked best on top of it, not as a replacement.",
+            },
+            {
+              highlight: true,
+              minimal:   true,
+              icon:      "compass",
+              title:     "Navigation became the primary factor.",
+              body:      "The thinking carried into the Full View. The question shifted from how do we surface everything through AI to how do we design a system where users always know where they are and can get there without friction.",
+            },
+          ],
         },
         {
           label: "Oh, and there's more.",

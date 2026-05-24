@@ -9,10 +9,10 @@ export default function FmeProject() {
       year="2024"
       role="Product Design Intern"
       cover="/SafeCaseStudyH.png"
-      overview={"During my internship at Safe Software, I led the end-to-end redesign of the annotation experience in FME Form, a data integration platform used to build complex spatial workflows.\n\nAnnotations play a key role in helping users document logic, explain decisions, and maintain clarity across workflows. However, as workflows grew in complexity, annotations began to introduce more problems than they solved — cluttering the canvas, reducing readability, and making navigation more difficult."}
+      overview={"During my internship at Safe Software, I led the end-to-end redesign of the annotation experience in FME Form, a data integration platform used to build complex spatial workflows.\n\nAnnotations play a key role in helping users document logic, explain decisions, and maintain clarity across workflows. However, as workflows grew in complexity, annotations began to introduce more problems than they solved: cluttering the canvas, reducing readability, and making navigation more difficult."}
       specs={[
         { label: "Team",     value: "4 Members" },
-        { label: "Duration", value: "April — September 2025" },
+        { label: "Duration", value: "April to September 2025" },
       ]}
       sections={[
         {
@@ -45,12 +45,12 @@ export default function FmeProject() {
             {
               highlight: true,
               title: "01",
-              body: "Dynamic Visibility — allow users to toggle annotations between expanded and minimized states directly on the canvas.",
+              body: "Dynamic Visibilityallow users to toggle annotations between expanded and minimized states directly on the canvas.",
             },
             {
               highlight: true,
               title: "02",
-              body: "Annotation in Parameter Dialog — embed notes within parameter editor dialogs where configuration decisions are made.",
+              body: "Annotation in Parameter Dialogembed notes within parameter editor dialogs where configuration decisions are made.",
             },
           ],
         },
@@ -115,7 +115,7 @@ export default function FmeProject() {
         {
           label: "Shipping",
           title: "What made it to release and what didn't.",
-          body:  "The annotation in the parameter dialog has been released and is now available to users. However, the annotation visibility feature is on hold due to capacity constraints, though it has been prioritized for future development and remains on the Product Planning page.\n\nThe enhanced annotation feature reduced visible canvas clutter by 57%, improving how users navigated and read complex workflows. More importantly, users gained meaningful control — for the first time, they could collapse and show annotations on demand, rather than managing a canvas that worked against them.",
+          body:  "The annotation in the parameter dialog has been released and is now available to users. However, the annotation visibility feature is on hold due to capacity constraints, though it has been prioritized for future development and remains on the Product Planning page.\n\nThe enhanced annotation feature reduced visible canvas clutter by 57%, improving how users navigated and read complex workflows. More importantly, users gained meaningful control. For the first time, they could collapse and show annotations on demand, rather than managing a canvas that worked against them.",
           image: "/linkedInComments.png",
         },
       ]}
