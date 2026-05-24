@@ -48,7 +48,7 @@ const PROJECTS = [
     date: "May - Dec 2025",
     description: "Designing a conversational AI assistant embedded in AMD's Adrenalin software for millions of gamers.",
     href: "/amd_ai_project",
-    cover: "/ThumbnailTest.mp4",
+    cover: "/ThumbnailAMDAI.mp4",
     badge: "/amdchip.svg",
   },
   {

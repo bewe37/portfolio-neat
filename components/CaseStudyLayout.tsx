@@ -184,19 +184,15 @@ function Lightbox({ item, onClose }: { item: LightboxItem; onClose: () => void }
 
 function SectionLabel({ text }: { text: string }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 28 }}>
+    <div style={{ marginBottom: 12 }}>
       <span style={{
-        fontFamily:    "var(--font-sans)",
-        fontSize:      11,
-        fontWeight:    500,
-        letterSpacing: "0.08em",
-        textTransform: "uppercase" as const,
-        color:         "var(--c-secondary)",
-        whiteSpace:    "nowrap" as const,
+        fontFamily: "var(--font-sans)",
+        fontSize:   14,
+        fontWeight: 400,
+        color:      "var(--c-secondary)",
       }}>
         {text}
       </span>
-      <div style={{ flex: 1, height: 1, backgroundColor: "var(--divider)" }} />
     </div>
   )
 }
@@ -662,8 +658,8 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
 
   return (
     <>
-      {/* Desktop: full-width stacked items with dividers */}
-      <div className="rsp-accordion-desktop" style={{ display: "flex", flexDirection: "column" }}>
+      {/* Desktop: side-by-side — media left, text right */}
+      <div className="rsp-accordion-desktop" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         {contents.map((item, i) => {
           const src = item.videos?.[0]
             ? { src: item.videos[0], video: true }
@@ -679,20 +675,18 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={VIEWPORT}
               transition={{ ...FADE, delay: i * 0.05 }}
-              style={{ paddingTop: i === 0 ? 0 : 48, display: "flex", flexDirection: "column", gap: 24 }}
+              style={{
+                display:             "grid",
+                gridTemplateColumns: "2fr 1fr",
+                minHeight:           360,
+                gap:                 48,
+                alignItems:          "end",
+                paddingTop:          i === 0 ? 0 : 28,
+              }}
             >
-              <div>
-                <p style={{ fontFamily: "var(--font-sans)", fontSize: 17, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.3, margin: 0 }}>
-                  {item.title}
-                </p>
-                {item.body && (
-                  <p style={{ fontFamily: "var(--font-sans)", fontSize: 16, fontWeight: 400, color: "var(--c-body)", lineHeight: 1.85, letterSpacing: "-0.01em", margin: "6px 0 0" }}>
-                    {item.body}
-                  </p>
-                )}
-              </div>
+              {/* Media — full bleed, rounded */}
               {src && (
-                <div style={{ borderRadius: 8, overflow: "hidden", border: "1px solid var(--border)", backgroundColor: "var(--surface)" }}>
+                <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid var(--border)" }}>
                   {src.video
                     ? <video src={src.src} autoPlay muted loop playsInline preload="metadata" style={{ width: "100%", display: "block" }} />
                     /* eslint-disable-next-line @next/next/no-img-element */
@@ -700,6 +694,17 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
                   }
                 </div>
               )}
+              {/* Text */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: 22, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.03em", lineHeight: 1.25, margin: 0 }}>
+                  {item.title}
+                </p>
+                {item.body && (
+                  <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 400, color: "var(--c-body)", lineHeight: 1.75, letterSpacing: "-0.01em", margin: 0 }}>
+                    {item.body}
+                  </p>
+                )}
+              </div>
             </motion.div>
           )
         })}
@@ -1148,7 +1153,7 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={VIEWPORT}
       transition={{ ...FADE, delay: 0 }}
-      style={{ paddingTop: 40, paddingBottom: 40 }}
+      style={{ paddingTop: 56, paddingBottom: 56 }}
     >
       <SectionLabel text={sec.label} />
 
@@ -1234,7 +1239,7 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
 
       {sec.contents && (
         sec.accordion
-          ? <div style={{ marginTop: (hasTopMedia || sec.bento || sec.body) ? 36 : 0 }}>
+          ? <div style={{ marginTop: (hasTopMedia || sec.bento || sec.body) ? 20 : 0 }}>
               <AccordionContents contents={sec.contents} />
             </div>
           : (() => {
@@ -1501,7 +1506,7 @@ export default function CaseStudyLayout({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={VIEWPORT}
               transition={FADE}
-              style={{ paddingTop: 40, paddingBottom: 40 }}
+              style={{ paddingTop: 56, paddingBottom: 56 }}
             >
               <SectionLabel text="NDA — Protected Content" />
               {passwordDesc && (
