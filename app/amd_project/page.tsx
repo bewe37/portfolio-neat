@@ -8,7 +8,7 @@ export default function AmdProject() {
       year="2025"
       role="Design System Designer"
       cover="/AMDCaseStudy.png"
-      overview={"When I joined AMD's UX team, the product didn't have a shared design foundation. Designers organized files differently, colors were applied inconsistently, and components varied from screen to screen. The team was also preparing for a full software redesign, which meant the inconsistency wasn't just a current problem. It was about to be a much bigger one. I took on building the design system from the ground up, not as a cleanup effort, but as the structural layer the redesign would be built on top of."}
+      overview={""}
       specs={[
         { label: "Scope",    value: "Design System" },
         { label: "Duration", value: "May – December 2025" },

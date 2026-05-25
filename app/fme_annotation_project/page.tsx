@@ -44,13 +44,17 @@ export default function FmeProject() {
           contents: [
             {
               highlight: true,
-              title: "01",
-              body: "Dynamic Visibilityallow users to toggle annotations between expanded and minimized states directly on the canvas.",
+              minimal:   true,
+              icon:      "layers",
+              title:     "Dynamic Visibility.",
+              body:      "Allow users to toggle annotations between expanded and minimized states directly on the canvas.",
             },
             {
               highlight: true,
-              title: "02",
-              body: "Annotation in Parameter Dialogembed notes within parameter editor dialogs where configuration decisions are made.",
+              minimal:   true,
+              icon:      "zap",
+              title:     "Annotation in Parameter Dialog.",
+              body:      "Embed notes within parameter editor dialogs where configuration decisions are made.",
             },
           ],
         },

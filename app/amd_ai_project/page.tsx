@@ -9,7 +9,7 @@ export default function AmdAiProject() {
       year="2025"
       role="Product Design Intern"
       cover="/AMDThumbnailTop.png"
-      overview={"In the summer of 2025, I joined AMD as a Product Design Intern contributing to one of the largest redesigns AMD Software had undertaken in recent years. My focus was reworking the Overlay View, a lightweight interface that sits on top of any application, designed for quick, in-session control. At the time, the overlay was limited to displaying system metrics. My role was to evolve it into something users could actually interact with and act on, without ever leaving what they were doing."}
+      overview={""}
       specs={[
         { label: "Scope",    value: "Feature Design (AI Integration)" },
         { label: "Duration", value: "May – December 2025" },

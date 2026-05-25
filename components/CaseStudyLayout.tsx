@@ -1842,6 +1842,7 @@ export default function CaseStudyLayout({
   ]
 
   const tocItems = [
+    ...(overview && (!password || !unlocked) ? [{ label: "Context", id: "sec-overview-block", hide: false }] : []),
     ...(!password || !unlocked ? sections.map((s, si) => ({ label: s.label, id: `sec-s${si}`, hide: s.hideToc })).filter(t => !t.hide) : []),
     ...(unlocked && lockedSections ? lockedSections.map((s, si) => ({ label: s.label, id: `sec-l${si}`, hide: s.hideToc })).filter(t => !t.hide) : []),
   ]
@@ -1868,7 +1869,11 @@ export default function CaseStudyLayout({
   }, [tocIds])
 
   const tryUnlock = () => {
-    if (pwInput === password) { setUnlocked(true); setPwError(false) }
+    if (pwInput === password) {
+      setUnlocked(true)
+      setPwError(false)
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    }
     else setPwError(true)
   }
 
@@ -1992,9 +1997,15 @@ export default function CaseStudyLayout({
                 </div>
               ))}
             </div>
+
           </motion.div>
 
           {banner && <div style={{ marginBottom: 24 }}>{banner}</div>}
+
+          {/* Overview as a section block */}
+          {overview && (!password || !unlocked) && (
+            <SectionBlock sec={{ label: "Context", body: overview }} id="sec-overview-block" />
+          )}
 
           {/* Sections — hidden once NDA content is unlocked */}
           {(!password || !unlocked) && sections.map((sec, si) => (
