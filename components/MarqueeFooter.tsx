@@ -39,7 +39,7 @@ export default function MarqueeFooter() {
       marginTop:  "auto",
     }}>
       <div className="rsp-footer-grid" style={{
-        maxWidth:       1200,
+        maxWidth:       1340,
         margin:         "0 auto",
         display:        "grid",
         gridTemplateColumns: "1fr 1fr 1fr",

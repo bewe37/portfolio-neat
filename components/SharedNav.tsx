@@ -66,7 +66,7 @@ export default function SharedNav() {
       className="rsp-px"
     >
       <div style={{
-        maxWidth:       1200,
+        maxWidth:       1340,
         margin:         "0 auto",
         display:        "flex",
         alignItems:     "flex-start",

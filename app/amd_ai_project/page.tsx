@@ -66,8 +66,8 @@ export default function AmdAiProject() {
         {
           label: "Research",
           lineBefore: true,
-          title: "The overlay then and now.",
-          body:  "Two versions ago, the overlay put controls within reach. Over successive updates, they were stripped out in favor of a cleaner metrics display. By the current version, it had become a read-only dashboard. Useful for monitoring, but no longer a tool for doing.",
+          title: "From control panel to read-only dashboard.",
+          body:  "Two versions ago, the overlay was a control panel. Users could adjust settings, toggle features, and act on their system without leaving their game. Then, over a series of updates, those controls were gradually removed in favor of a cleaner, more focused metrics display. Each update trimmed a little more until, by the current version, every interactive element was gone. What remained was a read-only dashboard: it could show you your GPU temperature or frame rate, but it couldn't let you do anything about them. The overlay had quietly shifted from a tool for doing into a screen for watching.",
           images:      ["/OldOverlay.png", "/MetricsIssue.png"],
           imageLabels: ["Previous overlay with direct controls", "Current version, metrics only"],
         },
@@ -124,7 +124,7 @@ export default function AmdAiProject() {
         },
         {
           label: "Design Decision",
-          title: "Time to rethink.",
+          title: "Direct control first, AI second.",
           body:  "The overlay needed more than a chatbot. Direct controls had to come back, not as a replacement for AI, but as the foundation that makes it actually useful.",
           contents: [
             {
@@ -210,7 +210,7 @@ export default function AmdAiProject() {
         {
           label: "Final Design",
           hideToc: true,
-          title: "The full picture.",
+          title: "Where it all came together.",
           body:  "Two modes, one overlay. The default view gives users a persistent panel of pinned controls and AMD Chat as the primary entry point. The in-game mode builds on that with an additional modal, surfacing the most-reached-for controls one tap away without interrupting the session.",
           tabs: [
             { label: "Default View",  image: "/DefaultView.png" },

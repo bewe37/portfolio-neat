@@ -90,6 +90,7 @@ interface Particle {
   swayAmt: number
   size:  number
   alpha: number
+  ringDist: number   // distance from center, updated each frame for falloff
 }
 
 // module-level cache so the image is only fetched once across re-mounts
@@ -173,6 +174,7 @@ export default function HeroParticles({ hovered }: { hovered: boolean }) {
           swayAmt,
           size:  rng() > 0.72 ? 2 : 1,
           alpha: 0.35 + rng() * 0.5,
+          ringDist: 0,
         }
       })
     }
@@ -263,17 +265,20 @@ export default function HeroParticles({ hovered }: { hovered: boolean }) {
           let idleY = p.homeY + driftY
 
           // Soft gradient repulsion from center — scales with text width (clamp matches the CSS clamp)
-          const textPx = Math.min(Math.max(W * 0.016, 15), 22)
+          const textPx = Math.min(Math.max(W * 0.016, 16), 22)
           const textW  = textPx * 22   // ~22 chars
-          const repelR = Math.max(textW * 0.7, Math.min(W, H) * 0.12)
+          const repelR = Math.max(textW * 0.75, Math.min(W, H) * 0.14)
           const tdx    = idleX - W / 2
           const tdy    = idleY - H / 2
           const tdist  = Math.hypot(tdx, tdy) || 1
+          // Gentler, wider falloff so the inner edge feathers out instead of a hard cutoff
           if (tdist < repelR) {
-            const push = Math.pow((repelR - tdist) / repelR, 2) * 0.55
+            const push = Math.pow((repelR - tdist) / repelR, 1.6) * 0.42
             idleX += (tdx / tdist) * push * repelR
             idleY += (tdy / tdist) * push * repelR
           }
+          // Store normalized distance from the ring for size/opacity falloff in render
+          p.ringDist = tdist
 
           // Mouse repulsion in idle
           const mouse = mouseRef.current

@@ -112,97 +112,65 @@ export default function HomePage() {
           pointerEvents:  "none",
           userSelect:     "none",
         }}>
-          <FadeUp delay={0.15} style={{ width: "auto" }}>
-            <p style={{
-              fontFamily:    "var(--font-sans)",
-              fontSize:      "clamp(15px, 1.6vw, 22px)",
-              fontWeight:    400,
-              letterSpacing: "-0.02em",
-              lineHeight:    1.4,
-              color:         "var(--c-mid)",
-              margin:        0,
-              pointerEvents: "none",
-              transition:    "opacity 0.5s ease",
-              opacity:       heroHovered ? 0 : 1,
-            }}>
-              Making complex things{" "}
-              <style>{`
-                @keyframes beautifulPulse {
-                  0%, 100% { opacity: 1; }
-                  50%       { opacity: 0.45; }
-                }
-              `}</style>
+          <FadeUp delay={0.15} style={{ width: "auto", display: "flex", justifyContent: "center" }}>
+            <p
+              onMouseEnter={() => setHeroHovered(true)}
+              onMouseLeave={() => setHeroHovered(false)}
+              onClick={() => document.getElementById("work")?.scrollIntoView({ behavior: "smooth" })}
+              style={{
+                fontFamily:    "var(--font-sans)",
+                fontSize:      "clamp(15px, 1.45vw, 20px)",
+                fontWeight:    400,
+                letterSpacing: "-0.02em",
+                lineHeight:    1.5,
+                color:         "var(--c-mid)",
+                margin:        0,
+                textAlign:     "center",
+                pointerEvents: "auto",
+                cursor:        "pointer",
+              }}
+            >
+              <span style={{ transition: "opacity 0.5s ease", opacity: heroHovered ? 0 : 1 }}>
+                Giving complicated tools<br />
+                a reason to feel{" "}
+              </span>
               <span
                 style={{
-                  fontFamily:      "var(--font-serif)",
-                  fontStyle:       "italic",
-                  fontWeight:      400,
-                  pointerEvents:   "auto",
-                  cursor:          "default",
-                  animation:       heroHovered ? "none" : "beautifulPulse 3s ease-in-out infinite",
+                  fontFamily: "var(--font-gabriela)",
+                  fontStyle:  "italic",
+                  fontWeight: 400,
+                  color:      "var(--c-primary)",
+                  transition: "opacity 0.5s ease",
+                  opacity:    heroHovered ? 0 : 1,
                 }}
-                onMouseEnter={() => setHeroHovered(true)}
-                onMouseLeave={() => setHeroHovered(false)}
               >
-                beautiful
+                beautiful.
               </span>
+              {" "}
+              <button
+                onClick={() => document.getElementById("work")?.scrollIntoView({ behavior: "smooth" })}
+                aria-label="Scroll to work"
+                style={{
+                  display:        "inline-flex",
+                  alignItems:     "center",
+                  justifyContent: "center",
+                  verticalAlign:  "middle",
+                  background:     "none",
+                  border:         "none",
+                  padding:        4,
+                  cursor:         "pointer",
+                  color:          "var(--c-mid)",
+                  transition:     "opacity 0.5s ease",
+                  opacity:        heroHovered ? 0 : 1,
+                }}
+              >
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style={{ display: "block", transform: "scaleX(-1)" }}>
+                  <path d="M13 4H8a1 1 0 0 0-1 1v7M7 12l-3-3M7 12l3-3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
             </p>
           </FadeUp>
         </div>
-
-        {/* Scroll indicator — bottom center */}
-        <style>{`
-          @keyframes scrollBounce {
-            0%, 100% { transform: translateY(0); }
-            50%       { transform: translateY(5px); }
-          }
-        `}</style>
-
-        {/* Mobile: bio + arrow stacked center */}
-        <div className="rsp-hero-bottom-mobile" style={{
-          display:        "none",
-          position:       "absolute",
-          bottom:         36,
-          left:           0,
-          right:          0,
-          zIndex:         3,
-          flexDirection:  "column",
-          alignItems:     "center",
-          gap:            16,
-          pointerEvents:  "none",
-          userSelect:     "none",
-        }}>
-          <svg width="22" height="22" viewBox="0 0 16 16" fill="none"
-            style={{ animation: "scrollBounce 2s ease-in-out infinite", display: "block", color: "rgba(255,255,255,0.55)" }}>
-            <path d="M8 3v10M8 13l-4-4M8 13l4-4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </div>
-
-        {/* Desktop: arrow center + bio bottom-left */}
-        <button
-          className="rsp-hero-arrow-desktop"
-          onClick={() => document.getElementById("work")?.scrollIntoView({ behavior: "smooth" })}
-          style={{
-            position:      "absolute",
-            bottom:        48,
-            left:          "50%",
-            transform:     "translateX(-50%)",
-            zIndex:        3,
-            background:    "none",
-            border:        "none",
-            padding:       0,
-            cursor:        "pointer",
-            color:         "rgba(255,255,255,0.55)",
-            transition:    "color 0.15s ease",
-          }}
-          onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.9)")}
-          onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.55)")}
-        >
-          <svg width="22" height="22" viewBox="0 0 16 16" fill="none"
-            style={{ animation: "scrollBounce 2s ease-in-out infinite", display: "block" }}>
-            <path d="M8 3v10M8 13l-4-4M8 13l4-4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
 
         {/* Bottom left — desc (desktop only) */}
         <div className="rsp-hero-bio-desktop" style={{
@@ -215,7 +183,7 @@ export default function HomePage() {
           userSelect:    "none",
           padding:       "0 clamp(20px, 4vw, 48px)",
         }}>
-          <div style={{ maxWidth: 1200, margin: "0 auto", paddingLeft: 17 }}>
+          <div style={{ maxWidth: 1340, margin: "0 auto", paddingLeft: 17 }}>
             <p style={{
               fontFamily:    "var(--font-sans)",
               fontSize:      12,
@@ -237,7 +205,7 @@ export default function HomePage() {
         style={{ width: "100%", padding: "0 48px", display: "flex", flexDirection: "column" }}
         className="rsp-px"
       >
-        <div style={{ maxWidth: 1200, margin: "0 auto", width: "100%" }}>
+        <div style={{ maxWidth: 1340, margin: "0 auto", width: "100%" }}>
 
         {/* ── Work container ───────────────────────────────────────────── */}
         <div id="work" style={{ position: "relative" }}>

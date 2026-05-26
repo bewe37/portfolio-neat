@@ -380,6 +380,7 @@ a {
   .rsp-back-mobile   { display: flex !important; }
   .rsp-cs-main       { padding-top: 80px !important; }
   .project-badge     { opacity: 1 !important; transform: translateY(0) !important; }
+  .rsp-specs span    { font-size: 12px !important; }
 
   /* Scale project folders down on mobile for breathing room */
   .rsp-project-card-bg {

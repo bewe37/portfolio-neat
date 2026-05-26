@@ -133,22 +133,23 @@ function Lightbox({ item, onClose }: { item: LightboxItem; onClose: () => void }
           transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
           onClick={e => e.stopPropagation()}
           style={{
-            maxWidth:     "90vw",
-            maxHeight:    "90vh",
-            borderRadius: 10,
+            borderRadius: 12,
             overflow:     "hidden",
             boxShadow:    "0 32px 80px rgba(0,0,0,0.6)",
             position:     "relative",
+            display:      "flex",
+            lineHeight:   0,
+            backgroundColor: item.video ? "#000" : "transparent",
           }}
         >
           {item.video
             ? <video
                 src={item.src}
                 autoPlay
-                controls
+                muted
                 loop
                 playsInline
-                style={{ display: "block", maxWidth: "90vw", maxHeight: "90vh" }}
+                style={{ display: "block", maxWidth: "min(1100px, 90vw)", maxHeight: "85vh", objectFit: "contain" }}
               />
             /* eslint-disable-next-line @next/next/no-img-element */
             : <img
@@ -839,6 +840,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
 function AccordionContents({ contents }: { contents: ContentBlock[] }) {
   const [active, setActive] = useState(0)
   const carouselRef = useRef<HTMLDivElement>(null)
+  const openLightbox = useContext(LightboxContext)
 
   const block = contents[active]
   const mediaSrc = block.videos?.[0]
@@ -881,18 +883,21 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
               transition={{ ...FADE, delay: i * 0.05 }}
               style={{
                 display:             "grid",
-                gridTemplateColumns: "2fr 1fr",
+                gridTemplateColumns: "1.7fr 1fr",
                 minHeight:           360,
-                gap:                 48,
+                gap:                 40,
                 alignItems:          "end",
                 paddingTop:          i === 0 ? 0 : 28,
               }}
             >
               {/* Media — full bleed, rounded */}
               {src && (
-                <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid var(--border)" }}>
+                <div
+                  onClick={() => openLightbox(src)}
+                  style={{ borderRadius: 12, overflow: "hidden", border: "1px solid var(--border)", cursor: "zoom-in" }}
+                >
                   {src.video
-                    ? <video src={src.src} autoPlay muted loop playsInline preload="metadata" style={{ width: "100%", display: "block" }} />
+                    ? <video src={src.src} autoPlay muted loop playsInline preload="metadata" style={{ width: "100%", display: "block", pointerEvents: "none" }} />
                     /* eslint-disable-next-line @next/next/no-img-element */
                     : <img src={src.src} alt="" draggable={false} style={{ width: "100%", display: "block" }} />
                   }
@@ -900,7 +905,7 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
               )}
               {/* Text */}
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                <p style={{ fontFamily: "var(--font-sans)", fontSize: 22, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.03em", lineHeight: 1.25, margin: 0 }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: 20, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.03em", lineHeight: 1.3, margin: 0, textWrap: "balance" }}>
                   {item.title}
                 </p>
                 {item.body && (
@@ -1222,6 +1227,7 @@ function TableOfContents({ backHref, items, activeId }: {
 }) {
   const [hovId, setHovId] = useState<string | null>(null)
   const [hovHome, setHovHome] = useState(false)
+  const [hovTheme, setHovTheme] = useState(false)
   const [isDark, setIsDark] = useState(true)
 
   useEffect(() => {
@@ -1281,21 +1287,23 @@ function TableOfContents({ backHref, items, activeId }: {
             width:      14,
             height:     14,
           }}
-          onMouseEnter={e => (e.currentTarget.style.color = "var(--c-primary)")}
-          onMouseLeave={e => (e.currentTarget.style.color = "var(--c-dim)")}
+          onMouseEnter={e => { e.currentTarget.style.color = "var(--c-primary)"; setHovTheme(true) }}
+          onMouseLeave={e => { e.currentTarget.style.color = "var(--c-dim)"; setHovTheme(false) }}
         >
           {/* Sun */}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
             style={{ position: "absolute", transition: "opacity 0.3s ease, transform 0.3s ease", opacity: isDark ? 1 : 0, transform: isDark ? "rotate(0deg) scale(1)" : "rotate(45deg) scale(0.6)" }}>
             <circle cx="12" cy="12" r="5"/>
-            <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-            <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            <g style={{ transformOrigin: "12px 12px", transition: "transform 0.5s cubic-bezier(0.16,1,0.3,1)", transform: hovTheme && isDark ? "rotate(45deg)" : "rotate(0deg)" }}>
+              <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </g>
           </svg>
           {/* Moon */}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-            style={{ position: "absolute", transition: "opacity 0.3s ease, transform 0.3s ease", opacity: isDark ? 0 : 1, transform: isDark ? "rotate(-45deg) scale(0.6)" : "rotate(0deg) scale(1)" }}>
+            style={{ position: "absolute", transition: "opacity 0.3s ease, transform 0.3s ease", opacity: isDark ? 0 : 1, transform: isDark ? "rotate(-45deg) scale(0.6)" : (hovTheme ? "rotate(-20deg) scale(1)" : "rotate(0deg) scale(1)") }}>
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
           </svg>
         </button>
@@ -1976,7 +1984,7 @@ export default function CaseStudyLayout({
               </motion.div>
             )}
 
-            <div style={{
+            <div className="rsp-specs" style={{
               display:             "grid",
               gridTemplateColumns: `repeat(${Math.min(allSpecs.length, 5)}, 1fr)`,
               gap:                 24,

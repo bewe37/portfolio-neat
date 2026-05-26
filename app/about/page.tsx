@@ -36,7 +36,7 @@ export default function AboutPage() {
         className="rsp-px"
       >
         <FadeUp delay={0}>
-          <section style={{ padding: "80px 0 64px", maxWidth: 1200, margin: "0 auto", width: "100%" }}>
+          <section style={{ padding: "80px 0 64px", maxWidth: 1340, margin: "0 auto", width: "100%" }}>
 
             {/* ── Gallery ──────────────────────────────────────────── */}
             <div style={{ marginBottom: 24 }}>
