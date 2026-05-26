@@ -40,7 +40,7 @@ export default function AmdAiProject() {
         },
         {
           label: "Highlights",
-          title: "A conversational overlay built for real-time control.",
+          title: "An overlay you can finally act on.",
           body:  "AMD Software's overlay sits on top of any game or app, built for quick actions without breaking focus. This is a look at how I redesigned it from a passive metrics display into something users could actually do things with.",
           accordion: true,
           contents: [
@@ -123,7 +123,7 @@ export default function AmdAiProject() {
           ],
         },
         {
-          label: "Design Decision",
+          label: "New Design Decision",
           title: "Direct control first, AI second.",
           body:  "The overlay needed more than a chatbot. Direct controls had to come back, not as a replacement for AI, but as the foundation that makes it actually useful.",
           contents: [
