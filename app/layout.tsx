@@ -12,7 +12,28 @@ const gabriela = Gabriela({ subsets: ['latin'], weight: '400', variable: '--font
 
 export const metadata: Metadata = {
   title: "Georgius Bryan",
-  description: "Product designer based in Toronto.",
+  description: "Product designer who gives complicated tools a reason to feel beautiful.",
+  openGraph: {
+    title: "Georgius Bryan",
+    description: "Product designer who gives complicated tools a reason to feel beautiful.",
+    url: "https://georgiusbw.com",
+    siteName: "Georgius Bryan",
+    images: [
+      {
+        url: "https://georgiusbw.com/siteThumbnail.png",
+        width: 1200,
+        height: 630,
+        alt: "Georgius Bryan – Product Designer",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Georgius Bryan",
+    description: "Product designer who gives complicated tools a reason to feel beautiful.",
+    images: ["https://georgiusbw.com/siteThumbnail.png"],
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
