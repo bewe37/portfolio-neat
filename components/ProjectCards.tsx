@@ -14,12 +14,16 @@ interface Project {
   comingSoon?: boolean
   lightbox?: boolean
   coverNode?: React.ReactNode
+  coverFit?: "cover" | "contain"
+  coverBg?: string
+  coverPadding?: number | string
+  coverBorder?: string
   carousel?: string[]
   badge?: string
 }
 
-const coverStyle = (hovered: boolean): React.CSSProperties => ({
-  width: "100%", height: "100%", objectFit: "cover", display: "block",
+const coverStyle = (hovered: boolean, fit: "cover" | "contain" = "cover"): React.CSSProperties => ({
+  width: "100%", height: "100%", objectFit: fit, display: "block",
   transform: hovered ? "scale(1.02)" : "scale(1)",
   transition: "transform 0.6s cubic-bezier(0.22,1,0.36,1)",
 })
@@ -79,17 +83,21 @@ function CarouselCover({ videos, hovered }: { videos: string[]; hovered: boolean
 function ProjectCard({ project, onLightbox }: { project: Project; onLightbox?: () => void }) {
   const [hovered, setHovered] = useState(false)
   const isVideo = project.cover.endsWith(".mp4") || project.cover.endsWith(".webm")
+  const fit = project.coverFit ?? "cover"
+  const bg = project.coverBg ?? "var(--surface)"
+  const coverPadding = project.coverPadding ?? 0
+  const coverBorder = project.coverBorder ?? undefined
 
   const inner = (
     <>
-      <div style={{ width: "100%", aspectRatio: "4/3", borderRadius: 8, overflow: "hidden", backgroundColor: "var(--surface)", position: "relative" }}>
+      <div style={{ width: "100%", aspectRatio: "4/3", borderRadius: 8, overflow: "hidden", backgroundColor: bg, position: "relative", border: coverBorder, padding: coverPadding, boxSizing: "border-box" }}>
         {project.carousel ? (
           <CarouselCover videos={project.carousel} hovered={hovered} />
         ) : project.coverNode ? project.coverNode : isVideo ? (
-          <video src={project.cover} autoPlay loop muted playsInline preload="metadata" style={coverStyle(hovered)} />
+          <video src={project.cover} autoPlay loop muted playsInline preload="metadata" style={coverStyle(hovered, fit)} />
         ) : (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={project.cover} alt={project.title} draggable={false} loading="eager" width={800} height={600} style={coverStyle(hovered)} />
+          <img src={project.cover} alt={project.title} draggable={false} loading="eager" width={800} height={600} style={coverStyle(hovered, fit)} />
         )}
         {project.badge && (
           <div className="project-badge" style={{
