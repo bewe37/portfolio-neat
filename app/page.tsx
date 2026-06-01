@@ -13,6 +13,14 @@ const HeroParticles = dynamic(() => import("@/components/HeroParticles"), { ssr:
 
 const VIBE_PROJECTS = [
   {
+    title: "Every Painted Box in Toronto",
+    category: "Photography",
+    date: "Check em out →",
+    description: "A self-initiated archive of every painted utility box found across Toronto — documenting the street artists turning infrastructure into canvas.",
+    href: "https://outside-the-box-tau.vercel.app/gallery",
+    cover: "/OTBPortfolio.mp4",
+  },
+  {
     title: "My Unhealthy Obsession Over Skeuomorphic Design",
     category: "Vibe Coded",
     date: "",
