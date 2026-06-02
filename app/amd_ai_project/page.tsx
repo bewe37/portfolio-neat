@@ -113,7 +113,7 @@ export default function AmdAiProject() {
           ],
         },
         {
-          label: "New Design Decision",
+          label: "Design Decisions",
           title: "Direct control first, AI second.",
           body:  "The overlay needed more than a chatbot. Direct controls had to come back, not as a replacement for AI, but as the foundation that makes it actually useful.",
           contents: [
@@ -203,8 +203,8 @@ export default function AmdAiProject() {
           title: "Where it all came together.",
           body:  "Two modes, one overlay. The default view gives users a persistent panel of pinned controls and AMD Chat as the primary entry point. The in-game mode builds on that with an additional modal, surfacing the most-reached-for controls one tap away without interrupting the session.",
           tabs: [
-            { label: "Default View",  image: "/DefaultView.png" },
-            { label: "In-Game View",  image: "/InGameView.png" },
+            { label: "Default View",  image: "/DefaultView.webp" },
+            { label: "In-Game View",  image: "/InGameView.webp" },
           ],
         },
         {

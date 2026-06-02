@@ -1,7 +1,8 @@
-import ContactList from "@/components/ContactList"
-import PhotoGallery from "@/components/PhotoGallery"
+"use client"
+
 import MarqueeFooter from "@/components/MarqueeFooter"
 import FadeUp from "@/components/FadeUp"
+import InfiniteGallery from "@/components/InfiniteGallery"
 
 const EXPERIENCE = [
   { company: "YU Blueprint",  role: "Design Lead",           period: "Feb 2026 – Present" },
@@ -9,6 +10,7 @@ const EXPERIENCE = [
   { company: "Safe Software", role: "Product Design Intern", period: "Jan – Aug 2024"     },
   { company: "Vosyn",         role: "Product Design Intern", period: "Sep – Dec 2023"     },
 ]
+
 
 const ROW: React.CSSProperties = {
   display: "grid",
@@ -28,54 +30,50 @@ const BODY: React.CSSProperties = {
   color: "var(--c-secondary)", letterSpacing: "-0.01em", lineHeight: 1.75, margin: 0,
 }
 
+
+
 export default function AboutPage() {
   return (
     <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
-      <main
-        style={{ width: "100%", padding: "0 48px", display: "flex", flexDirection: "column" }}
-        className="rsp-px"
-      >
+      <main style={{ width: "100%", padding: "0 48px", display: "flex", flexDirection: "column" }} className="rsp-px">
         <FadeUp delay={0}>
-          <section style={{ padding: "80px 0 64px", maxWidth: 1340, margin: "0 auto", width: "100%" }}>
-
-            {/* ── Gallery ──────────────────────────────────────────── */}
-            <div style={{ marginBottom: 24 }}>
-              <PhotoGallery />
-            </div>
-
-            {/* ── Content rows ─────────────────────────────────────── */}
+          <section style={{ padding: "140px 0 64px", maxWidth: 1340, margin: "0 auto", width: "100%" }}>
             <div style={{ display: "flex", flexDirection: "column" }}>
 
-              <div style={{ ...ROW }} className="rsp-stack">
+              {/* Hero text */}
+              <p style={{
+                fontFamily: "var(--font-sans)", fontSize: "clamp(22px, 3vw, 38px)",
+                fontWeight: 300, color: "var(--c-primary)", letterSpacing: "-0.03em",
+                lineHeight: 1.2, margin: "0 0 48px",
+              }}>
+                Good design comes from observing the world.<br /><span style={{ fontFamily: "var(--font-gabriela)", fontStyle: "italic", fontWeight: 400 }}>I take that part pretty literally.</span>
+              </p>
+
+              {/* Bio + Principles — three column */}
+              <div style={{ padding: "32px 0", borderBottom: "1px solid var(--divider)", display: "grid", gridTemplateColumns: "clamp(120px, 14vw, 200px) 1fr 1fr", gap: "0 clamp(24px, 5vw, 72px)", alignItems: "start" }} className="rsp-stack">
                 <p style={LABEL}>Hi there!</p>
-                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                  <p style={{ ...LABEL, color: "var(--c-primary)", fontSize: 15, fontWeight: 600 }}>How I got into design</p>
                   <p style={BODY}>
-                    I&apos;m Georgius Bryan Winata, but Bryan works. And yes, Georgius… gorgeous. I&apos;ve heard it enough times, I&apos;ll save you the effort.
+                    Growing up, I was always making things. Drawing, painting, shooting video on whatever camera I could get my hands on. I wasn&apos;t thinking about design. I was just obsessed with how things made people feel.
                   </p>
                   <p style={BODY}>
-                    I&apos;m a product designer based in Toronto. At the core, I love art, people, and technology, and design is where all three tend to meet. I care about making things feel obvious. Not by simplifying everything, but by structuring complexity so people don&apos;t have to think about it. The decisions behind the interface matter as much as the interface itself, and the details are usually where it falls apart.
+                    I never touched product design until university, and my entry point was honestly just frustration with products that felt like they were built for the person who made them, not the person using them. But the more I learned, the more I realized it was psychology. Understanding how people think, what they notice, where they hesitate. That&apos;s when I felt the real connection to everything I&apos;d been doing since I was a kid. Shaping something that lands differently in someone else&apos;s chest than it does in your own.
                   </p>
                 </div>
-              </div>
-
-              <div style={{ ...ROW }} className="rsp-stack">
-                <p style={LABEL}>Outside of design</p>
-                <p style={BODY}>
-                  Beyond work, you&apos;ll find me lingering in front of interesting buildings, shooting film, nursing a drink at a good bar, or chasing a proper meal from a Chinese aunty who definitely doesn&apos;t speak English but absolutely knows what she&apos;s doing.
-                </p>
-              </div>
-
-              <div style={{ ...ROW }} className="rsp-stack">
-                <p style={LABEL}>Education</p>
-                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12 }}>
-                  <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-                    <span style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.01em" }}>York University</span>
-                    <span style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 400, color: "var(--c-dim)", letterSpacing: "-0.01em" }}>B.A. Digital Media</span>
-                  </div>
-                  <span style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 400, color: "var(--c-faint)", letterSpacing: "-0.01em", whiteSpace: "nowrap", flexShrink: 0 }}>2020 – 2025</span>
+                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                  <p style={{ ...LABEL, color: "var(--c-primary)", fontSize: 15, fontWeight: 600 }}>What I believe</p>
+                  <p style={BODY}>
+                    Good design doesn&apos;t announce itself. The best interfaces I&apos;ve ever used felt inevitable, like someone had already thought through every edge case before I got there.
+                  </p>
+                  <p style={BODY}>
+                    I believe complexity is real and you can&apos;t design it away, only through it. I believe the details are where trust is built or lost. And I believe taste is everything. Not as decoration, but as the thing that tells you when something is right before you can fully explain why.
+                  </p>
                 </div>
+
               </div>
 
+              {/* Experience */}
               <div style={{ ...ROW }} className="rsp-stack">
                 <p style={LABEL}>Experience</p>
                 <div style={{ display: "flex", flexDirection: "column" }}>
@@ -95,17 +93,22 @@ export default function AboutPage() {
                 </div>
               </div>
 
+
+              {/* Outside of design */}
               <div style={{ ...ROW, borderBottom: "none" }} className="rsp-stack">
-                <p style={LABEL}>Find me at</p>
-                <ContactList />
+                <p style={LABEL}>I still touch grass</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+                  <p style={BODY}>
+                    Beyond the screen, you&apos;ll find me somewhere between a new city and a full plate. I travel whenever I can, and food is usually the whole point. There&apos;s something about being somewhere unfamiliar that resets my brain, clears out the noise and makes room for ideas that wouldn&apos;t have surfaced otherwise. What you&apos;ll find below is a mix of goofy photos of me, places that actually stuck, and meals I still think about. The living part of the portfolio, less about the work, more about the person behind it.
+                  </p>
+                  <InfiniteGallery />
+                </div>
               </div>
 
             </div>
           </section>
         </FadeUp>
-
       </main>
-
       <MarqueeFooter />
     </div>
   )

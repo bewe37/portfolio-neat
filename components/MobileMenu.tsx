@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ArrowUpRight } from "@phosphor-icons/react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { playClick } from "@/lib/click-sound"
 
 const MotionLink = motion(Link)
@@ -16,7 +17,10 @@ const NAV_ITEMS = [
 ]
 
 export default function MobileMenu() {
+  const pathname = usePathname()
   const [open, setOpen] = useState(false)
+
+  if (pathname === "/gallery") return null
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : ""

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { AnimatePresence } from "framer-motion"
 import ProjectCards from "@/components/ProjectCards"
 import MarqueeFooter from "@/components/MarqueeFooter"
@@ -96,12 +96,26 @@ const PROJECTS = [
 export default function HomePage() {
   const [companionOpen, setCompanionOpen] = useState(false)
   const [heroHovered, setHeroHovered] = useState(false)
+  const [scrollProgress, setScrollProgress] = useState(0)
+  const heroRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    function onScroll() {
+      const el = heroRef.current
+      if (!el) return
+      const h = el.offsetHeight
+      const progress = Math.min(1, Math.max(0, window.scrollY / h))
+      setScrollProgress(progress)
+    }
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
 
   return (
     <div style={{ minHeight: "100svh", display: "flex", flexDirection: "column" }}>
 
       {/* ── Hero — full bleed ──────────────────────────────────────────── */}
-      <section style={{
+      <section ref={heroRef} style={{
         position:  "relative",
         width:     "100%",
         height:    "100svh",
@@ -110,7 +124,7 @@ export default function HomePage() {
       }}>
         {/* Particles fill the whole hero */}
         <div style={{ position: "absolute", inset: 0, zIndex: 1 }}>
-          <HeroParticles hovered={heroHovered} />
+          <HeroParticles hovered={heroHovered} scrollProgress={scrollProgress} />
         </div>
 
         {/* Center — tagline */}
@@ -129,6 +143,7 @@ export default function HomePage() {
               onMouseEnter={() => setHeroHovered(true)}
               onMouseLeave={() => setHeroHovered(false)}
               onClick={() => document.getElementById("work")?.scrollIntoView({ behavior: "smooth" })}
+              className="hero-tagline"
               style={{
                 fontFamily:    "var(--font-sans)",
                 fontSize:      "clamp(15px, 1.45vw, 20px)",
@@ -162,6 +177,7 @@ export default function HomePage() {
               <button
                 onClick={() => document.getElementById("work")?.scrollIntoView({ behavior: "smooth" })}
                 aria-label="Scroll to work"
+                className="rsp-hide-mobile"
                 style={{
                   display:        "inline-flex",
                   alignItems:     "center",
