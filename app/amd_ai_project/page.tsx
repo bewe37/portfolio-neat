@@ -17,16 +17,6 @@ export default function AmdAiProject() {
       sections={[
         {
           label: "Context",
-          title: "What is the Overlay?",
-          body: "AMD Software ships with every Radeon GPU and gives users control over their system performance, graphics settings, and recording tools. The Overlay is a core part of AMD Software — a lightweight layer that floats on top of any game or application, designed for quick access without ever leaving what you're doing.\n\nOver a few product updates, the overlay had been stripped back to a passive metrics display. Users could see data, but couldn't act on it. My role was to rethink it as an interactive control surface, and to explore how AI could make that experience more accessible without replacing the direct controls users needed most.\n\nThis case study is password protected under NDA. Reach out if you'd like access.",
-          image: "/FullOverlayView.png",
-        },
-      ]}
-      password="amdx"
-      passwordDesc="This case study is protected under NDA. If you'd like to learn more about the work, feel free to reach out directly and I'd be happy to walk you through it."
-      lockedSections={[
-        {
-          label: "Context",
           title: "A new direction for AMD Software.",
           body:  "In the summer of 2025, I joined AMD as a Product Design Intern contributing to one of the largest redesigns AMD Software had undertaken in recent years. My focus was reworking the Overlay View, a lightweight interface that sits on top of any application, designed for quick, in-session control.",
           image: "/FullOverlayView.png",

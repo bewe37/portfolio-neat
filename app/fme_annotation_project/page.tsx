@@ -21,21 +21,27 @@ export default function FmeProject() {
             {
               title: "No visibility controls.",
               body:  "Annotations were essential for adding context, but created significant visual clutter and reduced workflow readability. Users had no way to control visibility, leading to overloaded canvases.",
-              image: "/ProblemSpace2.png",
+              image: "/NoVisibility.png",
             },
             {
               title: "Lack of customizability & details.",
               body:  "Summary annotations don't go deep enough. They describe what an object does, but not why it's configured a certain way. Users end up writing their own custom annotations just to fill in the gaps, adding friction to an already complex workflow.",
-              image: "/ProblemSpace1.png",
+              videos: ["/NoContextAnnotation.mp4"],
             },
           ],
         },
         {
           label: "User Research",
           title: "Understanding what users actually want.",
-          body:  "To validate our hypothesis, we pulled feedback from the FME Community platform and conducted user interviews. A recurring theme emerged: users wanted annotations to be collapsible and available directly inside the parameter dialog, so context stays visible exactly where configuration decisions are made.\n\nWe also found users tucking annotations into bookmarks just to collapse and hide them; a workaround that kept things tidier but added friction and stripped away context.",
+          body:  "To validate our hypothesis, we pulled feedback from the FME Community platform and conducted user interviews. A recurring theme emerged: users wanted annotations to be collapsible and available directly inside the parameter dialog, so context stays visible exactly where configuration decisions are made.",
           image: "/WhatUserSaid.png",
-          videos: ["/Workaround.mp4"],
+          contents: [
+            {
+              title: "Users were already solving it themselves.",
+              body:  "We found users tucking annotations into bookmarks just to collapse and hide them — a workaround that kept things tidier but added friction and stripped away context. It was a clear signal: the need for visibility control was real, and users were paying a cost every time they worked around it.",
+              videos: ["/WorkaroundAnnotation.mp4"],
+            },
+          ],
         },
         {
           label: "Project Direction",
@@ -79,7 +85,7 @@ export default function FmeProject() {
             {
               title:  "Right click menu as access point.",
               body:   "We introduced collapsible annotations to reduce visual clutter while preserving access to context. Annotations can be minimized into an icon on the object header, with controls available via right-click and the toolbar for flexible interaction.",
-              videos: ["/visibilityannotation.mp4"],
+              videos: ["/HiddenAnnotation.mp4"],
             },
             {
               title: "Side window as annotation container.",
@@ -94,12 +100,13 @@ export default function FmeProject() {
             {
               title:  "Adding in-line annotation.",
               body:   "Users were constantly switching between the canvas and parameter dialogs to reference their notes. To solve this, I brought annotations directly into the dialog, so context lives right where decisions are being made.",
-              videos: ["/safedialogannotation.mp4"],
+              videos: ["/InLineAnnotation.mp4"],
             },
           ],
         },
         {
           label: "Getting Buy-ins",
+          hideToc: true,
           title: "Design evaluation & stakeholder feedback.",
           body:  "To evaluate our design and uncover potential pain points, we used storyboarding to walk PMs and engineers through the proposed flow and interactions, which helped us in gathering feedback & opportunities to improve the overall flow or design.",
           image: "/storyboarding1.png",
