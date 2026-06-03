@@ -48,6 +48,7 @@ const IMAGES: GalleryImage[] = [
   { src: "/IMG_9527.jpg",                                    tag: "places" },
   { src: "/IMG_1235.jpg",                                    tag: "places" },
   { src: "/venice.jpg",                                      tag: "me"     },
+  { src: "/IMG_5564.jpg",                                    tag: "me"     },
 ]
 
 const CARD_H           = 180

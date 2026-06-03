@@ -69,7 +69,7 @@ const PROJECTS = [
     date: "May – Dec 2025",
     description: "Building a scalable component library that unified design and engineering across AMD's product suite.",
     href: "/amd_project",
-    cover: "/AMDCaseStudyH2.png",
+    cover: "/DSThumbnailVid.mp4",
     badge: "/amdchip.svg",
   },
   {
