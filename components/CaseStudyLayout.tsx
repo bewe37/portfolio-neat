@@ -520,6 +520,14 @@ function renderContentBlock(block: ContentBlock, bi: number) {
                 <circle cx="9" cy="9" r="7.5" stroke="var(--c-primary)" strokeWidth="1.5" />
                 <path d="M11.5 6.5L10 10L6.5 11.5L8 8L11.5 6.5Z" stroke="var(--c-primary)" strokeWidth="1.5" strokeLinejoin="round" />
               </>}
+              {block.icon === "pencil" && <>
+                <path d="M11.5 2.5l4 4-9 9H2.5v-4l9-9Z" stroke="var(--c-primary)" strokeWidth="1.5" strokeLinejoin="round" />
+                <path d="M9.5 4.5l4 4" stroke="var(--c-primary)" strokeWidth="1.5" />
+              </>}
+              {block.icon === "sparkle" && <>
+                <path d="M9 2v2M9 14v2M2 9h2M14 9h2M4.1 4.1l1.4 1.4M12.5 12.5l1.4 1.4M4.1 13.9l1.4-1.4M12.5 5.5l1.4-1.4" stroke="var(--c-primary)" strokeWidth="1.5" strokeLinecap="round" />
+                <circle cx="9" cy="9" r="2.5" stroke="var(--c-primary)" strokeWidth="1.5" />
+              </>}
             </svg>
           )}
           {block.title && (
@@ -1978,9 +1986,11 @@ export default function CaseStudyLayout({
                   maxHeight:       540,
                 }}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={cover} alt={title} draggable={false}
-                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                {cover.endsWith(".mp4") || cover.endsWith(".webm")
+                  ? <video src={cover} autoPlay muted loop playsInline preload="metadata" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                  : /* eslint-disable-next-line @next/next/no-img-element */
+                    <img src={cover} alt={title} draggable={false} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                }
               </motion.div>
             )}
 

@@ -105,14 +105,12 @@ function loadRosePoints(): Promise<[number, number][]> {
   const isDesktop = typeof window !== "undefined" && window.innerWidth >= 768
   const key = isDesktop ? "desktop" : "mobile"
   if (cachedRosePoints[key]) return Promise.resolve(cachedRosePoints[key])
-  const imgPromise = roseImgPromise ?? (roseImgPromise = new Promise(resolve => {
+  const imgPromise = roseImgPromise ?? (roseImgPromise = (async () => {
     const img = new Image()
-    img.onload = () => resolve(img)
-    img.onerror = () => resolve(img)
     img.src = "/roses.png"
-    // Already cached and decoded synchronously in some browsers
-    if (img.complete && img.naturalWidth > 0) resolve(img)
-  }))
+    try { await img.decode() } catch { /* fallback to onload */ await new Promise(r => { img.onload = r; img.onerror = r }) }
+    return img
+  })())
   return imgPromise.then(img => {
     const pts = sampleFlower(img)
     cachedRosePoints[key] = pts

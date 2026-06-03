@@ -55,7 +55,7 @@ export default function AboutPage() {
 
               {/* I still touch grass — right after gallery */}
               <div style={{ ...ROW }} className="rsp-stack">
-                <p style={LABEL}>Designers who still touch grass</p>
+                <p style={LABEL}>Still touch grass</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                   <p style={BODY}>
                     Hi, I&apos;m Bryan, a product designer who cares too much about the details. I work on complicated tools and dense software, the kind that people depend on every day but rarely feel good to use. Making those feel human is what I do.
