@@ -9,7 +9,7 @@ import OnboardingLightbox from "@/components/OnboardingLightbox"
 import CompanionThumbnail from "@/components/CompanionThumbnail"
 import dynamic from "next/dynamic"
 
-const HeroParticles = dynamic(() => import("@/components/HeroParticles"), { ssr: false })
+const HeroParticles = dynamic<{ hovered: boolean; scrollProgress?: number }>(() => import("@/components/HeroParticles"), { ssr: false })
 
 const VIBE_PROJECTS = [
   {
