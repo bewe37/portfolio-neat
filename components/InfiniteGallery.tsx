@@ -80,8 +80,10 @@ export function GalleryCanvas({ fullPage = false, showFilters = false, showClose
   const rebuildRef = useRef<(() => void) | null>(null)
   const alphaRef      = useRef(1)
   const fadeStateRef  = useRef<"idle" | "out" | "in">("idle")
+  const mountedRef    = useRef(false)
 
   useEffect(() => {
+    if (!mountedRef.current) { mountedRef.current = true; return }
     pendingFilterRef.current = activeFilter
     if (fadeStateRef.current !== "idle") return
     fadeStateRef.current = "out"
