@@ -136,7 +136,10 @@ export default function HeroParticles({ hovered, scrollProgress = 0 }: { hovered
   } | null>(null)
 
   useEffect(() => { hoveredRef.current = hovered }, [hovered])
-  useEffect(() => { scrollRef.current = scrollProgress }, [scrollProgress])
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 768) return
+    scrollRef.current = scrollProgress
+  }, [scrollProgress])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -164,8 +167,8 @@ export default function HeroParticles({ hovered, scrollProgress = 0 }: { hovered
           return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v)
         }
         const spread = Math.min(w, h) * 0.17
-        const homeX = Math.max(0, Math.min(w, w / 2 + gauss() * spread))
-        const homeY = Math.max(0, Math.min(h, h / 2 + gauss() * spread))
+        const homeX = w / 2 + gauss() * spread
+        const homeY = h / 2 + gauss() * spread
 
         // Sway amount: particles near the top of the flower sway more (pendulum effect)
         // ny is 0=top, 1=bottom — top petals swing wider

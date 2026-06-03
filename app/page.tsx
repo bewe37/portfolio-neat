@@ -98,6 +98,17 @@ export default function HomePage() {
   const [heroHovered, setHeroHovered] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
   const heroRef = useRef<HTMLElement>(null)
+  const flowerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  function handleBeautifulClick(e: React.MouseEvent) {
+    e.stopPropagation()
+    const next = !heroHovered
+    setHeroHovered(next)
+    if (flowerTimerRef.current) clearTimeout(flowerTimerRef.current)
+    if (next) {
+      flowerTimerRef.current = setTimeout(() => setHeroHovered(false), 4000)
+    }
+  }
 
   useEffect(() => {
     function onScroll() {
@@ -163,7 +174,7 @@ export default function HomePage() {
               </span>
               <button
                 className="hero-beautiful"
-                onClick={e => { e.stopPropagation(); setHeroHovered(h => !h) }}
+                onClick={handleBeautifulClick}
                 style={{
                   fontFamily:  "var(--font-gabriela)",
                   fontStyle:   "italic",
