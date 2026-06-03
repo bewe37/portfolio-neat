@@ -121,10 +121,10 @@ export default function ThemeToggle() {
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={theme}
-          initial={{ opacity: 0, rotate: -30, scale: 0.7 }}
-          animate={{ opacity: 1, rotate: 0,   scale: 1   }}
-          exit={{    opacity: 0, rotate:  30,  scale: 0.7 }}
-          transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          initial={{ opacity: 0, rotate: -30, scale: 0.7, filter: "blur(4px)" }}
+          animate={{ opacity: 1, rotate: 0,   scale: 1,   filter: "blur(0px)" }}
+          exit={{    opacity: 0, rotate:  30,  scale: 0.7, filter: "blur(4px)" }}
+          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
         >
           <Icon color={iconColor} hovered={hovered} />
         </motion.div>

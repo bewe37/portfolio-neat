@@ -163,7 +163,7 @@ export default function HomePage() {
               </span>
               <button
                 className="hero-beautiful"
-                onClick={() => setHeroHovered(h => !h)}
+                onClick={e => { e.stopPropagation(); setHeroHovered(h => !h) }}
                 style={{
                   fontFamily:  "var(--font-gabriela)",
                   fontStyle:   "italic",
