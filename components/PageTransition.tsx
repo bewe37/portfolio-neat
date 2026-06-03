@@ -21,8 +21,11 @@ export default function PageTransition({ children }: { children: React.ReactNode
     setPrevState(prev)
 
     if (prev === null) return
-    // Clear gallery body bg when leaving
-    if (prev === "/gallery") document.body.style.background = ""
+    // Clear gallery body styles when leaving
+    if (prev === "/gallery") {
+      document.body.style.background = ""
+      document.body.style.overflow = ""
+    }
     const wasCase = isCaseStudyPath(prev)
     const isCase  = isCaseStudyPath(pathname)
     if (wasCase && !isCase) {
