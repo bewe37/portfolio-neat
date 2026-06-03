@@ -415,7 +415,7 @@ export function GalleryCanvas({ fullPage = false, showFilters = false, showClose
           {FILTERS.map(f => (
             <button key={f.value} onClick={() => setActiveFilter(f.value)} style={{
               fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 500,
-              letterSpacing: "0.04em", textTransform: "uppercase",
+              letterSpacing: "-0.01em", textTransform: "none",
               padding: "6px 16px", borderRadius: 999, border: "none",
               cursor: "pointer", position: "relative", background: "transparent",
               color: activeFilter === f.value ? "#111" : "rgba(255,255,255,0.5)",

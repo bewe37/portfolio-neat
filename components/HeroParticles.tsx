@@ -91,6 +91,7 @@ interface Particle {
   size:  number
   alpha: number
   ringDist: number   // distance from center, updated each frame for falloff
+  scrollDelay: number // 0=sucked first (outer), 1=sucked last (inner)
 }
 
 // module-level cache so the image is only fetched once across re-mounts
@@ -111,22 +112,25 @@ function loadRosePoints(): Promise<[number, number][]> {
   return roseLoadPromise
 }
 
-export default function HeroParticles({ hovered }: { hovered: boolean }) {
-  const canvasRef  = useRef<HTMLCanvasElement>(null)
-  const hoveredRef = useRef(false)
-  const rafRef     = useRef(0)
-  const visibleRef = useRef(true)
-  const ptsRef     = useRef<Particle[]>([])
-  const transRef   = useRef(0)
-  const timeRef    = useRef(0)
-  const lastTRef   = useRef<number | null>(null)
-  const mouseRef   = useRef<{ x: number; y: number } | null>(null)
-  const roseMapRef = useRef<{
+export default function HeroParticles({ hovered, scrollProgress = 0 }: { hovered: boolean; scrollProgress?: number }) {
+  const canvasRef       = useRef<HTMLCanvasElement>(null)
+  const hoveredRef      = useRef(false)
+  const rafRef          = useRef(0)
+  const visibleRef      = useRef(true)
+  const ptsRef          = useRef<Particle[]>([])
+  const transRef        = useRef(0)
+  const timeRef         = useRef(0)
+  const lastTRef        = useRef<number | null>(null)
+  const mouseRef        = useRef<{ x: number; y: number } | null>(null)
+  const scrollRef       = useRef(0)
+  const smoothScrollRef = useRef(0)
+  const roseMapRef      = useRef<{
     cx: number; cy: number; scale: number
     minX: number; minY: number; spanX: number; spanY: number
   } | null>(null)
 
   useEffect(() => { hoveredRef.current = hovered }, [hovered])
+  useEffect(() => { scrollRef.current = scrollProgress }, [scrollProgress])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -161,6 +165,10 @@ export default function HeroParticles({ hovered }: { hovered: boolean }) {
         // ny is 0=top, 1=bottom — top petals swing wider
         const swayAmt = Math.max(0, 1 - ny) * 12 + 3
 
+        // Particles farther from center get sucked first (0 = first, 1 = last)
+        const distFromCenter = Math.hypot(homeX - w / 2, homeY - h / 2) / (Math.min(w, h) * 0.5)
+        const scrollDelay = Math.max(0, Math.min(1, 1 - distFromCenter + rng() * 0.15))
+
         return {
           homeX, homeY,
           x: homeX, y: homeY,
@@ -175,6 +183,7 @@ export default function HeroParticles({ hovered }: { hovered: boolean }) {
           size:  rng() > 0.72 ? 2 : 1,
           alpha: 0.35 + rng() * 0.5,
           ringDist: 0,
+          scrollDelay,
         }
       })
     }
@@ -218,6 +227,9 @@ export default function HeroParticles({ hovered }: { hovered: boolean }) {
       const tr      = transRef.current
       const pts     = ptsRef.current
       const roseMap = roseMapRef.current
+      // Smooth the scroll value so return is gradual, not a snap
+      smoothScrollRef.current += (scrollRef.current - smoothScrollRef.current) * 0.12
+      const scroll = smoothScrollRef.current
 
       // Global wind — slow primary + faster wobble for organic feel
       const windSway  = Math.sin(t * 0.32) * 1.0 + Math.sin(t * 0.87) * 0.45 + Math.sin(t * 1.7) * 0.15
@@ -231,79 +243,86 @@ export default function HeroParticles({ hovered }: { hovered: boolean }) {
       ctx.fillStyle = cachedColor
 
       for (const p of pts) {
-        if (tr > 0.01 && roseMap) {
-          const { cx, cy, scale, minX, minY, spanX, spanY } = roseMap
+        // Per-particle staged scroll — outer particles activate first
+        const suctionStart = p.scrollDelay * 0.5
+        const localScroll  = Math.max(0, Math.min(1, (scroll - suctionStart) / Math.max(0.001, 1 - suctionStart)))
 
-          // Base flower position
-          let tx = cx + (p.roseTX - (minX + spanX / 2)) * scale
-          let ty = cy + (p.roseTY - (minY + spanY / 2)) * scale
-
-            // Sway: top petals swing wider, anchored at stem base
-          const sway = windSway * p.swayAmt * 2.2 * tr
-          const breathe = windDrift * (p.swayAmt * 0.5) * tr
-          tx += sway
-          ty += breathe
-
-          const dx = tx - p.x
-          const dy = ty - p.y
-          p.vx = (p.vx + dx * 0.012) * 0.88
-          p.vy = (p.vy + dy * 0.012) * 0.88
+        if (localScroll > 0) {
+          // Suction toward bottom-center vanishing point
+          const vpX  = W / 2
+          const vpY  = H * 1.1
+          const dx   = vpX - p.x
+          const dy   = vpY - p.y
+          const dist = Math.hypot(dx, dy) || 1
+          const pull = localScroll * localScroll * 22
+          p.vx = (p.vx + (dx / dist) * pull) * 0.78
+          p.vy = (p.vy + (dy / dist) * pull) * 0.80
           p.x += p.vx
           p.y += p.vy
         } else {
-          // Idle: smooth noise drift — dreamy slow float
-          const nx = smoothNoise(p.noiseOffX + t * 0.12, p.noiseOffY, 0)
-          const ny = smoothNoise(p.noiseOffX, p.noiseOffY + t * 0.10, 1)
-          // Add a second octave for extra softness
-          const nx2 = smoothNoise(p.noiseOffX * 2.1 + t * 0.07, p.noiseOffY * 2.1, 2) * 0.4
-          const ny2 = smoothNoise(p.noiseOffX * 2.1, p.noiseOffY * 2.1 + t * 0.09, 3) * 0.4
+          // Normal idle / hover physics — only runs when scroll = 0
+          if (tr > 0.01 && roseMap) {
+            const { cx, cy, scale, minX, minY, spanX, spanY } = roseMap
+            let tx = cx + (p.roseTX - (minX + spanX / 2)) * scale
+            let ty = cy + (p.roseTY - (minY + spanY / 2)) * scale
+            const sway    = windSway  * p.swayAmt * 2.2 * tr
+            const breathe = windDrift * (p.swayAmt * 0.5) * tr
+            tx += sway
+            ty += breathe
+            p.vx = (p.vx + (tx - p.x) * 0.012) * 0.88
+            p.vy = (p.vy + (ty - p.y) * 0.012) * 0.88
+            p.x += p.vx
+            p.y += p.vy
+          } else {
+            const nx  = smoothNoise(p.noiseOffX + t * 0.12, p.noiseOffY, 0)
+            const ny  = smoothNoise(p.noiseOffX, p.noiseOffY + t * 0.10, 1)
+            const nx2 = smoothNoise(p.noiseOffX * 2.1 + t * 0.07, p.noiseOffY * 2.1, 2) * 0.4
+            const ny2 = smoothNoise(p.noiseOffX * 2.1, p.noiseOffY * 2.1 + t * 0.09, 3) * 0.4
+            const driftX = (nx + nx2 - 0.7) * 80
+            const driftY = (ny + ny2 - 0.7) * 80
+            let idleX = p.homeX + driftX
+            let idleY = p.homeY + driftY
 
-          const driftX = (nx + nx2 - 0.7) * 80
-          const driftY = (ny + ny2 - 0.7) * 80
-
-          let idleX = p.homeX + driftX
-          let idleY = p.homeY + driftY
-
-          // Soft gradient repulsion from center — scales with text width (clamp matches the CSS clamp)
-          const textPx = Math.min(Math.max(W * 0.016, 16), 22)
-          const textW  = textPx * 22   // ~22 chars
-          const repelR = Math.max(textW * 0.75, Math.min(W, H) * 0.14)
-          const tdx    = idleX - W / 2
-          const tdy    = idleY - H / 2
-          const tdist  = Math.hypot(tdx, tdy) || 1
-          // Gentler, wider falloff so the inner edge feathers out instead of a hard cutoff
-          if (tdist < repelR) {
-            const push = Math.pow((repelR - tdist) / repelR, 1.6) * 0.42
-            idleX += (tdx / tdist) * push * repelR
-            idleY += (tdy / tdist) * push * repelR
-          }
-          // Store normalized distance from the ring for size/opacity falloff in render
-          p.ringDist = tdist
-
-          // Mouse repulsion in idle
-          const mouse = mouseRef.current
-          if (mouse) {
-            const mdx = idleX - mouse.x
-            const mdy = idleY - mouse.y
-            const mdist = Math.hypot(mdx, mdy) || 1
-            const repelR = 90
-            if (mdist < repelR) {
-              const push = Math.pow((repelR - mdist) / repelR, 2) * 60
-              idleX += (mdx / mdist) * push
-              idleY += (mdy / mdist) * push
+            const textPx = Math.min(Math.max(W * 0.016, 16), 22)
+            const textW  = textPx * 22
+            const repelR = Math.max(textW * 0.75, Math.min(W, H) * 0.14)
+            const tdx    = idleX - W / 2
+            const tdy    = idleY - H / 2
+            const tdist  = Math.hypot(tdx, tdy) || 1
+            if (tdist < repelR) {
+              const push = Math.pow((repelR - tdist) / repelR, 1.6) * 0.42
+              idleX += (tdx / tdist) * push * repelR
+              idleY += (tdy / tdist) * push * repelR
             }
-          }
+            p.ringDist = tdist
 
-          p.x += (idleX - p.x) * 0.008
-          p.y += (idleY - p.y) * 0.008
+            const mouse = mouseRef.current
+            if (mouse) {
+              const mdx   = idleX - mouse.x
+              const mdy   = idleY - mouse.y
+              const mdist = Math.hypot(mdx, mdy) || 1
+              const mR    = 90
+              if (mdist < mR) {
+                const push = Math.pow((mR - mdist) / mR, 2) * 60
+                idleX += (mdx / mdist) * push
+                idleY += (mdy / mdist) * push
+              }
+            }
+
+            // Lerp back toward idle — zero velocity when returning from suction
+            p.vx = 0
+            p.vy = 0
+            p.x += (idleX - p.x) * 0.008
+            p.y += (idleY - p.y) * 0.008
+          }
         }
 
-        // Slow alpha pulse for dreaminess in idle
-        const pulse = tr < 0.5 ? 0.82 + 0.18 * Math.sin(t * 0.8 + p.swayPhase) : 1
+        // Fade: staged per-particle, tied to its own localScroll
+        const pulse     = tr < 0.5 ? 0.82 + 0.18 * Math.sin(t * 0.8 + p.swayPhase) : 1
+        const baseAlpha = tr > 0.5 ? p.alpha * tr : p.alpha * 0.8 * pulse
+        const alpha     = baseAlpha * Math.max(0, 1 - localScroll * 2)
 
-        const alpha = tr > 0.5
-          ? p.alpha * tr
-          : p.alpha * 0.8 * pulse
+        if (alpha <= 0) continue
 
         ctx.globalAlpha = Math.max(0, Math.min(1, alpha))
         const sz = p.size * dpr

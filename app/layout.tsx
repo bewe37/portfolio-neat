@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import "./globals.css"
 import PageTransition from "@/components/PageTransition"
+import ScrollToTop from "@/components/ScrollToTop"
 import SharedNav from "@/components/SharedNav"
 import MobileMenu from "@/components/MobileMenu"
 import { Geist, Playfair_Display, Gabriela } from "next/font/google";
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: `(function(){if(localStorage.getItem('theme')==='light')document.body&&document.body.classList.remove('dark')})()` }} />
       </head>
       <body className="dark">
+        <ScrollToTop />
         <SharedNav />
         <MobileMenu />
         <PageTransition>{children}</PageTransition>

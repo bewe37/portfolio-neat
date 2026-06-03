@@ -4,7 +4,10 @@ import MarqueeFooter from "@/components/MarqueeFooter"
 import FadeUp from "@/components/FadeUp"
 import dynamic from "next/dynamic"
 
-const InfiniteGallery = dynamic(() => import("@/components/InfiniteGallery"), { ssr: false })
+const GalleryCanvas = dynamic(
+  () => import("@/components/InfiniteGallery").then(m => m.GalleryCanvas),
+  { ssr: false }
+)
 
 const EXPERIENCE = [
   { company: "YU Blueprint",  role: "Design Lead",           period: "Feb 2026 – Present" },
@@ -37,19 +40,18 @@ const BODY: React.CSSProperties = {
 export default function AboutPage() {
   return (
     <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
+
+      {/* Hero gallery — constrained to content width, text overlay */}
+      <div style={{ width: "100%", padding: "0 48px", marginTop: 80 }} className="rsp-px">
+        <div style={{ maxWidth: 1340, margin: "0 auto", borderRadius: 12, overflow: "hidden", height: 560 }}>
+          <GalleryCanvas />
+        </div>
+      </div>
+
       <main style={{ width: "100%", padding: "0 48px", display: "flex", flexDirection: "column" }} className="rsp-px">
         <FadeUp delay={0}>
-          <section style={{ padding: "140px 0 64px", maxWidth: 1340, margin: "0 auto", width: "100%" }}>
+          <section style={{ padding: "24px 0 64px", maxWidth: 1340, margin: "0 auto", width: "100%" }}>
             <div style={{ display: "flex", flexDirection: "column" }}>
-
-              {/* Hero text */}
-              <p style={{
-                fontFamily: "var(--font-sans)", fontSize: "clamp(22px, 3vw, 38px)",
-                fontWeight: 300, color: "var(--c-primary)", letterSpacing: "-0.03em",
-                lineHeight: 1.2, margin: "0 0 48px",
-              }}>
-                Good design comes from observing the world.<br /><span style={{ fontFamily: "var(--font-gabriela)", fontStyle: "italic", fontWeight: 400 }}>I take that part pretty literally.</span>
-              </p>
 
               {/* Bio + Principles — three column */}
               <div style={{ padding: "32px 0", borderBottom: "1px solid var(--divider)", display: "grid", gridTemplateColumns: "clamp(120px, 14vw, 200px) 1fr 1fr", gap: "0 clamp(24px, 5vw, 72px)", alignItems: "start" }} className="rsp-stack">
@@ -99,12 +101,9 @@ export default function AboutPage() {
               {/* Outside of design */}
               <div style={{ ...ROW, borderBottom: "none" }} className="rsp-stack">
                 <p style={LABEL}>I still touch grass</p>
-                <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-                  <p style={BODY}>
-                    Beyond the screen, you&apos;ll find me somewhere between a new city and a full plate. I travel whenever I can, and food is usually the whole point. There&apos;s something about being somewhere unfamiliar that resets my brain, clears out the noise and makes room for ideas that wouldn&apos;t have surfaced otherwise. What you&apos;ll find below is a mix of goofy photos of me, places that actually stuck, and meals I still think about. The living part of the portfolio, less about the work, more about the person behind it.
-                  </p>
-                  <InfiniteGallery />
-                </div>
+                <p style={BODY}>
+                  Beyond the screen, you&apos;ll find me somewhere between a new city and a full plate. I travel whenever I can, and food is usually the whole point. There&apos;s something about being somewhere unfamiliar that resets my brain, clears out the noise and makes room for ideas that wouldn&apos;t have surfaced otherwise. The gallery above is a mix of goofy photos of me, places that actually stuck, and meals I still think about.
+                </p>
               </div>
 
             </div>
