@@ -59,6 +59,18 @@ const GAP_Y            = 240
 
 export const GALLERY_IMAGES = IMAGES
 
+// Module-level image cache — shared across all GalleryCanvas instances
+const cachedImgs: (HTMLImageElement | null)[] = IMAGES.map(() => null)
+let cachedLoadCount = 0
+if (typeof window !== "undefined") {
+  IMAGES.forEach((item, i) => {
+    if (cachedImgs[i]) return
+    const img = new Image()
+    img.onload = () => { cachedImgs[i] = img; cachedLoadCount++ }
+    img.src = item.src
+  })
+}
+
 const FILTERS: { label: string; value: ImageTag | "all" }[] = [
   { label: "All",    value: "all"    },
   { label: "Me",     value: "me"     },
@@ -202,11 +214,13 @@ export function GalleryCanvas({ fullPage = false, showFilters = false, showClose
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, offscreen.width, offscreen.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
     texW = offscreen.width; texH = offscreen.height
 
-    const imgs: (HTMLImageElement | null)[] = IMAGES.map(() => null)
-    let loadedCount = 0
+    // Use module-level cache so images shared across instances don't reload
+    const imgs = cachedImgs
+    let loadedCount = cachedLoadCount
     IMAGES.forEach((item, i) => {
+      if (imgs[i]) return
       const img = new Image()
-      img.onload = () => { imgs[i] = img; loadedCount++; idle = false }
+      img.onload = () => { imgs[i] = img; loadedCount++; cachedLoadCount++; idle = false }
       img.src = item.src
     })
 
