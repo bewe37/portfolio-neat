@@ -277,6 +277,7 @@ export function GalleryCanvas({ fullPage = false, showFilters = false, showClose
 
     function loop() {
       if (!visible || document.hidden) { raf = 0; return }
+      if (!gl) return
       raf = requestAnimationFrame(loop)
       if (!dragging) { ox+=vx; oy+=vy; vx*=0.93; vy*=0.93 }
       ox = ((ox%TILE_W)+TILE_W)%TILE_W
