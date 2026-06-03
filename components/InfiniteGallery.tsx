@@ -20,7 +20,7 @@ const IMAGES: GalleryImage[] = [
   { src: "/LaSalumeria.jpg",                                 tag: "food"   },
   { src: "/IMG_4678.jpg",                                    tag: "me"     },
   { src: "/Mhel.jpg",                                        tag: "food"   },
-  { src: "/koreaphoto.JPG",                                  tag: "places" },
+  { src: "/koreaphoto.jpg",                                  tag: "places" },
   { src: "/Mimi%20Chinese.jpg",                              tag: "food"   },
   { src: "/IMG_3449.jpg",                                    tag: "me"     },
   { src: "/Shakers%20Club.jpg",                              tag: "food"   },
@@ -39,14 +39,14 @@ const IMAGES: GalleryImage[] = [
   { src: "/fred.jpg",                                        tag: "places" },
   { src: "/image3.jpg",                                      tag: "places" },
   { src: "/image4.jpg",                                      tag: "places" },
-  { src: "/156.jpg",                                         tag: "food"   },
-  { src: "/0FB14169-ED68-447E-8F6C-A9302E239FB8.jpg",        tag: "places" },
+  { src: "/156.JPG",                                         tag: "food"   },
+  { src: "/0FB14169-ED68-447E-8F6C-A9302E239FB8.JPG",        tag: "places" },
   { src: "/IMG_0815.jpg",                                    tag: "food"   },
   { src: "/IMG_4280.jpg",                                    tag: "places" },
   { src: "/IMG_5840.jpg",                                    tag: "places" },
   { src: "/IMG_9527.jpg",                                    tag: "places" },
   { src: "/IMG_1235.jpg",                                    tag: "places" },
-  { src: "/venice.JPG",                                      tag: "me"     },
+  { src: "/venice.jpg",                                      tag: "me"     },
 ]
 
 const CARD_H           = 180
