@@ -343,7 +343,7 @@ export function GalleryCanvas({ fullPage = false, showFilters = false, showClose
       gl.bindTexture(gl.TEXTURE_2D, tex)
       gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, offscreen)
       gl.uniform1i(uTex, 0)
-      gl.uniform1f(uBarrel, fullPage ? 0.04 : 0.08)
+      gl.uniform1f(uBarrel, fullPage ? 0.18 : 0.08)
       gl.uniform1f(uVignette, 1.8)
       gl.uniform1f(uOverscan, 0.88)
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
