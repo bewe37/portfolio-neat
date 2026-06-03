@@ -2,7 +2,9 @@
 
 import MarqueeFooter from "@/components/MarqueeFooter"
 import FadeUp from "@/components/FadeUp"
-import InfiniteGallery from "@/components/InfiniteGallery"
+import dynamic from "next/dynamic"
+
+const InfiniteGallery = dynamic(() => import("@/components/InfiniteGallery"), { ssr: false })
 
 const EXPERIENCE = [
   { company: "YU Blueprint",  role: "Design Lead",           period: "Feb 2026 – Present" },

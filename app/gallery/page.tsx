@@ -1,4 +1,9 @@
-import { GalleryCanvas } from "@/components/InfiniteGallery"
+import dynamic from "next/dynamic"
+
+const GalleryCanvas = dynamic(
+  () => import("@/components/InfiniteGallery").then(m => m.GalleryCanvas),
+  { ssr: false }
+)
 
 export default function GalleryPage() {
   return (
