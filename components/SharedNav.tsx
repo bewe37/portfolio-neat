@@ -37,7 +37,7 @@ function Sparkle({ spinning }: { spinning: boolean }) {
   )
 }
 
-const CASE_STUDY_PATHS = ["/amd_ai_project", "/amd_project", "/fme_annotation_project", "/blueprint"]
+const CASE_STUDY_PATHS = ["/amd_ai_project", "/amd_project", "/fme_annotation_project", "/blueprint", "/gallery"]
 
 export default function SharedNav() {
   const pathname = usePathname()
@@ -54,6 +54,7 @@ export default function SharedNav() {
 
   return (
     <div
+      data-shared-nav
       style={{
         position:      "absolute",
         top:           0,

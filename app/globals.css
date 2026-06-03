@@ -138,6 +138,11 @@ html {
   scroll-behavior: smooth;
 }
 
+body.gallery-open [data-shared-nav],
+body.gallery-open [data-mobile-menu] {
+  display: none !important;
+}
+
 body {
   background-color: var(--bg);
   color: var(--c-primary);
