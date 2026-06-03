@@ -161,18 +161,26 @@ export default function HomePage() {
                 Giving complicated tools<br />
                 a reason to feel{" "}
               </span>
-              <span
+              <button
+                className="hero-beautiful"
+                onClick={() => setHeroHovered(h => !h)}
                 style={{
-                  fontFamily: "var(--font-gabriela)",
-                  fontStyle:  "italic",
-                  fontWeight: 400,
-                  color:      "var(--c-primary)",
-                  transition: "opacity 0.5s ease",
-                  opacity:    heroHovered ? 0 : 1,
+                  fontFamily:  "var(--font-gabriela)",
+                  fontStyle:   "italic",
+                  fontWeight:  400,
+                  color:       "var(--c-primary)",
+                  transition:  "opacity 0.5s ease",
+                  opacity:     heroHovered ? 0 : 1,
+                  background:  "none",
+                  border:      "none",
+                  padding:     0,
+                  cursor:      "pointer",
+                  fontSize:    "inherit",
+                  pointerEvents: "auto",
                 }}
               >
                 beautiful.
-              </span>
+              </button>
               {" "}
               <button
                 onClick={() => document.getElementById("work")?.scrollIntoView({ behavior: "smooth" })}

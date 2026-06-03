@@ -110,7 +110,7 @@ function ProjectCard({ project, onLightbox }: { project: Project; onLightbox?: (
             pointerEvents: "none",
           }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={project.badge} alt="" style={{ height: 22, width: "auto", display: "block" }} />
+            <img src={project.badge} alt="" className="project-badge-img" style={{ height: 22, width: "auto", display: "block" }} />
           </div>
         )}
       </div>

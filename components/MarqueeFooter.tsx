@@ -13,9 +13,10 @@ function torontoTime() {
 
 export default function MarqueeFooter() {
   const year = new Date().getFullYear()
-  const [time, setTime] = useState(torontoTime())
+  const [time, setTime] = useState("")
 
   useEffect(() => {
+    setTime(torontoTime())
     const tick = setInterval(() => setTime(torontoTime()), 1000)
     return () => clearInterval(tick)
   }, [])

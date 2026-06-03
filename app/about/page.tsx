@@ -53,9 +53,22 @@ export default function AboutPage() {
           <section style={{ padding: "24px 0 64px", maxWidth: 1340, margin: "0 auto", width: "100%" }}>
             <div style={{ display: "flex", flexDirection: "column" }}>
 
+              {/* I still touch grass — right after gallery */}
+              <div style={{ ...ROW }} className="rsp-stack">
+                <p style={LABEL}>Designers who still touch grass</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                  <p style={BODY}>
+                    Hi, I&apos;m Bryan, a product designer who cares too much about the details. I work on complicated tools and dense software, the kind that people depend on every day but rarely feel good to use. Making those feel human is what I do.
+                  </p>
+                  <p style={BODY}>
+                    Being outside, staying present, that&apos;s how I stay sharp. Whether it&apos;s travelling, eating my way through a new city, or just stepping away from the screen. Being in the world forces you to pay attention differently. You notice how people move, where things break down, where they just work. That same eye is what I bring back to the screen.
+                  </p>
+                </div>
+              </div>
+
               {/* Bio + Principles — three column */}
               <div style={{ padding: "32px 0", borderBottom: "1px solid var(--divider)", display: "grid", gridTemplateColumns: "clamp(120px, 14vw, 200px) 1fr 1fr", gap: "0 clamp(24px, 5vw, 72px)", alignItems: "start" }} className="rsp-stack">
-                <p style={LABEL}>Hi there!</p>
+                <p style={LABEL}>How I think</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                   <p style={{ ...LABEL, color: "var(--c-primary)", fontSize: 15, fontWeight: 600 }}>How I got into design</p>
                   <p style={BODY}>
@@ -78,7 +91,7 @@ export default function AboutPage() {
               </div>
 
               {/* Experience */}
-              <div style={{ ...ROW }} className="rsp-stack">
+              <div style={{ ...ROW, borderBottom: "none" }} className="rsp-stack">
                 <p style={LABEL}>Experience</p>
                 <div style={{ display: "flex", flexDirection: "column" }}>
                   {EXPERIENCE.map((exp, i, arr) => (
@@ -98,13 +111,6 @@ export default function AboutPage() {
               </div>
 
 
-              {/* Outside of design */}
-              <div style={{ ...ROW, borderBottom: "none" }} className="rsp-stack">
-                <p style={LABEL}>I still touch grass</p>
-                <p style={BODY}>
-                  Beyond the screen, you&apos;ll find me somewhere between a new city and a full plate. I travel whenever I can, and food is usually the whole point. There&apos;s something about being somewhere unfamiliar that resets my brain, clears out the noise and makes room for ideas that wouldn&apos;t have surfaced otherwise. The gallery above is a mix of goofy photos of me, places that actually stuck, and meals I still think about.
-                </p>
-              </div>
 
             </div>
           </section>

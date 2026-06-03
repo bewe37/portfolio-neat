@@ -4,7 +4,8 @@ import { useEffect, useRef } from "react"
 
 const SAMPLE_W  = 600
 const SAMPLE_H  = 600
-const MAX_PTS   = 8000
+const MAX_PTS_MOBILE  = 8000
+const MAX_PTS_DESKTOP = 18000
 const DARKNESS_THRESHOLD = 4
 const BAYER = [
    0,32, 8,40, 2,34,10,42,
@@ -46,6 +47,7 @@ function smoothNoise(x: number, y: number, t: number): number {
 }
 
 function sampleFlower(img: HTMLImageElement): [number, number][] {
+  if (!img.naturalWidth || !img.naturalHeight) return []
   const off = document.createElement("canvas")
   off.width  = SAMPLE_W
   off.height = SAMPLE_H
@@ -70,9 +72,10 @@ function sampleFlower(img: HTMLImageElement): [number, number][] {
       if (darkness * 2.2 > thr) pts.push([x / SAMPLE_W, y / SAMPLE_H])
     }
   }
-  if (pts.length <= MAX_PTS) return pts
-  const step = pts.length / MAX_PTS
-  return Array.from({ length: MAX_PTS }, (_, i) => pts[Math.floor(i * step)])
+  const maxPts = typeof window !== "undefined" && window.innerWidth >= 768 ? MAX_PTS_DESKTOP : MAX_PTS_MOBILE
+  if (pts.length <= maxPts) return pts
+  const step = pts.length / maxPts
+  return Array.from({ length: maxPts }, (_, i) => pts[Math.floor(i * step)])
 }
 
 interface Particle {
@@ -94,22 +97,27 @@ interface Particle {
   scrollDelay: number // 0=sucked first (outer), 1=sucked last (inner)
 }
 
-// module-level cache so the image is only fetched once across re-mounts
-let cachedRosePoints: [number, number][] | null = null
-let roseLoadPromise: Promise<[number, number][]> | null = null
+// module-level cache — keyed by resolution so desktop/mobile get their own sample
+const cachedRosePoints: Record<string, [number, number][]> = {}
+let roseImgPromise: Promise<HTMLImageElement> | null = null
 
 function loadRosePoints(): Promise<[number, number][]> {
-  if (cachedRosePoints) return Promise.resolve(cachedRosePoints)
-  if (roseLoadPromise) return roseLoadPromise
-  roseLoadPromise = new Promise(resolve => {
+  const isDesktop = typeof window !== "undefined" && window.innerWidth >= 768
+  const key = isDesktop ? "desktop" : "mobile"
+  if (cachedRosePoints[key]) return Promise.resolve(cachedRosePoints[key])
+  const imgPromise = roseImgPromise ?? (roseImgPromise = new Promise(resolve => {
     const img = new Image()
-    img.onload = () => {
-      cachedRosePoints = sampleFlower(img)
-      resolve(cachedRosePoints)
-    }
+    img.onload = () => resolve(img)
+    img.onerror = () => resolve(img)
     img.src = "/roses.png"
+    // Already cached and decoded synchronously in some browsers
+    if (img.complete && img.naturalWidth > 0) resolve(img)
+  }))
+  return imgPromise.then(img => {
+    const pts = sampleFlower(img)
+    cachedRosePoints[key] = pts
+    return pts
   })
-  return roseLoadPromise
 }
 
 export default function HeroParticles({ hovered, scrollProgress = 0 }: { hovered: boolean; scrollProgress?: number }) {

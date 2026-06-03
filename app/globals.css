@@ -346,6 +346,8 @@ a {
   /* Project folder: swap carousel for card list */
   .rsp-hide-mobile  { display: none !important; }
   .hero-tagline { pointer-events: none !important; cursor: default !important; }
+  .hero-tagline .hero-beautiful { pointer-events: auto !important; cursor: pointer !important; }
+  .project-badge-img { height: 16px !important; }
   .rsp-mobile-only  { display: flex !important; }
   .rsp-show-mobile { display: flex !important; flex-direction: column !important; }
   .rsp-show-mobile-grid { display: grid !important; }
