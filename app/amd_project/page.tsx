@@ -16,11 +16,12 @@ export default function AmdProject() {
       sections={[
         {
           label: "Overview",
+          title: "No system, no standards, and a full redesign on the horizon.",
           body: "When I joined AMD's UX team, the product didn't have a shared design foundation. Designers organized files differently, colors were applied inconsistently, and components varied from screen to screen. The team was also preparing for a full software redesign, which meant the inconsistency wasn't just a current problem. It was about to be a much bigger one. I took on building the design system from the ground up, not as a cleanup effort, but as the structural layer the redesign would be built on top of.",
         },
         {
           label: "Goals",
-          title: "What the system needed to do.",
+          title: "Three things it had to solve.",
           body: "With a clear direction established, I outlined three goals the design system would need to support:",
           contents: [
             {
@@ -48,15 +49,15 @@ export default function AmdProject() {
         },
         {
           label: "Audit",
-          title: "Two problems, one root cause.",
+          title: "Auditing the existing product before building anything.",
           images:      ["/colorMismatch.png", "/inconsistentStyling.png"],
           imageLabels: ["Inconsistent color application", "Inconsistent component styling"],
-          body:   "Two issues surfaced immediately. Colors had no shared source of truth — the same UI state could look different depending on who built it, creating a broken visual hierarchy that made the product feel unreliable. Components had the same problem. Buttons alone varied across screens in corner radius, spacing, and weight, with no documented standard to reference. Without a governance layer, every designer made independent decisions, and the product drifted further from consistency with each new screen.",
+          body:   "Before building anything new, I audited the current product to understand what we were working with. Two issues surfaced immediately. Colors had no shared source of truth — the same UI state could look different depending on who built it, creating a broken visual hierarchy. Components had the same problem. Buttons alone varied across screens in corner radius, spacing, and weight, with no documented standard to reference. Without a governance layer, every designer made independent decisions, and the product drifted further from consistency with each new screen.",
         },
         {
           label: "Design Foundation",
-          title: "Building from the ground up.",
-          body:  "Instead of patching these inconsistencies one by one, I stepped back to understand the deeper pattern behind them. This shift in perspective allowed me to move beyond surface-level fixes and focus on building a more intentional, system-driven solution.",
+          title: "Starting with tokens, not components.",
+          body:  "Patching individual inconsistencies wouldn't hold. The root issue was that nothing shared a source of truth. I started by establishing the token layer first, so everything built on top of it would inherit the same foundation.",
           contents: [
             {
               image: "/primitiveTokens.png",
@@ -81,31 +82,32 @@ export default function AmdProject() {
         },
         {
           label: "Component Library",
+          title: "Building the components on top of the token layer.",
           contents: [
             {
               image:  "/ComponentAnatomy.png",
-              title:  "Identifying common components.",
-              body:   "As we explored different design styles, I started building the foundational components of the design system, beginning with essentials like buttons and the navigation bar.",
+              title:  "Starting with the essentials.",
+              body:   "I began with the most-used components — buttons, navigation, inputs — and built outward as designs got stakeholder approval. Starting small kept the system manageable and let me validate the token layer before scaling.",
             },
             {
               image:  "/CommonComponents.png",
-              title:  "Dissecting the designs.",
-              body:   "As the project progressed and designs began receiving approval from stakeholders, I gradually expanded the design system to include additional UI patterns and refined them further. Complex UI components often need to be further broken down to improve flexibility and maintainability.",
+              title:  "Breaking complex components down.",
+              body:   "As more patterns were approved, I expanded the library and decomposed complex components into smaller, reusable parts. This improved flexibility and made the system easier to maintain as it grew.",
             },
             {
               image:  "/ApplyFoundationalDesignTokens.png",
-              title:  "Applying foundational design tokens.",
-              body:   "Foundational design tokens define core properties such as spacing, radius, and typography. As the system matured, I progressively defined the rules behind each token. For example, which radius value belongs to which level of nesting, and how spacing scales across component sizes. By applying these tokens consistently, updates became easier to make at scale without breaking visual harmony across the product.",
+              title:  "Tokens all the way down.",
+              body:   "Every component references tokens, never hardcoded values. As the system matured, I defined the rules behind each one — which radius applies at which nesting level, how spacing scales across sizes. Updates propagate everywhere without breaking anything.",
             },
             {
               image:  "/ColorStructure.png",
-              title:  "Applying proper color structure.",
-              body:   "With the help of pre-defined color tokens, I could easily assign colors to components according to their semantic role.",
+              title:  "Color assigned by role, not by eye.",
+              body:   "With semantic color tokens in place, assigning color to components became a decision about intent rather than picking a hex. The same component automatically adapts when the token it references changes.",
             },
             {
               image: "/Slots.jpg",
-              title: "Supporting multiple variants.",
-              body:  "Instead of creating endless variants that would complicate the system, I chose to use the slot method. By treating slots as flexible placeholders, I gave the components room to adapt their content while still maintaining a consistent and polished appearance.",
+              title: "Slots instead of endless variants.",
+              body:  "Rather than creating a new variant for every content combination, I used slots as flexible placeholders. Components stay consistent in structure while adapting their content without multiplying the variant count.",
             },
           ],
         },
