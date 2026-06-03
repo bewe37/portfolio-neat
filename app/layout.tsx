@@ -41,6 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={cn("font-sans", geist.variable, playfair.variable, gabriela.variable)}>
       <head>
+        <link rel="preload" href="/roses.png" as="image" />
         <script dangerouslySetInnerHTML={{ __html: `(function(){if(localStorage.getItem('theme')==='light')document.body&&document.body.classList.remove('dark')})()` }} />
       </head>
       <body className="dark">

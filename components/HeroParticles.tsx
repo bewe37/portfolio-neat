@@ -309,11 +309,12 @@ export default function HeroParticles({ hovered, scrollProgress = 0 }: { hovered
               }
             }
 
-            // Lerp back toward idle — zero velocity when returning from suction
+            // Lerp back toward idle — faster in first 2s so particles settle quickly on load
             p.vx = 0
             p.vy = 0
-            p.x += (idleX - p.x) * 0.008
-            p.y += (idleY - p.y) * 0.008
+            const lerpSpeed = t < 2 ? 0.06 - t * 0.026 : 0.008
+            p.x += (idleX - p.x) * lerpSpeed
+            p.y += (idleY - p.y) * lerpSpeed
           }
         }
 

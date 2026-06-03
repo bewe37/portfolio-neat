@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
+import { playClick } from "@/lib/click-sound"
 
 type ImageTag = "food" | "me" | "places"
 interface GalleryImage { src: string; tag?: ImageTag }
@@ -413,7 +414,7 @@ export function GalleryCanvas({ fullPage = false, showFilters = false, showClose
           borderRadius: 999, padding: "4px", border: "1px solid rgba(255,255,255,0.1)",
         }}>
           {FILTERS.map(f => (
-            <button key={f.value} onClick={() => setActiveFilter(f.value)} style={{
+            <button key={f.value} onClick={() => { playClick(); setActiveFilter(f.value) }} style={{
               fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 500,
               letterSpacing: "-0.01em", textTransform: "none",
               padding: "6px 16px", borderRadius: 999, border: "none",
@@ -434,13 +435,13 @@ export function GalleryCanvas({ fullPage = false, showFilters = false, showClose
       )}
 
       {showClose ? (
-        <Link href="/about" style={{ ...btnStyle, textDecoration: "none" }}>
+        <Link href="/about" onClick={() => playClick()} style={{ ...btnStyle, textDecoration: "none" }}>
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
             <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
           </svg>
         </Link>
       ) : (
-        <Link href="/gallery" style={{ ...btnStyle, textDecoration: "none" }}>
+        <Link href="/gallery" onClick={() => playClick()} style={{ ...btnStyle, textDecoration: "none" }}>
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
             <path d="M1 6V1h5M10 1h5v5M15 10v5h-5M6 15H1v-5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
