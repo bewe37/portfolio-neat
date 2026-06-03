@@ -138,7 +138,7 @@ export default function HomePage() {
           pointerEvents:  "none",
           userSelect:     "none",
         }}>
-          <FadeUp delay={0.15} style={{ width: "auto", display: "flex", justifyContent: "center" }}>
+          <FadeUp delay={0.05} style={{ width: "auto", display: "flex", justifyContent: "center" }}>
             <p
               onMouseEnter={() => setHeroHovered(true)}
               onMouseLeave={() => setHeroHovered(false)}
@@ -237,7 +237,7 @@ export default function HomePage() {
 
         {/* ── Work container ───────────────────────────────────────────── */}
         <div id="work" style={{ position: "relative" }}>
-          <FadeUp delay={0.5}>
+          <FadeUp delay={0.2}>
             <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", paddingTop: 120, paddingBottom: 16 }}>
               <p style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.01em", margin: 0 }}>
                 Selected work
@@ -248,13 +248,13 @@ export default function HomePage() {
             </div>
           </FadeUp>
 
-          <FadeUp delay={0.6}>
+          <FadeUp delay={0.3}>
             <section style={{ paddingBottom: 64, display: "flex", flexDirection: "column", gap: 24 }}>
               <ProjectCards projects={PROJECTS} />
             </section>
           </FadeUp>
 
-          <FadeUp delay={0.7}>
+          <FadeUp delay={0.4}>
             <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", paddingBottom: 16 }}>
               <p style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.01em", margin: 0 }}>
                 Built on Vibes ~

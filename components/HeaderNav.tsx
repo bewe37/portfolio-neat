@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useLayoutEffect, useState, useEffect } from "react"
+import { useRef, useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { playClick } from "@/lib/click-sound"
@@ -23,13 +23,19 @@ export default function HeaderNav() {
     return pathname.startsWith(href)
   })
 
-  useLayoutEffect(() => {
-    const nav  = navRef.current
-    const wrap = wrapRefs.current[activeIdx]
-    if (!nav || !wrap) { setPill(null); return }
-    const navRect  = nav.getBoundingClientRect()
-    const wrapRect = wrap.getBoundingClientRect()
-    setPill({ left: wrapRect.left - navRect.left, width: wrapRect.width })
+  useEffect(() => {
+    let raf: number
+    function measure() {
+      const nav  = navRef.current
+      const wrap = wrapRefs.current[activeIdx]
+      if (!nav || !wrap) { setPill(null); return }
+      const navRect  = nav.getBoundingClientRect()
+      const wrapRect = wrap.getBoundingClientRect()
+      if (wrapRect.width === 0) { raf = requestAnimationFrame(measure); return }
+      setPill({ left: wrapRect.left - navRect.left, width: wrapRect.width })
+    }
+    raf = requestAnimationFrame(measure)
+    return () => cancelAnimationFrame(raf)
   }, [activeIdx])
 
   // Close on outside click
