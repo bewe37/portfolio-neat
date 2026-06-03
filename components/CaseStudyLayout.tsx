@@ -41,6 +41,7 @@ interface CardItem  { icon?: string; title: string; body: string }
 
 interface Section {
   label: string
+  tocLabel?: string
   title?: string
   href?: string
   body?: string
@@ -488,7 +489,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={VIEWPORT}
         transition={{ ...FADE, delay: bi * 0.05 }}
-        style={{ display: "flex", flexDirection: "column", gap: 16, borderTop: "1px solid var(--border)", paddingTop: 20 }}
+        style={{ display: "flex", flexDirection: "column", gap: 16, borderTop: "1px solid var(--border)", paddingTop: 20, height: "100%", justifyContent: "space-between" }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           {block.icon && (
@@ -1000,7 +1001,7 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
 function MultiHighlight({ contents, marginTop }: { contents: ContentBlock[]; marginTop: number }) {
   return (
     <div style={{ marginTop }}>
-      <div className="rsp-mh-desktop" style={{ display: "grid", gridTemplateColumns: `repeat(${contents.length}, 1fr)`, gap: 16 }}>
+      <div className="rsp-mh-desktop" style={{ display: "grid", gridTemplateColumns: `repeat(${contents.length}, 1fr)`, gap: 16, alignItems: "stretch", gridAutoRows: "1fr" }}>
         {contents.map((block, bi) => renderContentBlock(block, bi))}
       </div>
       <div className="rsp-mh-mobile" style={{ display: "none", flexDirection: "column", gap: 12 }}>
@@ -1859,7 +1860,7 @@ export default function CaseStudyLayout({
 
   const tocItems = [
     ...(overview && (!password || !unlocked) ? [{ label: "Context", id: "sec-overview-block", hide: false }] : []),
-    ...(!password || !unlocked ? sections.map((s, si) => ({ label: s.label, id: `sec-s${si}`, hide: s.hideToc })).filter(t => !t.hide) : []),
+    ...(!password || !unlocked ? sections.map((s, si) => ({ label: s.tocLabel ?? s.label, id: `sec-s${si}`, hide: s.hideToc })).filter(t => !t.hide) : []),
     ...(unlocked && lockedSections ? lockedSections.map((s, si) => ({ label: s.label, id: `sec-l${si}`, hide: s.hideToc })).filter(t => !t.hide) : []),
   ]
 
