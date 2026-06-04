@@ -55,7 +55,7 @@ export default function AboutPage() {
 
               {/* I still touch grass — right after gallery */}
               <div style={{ ...ROW }} className="rsp-stack">
-                <p style={LABEL}>Still touch grass</p>
+                <p style={LABEL}>Still touch grass · (꩐ꨮ‿꩐ꨮ)</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                   <p style={BODY}>
                     Hi, I&apos;m Bryan, a product designer who cares too much about the details. I work on complicated tools and dense software, the kind that people depend on every day but rarely feel good to use. Making those feel human is what I do.
@@ -68,7 +68,7 @@ export default function AboutPage() {
 
               {/* Bio + Principles — three column */}
               <div style={{ padding: "32px 0", borderBottom: "1px solid var(--divider)", display: "grid", gridTemplateColumns: "clamp(120px, 14vw, 200px) 1fr 1fr", gap: "0 clamp(24px, 5vw, 72px)", alignItems: "start" }} className="rsp-stack">
-                <p style={LABEL}>How I think</p>
+                <p style={LABEL}>How I think · (𖡎ᝰ𖡎)</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                   <p style={{ ...LABEL, color: "var(--c-primary)", fontSize: 15, fontWeight: 600 }}>How I got into design</p>
                   <p style={BODY}>
@@ -92,7 +92,7 @@ export default function AboutPage() {
 
               {/* Experience */}
               <div style={{ ...ROW, borderBottom: "none" }} className="rsp-stack">
-                <p style={LABEL}>Experience</p>
+                <p style={LABEL}>Experience · (⊛𓎟⊛)</p>
                 <div style={{ display: "flex", flexDirection: "column" }}>
                   {EXPERIENCE.map((exp, i, arr) => (
                     <div key={i} style={{
