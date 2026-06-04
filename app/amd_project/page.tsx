@@ -56,8 +56,6 @@ export default function AmdProject() {
         },
         {
           label: "Design Foundation",
-          title: "Starting with tokens, not components.",
-          body:  "Patching individual inconsistencies wouldn't hold. The root issue was that nothing shared a source of truth. I started by establishing the token layer first, so everything built on top of it would inherit the same foundation.",
           contents: [
             {
               image: "/primitiveTokens.png",
@@ -82,7 +80,6 @@ export default function AmdProject() {
         },
         {
           label: "Component Library",
-          title: "Building the components on top of the token layer.",
           contents: [
             {
               image:  "/ComponentAnatomy.png",
