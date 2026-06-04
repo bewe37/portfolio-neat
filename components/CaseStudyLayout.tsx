@@ -1020,10 +1020,13 @@ function MobileBackBar({ href }: { href: string }) {
       className="rsp-back-mobile"
       style={{
         display: "none", alignItems: "center", gap: 8,
-        padding: "56px 20px 12px",
+        position: "fixed", top: 20, left: 20, zIndex: 1001,
         fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500,
         letterSpacing: "-0.01em", color: "var(--c-primary)",
         textDecoration: "none",
+        background: "var(--bg)", border: "1px solid var(--border)",
+        borderRadius: 999, padding: "10px 16px",
+        backdropFilter: "blur(8px)",
       }}
     >
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
