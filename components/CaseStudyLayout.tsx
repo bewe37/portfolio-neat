@@ -723,7 +723,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
               fontWeight:    400,
               color:         "var(--c-body)",
               letterSpacing: "-0.01em",
-              lineHeight:    1.85,
+              lineHeight:    1.65,
               margin:        0,
               whiteSpace:    "pre-line",
             }}>
@@ -780,7 +780,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
         )
       })()}
       {hasMedia && block.insight && (
-        <div className="rsp-stack" style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: 32, alignItems: "start" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 24, alignItems: "stretch" }}>
           <MediaGrid srcs={allImages.length ? allImages : undefined} videos={allVideos.length ? allVideos : undefined} />
           <div style={{
             display:    "flex",
@@ -1910,7 +1910,7 @@ export default function CaseStudyLayout({
         className="rsp-cs-grid"
         style={{
           width:               "100%",
-          maxWidth:            1360,
+          maxWidth:            1200,
           display:             "grid",
           gridTemplateColumns: "260px 1fr",
           alignItems:          "start",

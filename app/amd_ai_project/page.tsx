@@ -82,7 +82,7 @@ export default function AmdAiProject() {
         {
           label: "The Goals",
           title: "The overlay needed a new job.",
-          body: "The usability sessions made one thing clear: the overlay wasn't just missing features, it was missing its purpose. It's the only part of AMD Software users reach for mid-session, when they need a quick answer or a fast adjustment without breaking focus. Fixing the full application wouldn't solve that. The overlay needed to be rethought on its own terms and two goals shaped the direction:",
+          body: "The usability sessions made one thing clear: the overlay wasn't missing features, it was missing its purpose. It's the only part of AMD Software users reach for mid-session, when they need a quick answer or fast adjustment without breaking focus. Fixing the full application wouldn't solve that, so the overlay needed to be rethought on its own terms. Two goals shaped the direction:",
           contents: [
             {
               highlight: true,
@@ -146,7 +146,7 @@ export default function AmdAiProject() {
           contents: [
             {
               title:  "Not just text. A response built around what you need.",
-              body:   "The chat is built around one principle: don't make users think. Describe what's wrong and the AI reads live hardware data to figure out the cause. Depending on what it finds, the response takes one of two forms. If the issue is performance-related, it surfaces the relevant metrics directly in the chat so users can see what's actually happening. If there's a feature that addresses it, the response includes an action button to enable it on the spot. No navigation, no settings hunting.",
+              body:   "The chat is built on one principle: don't make users think. Describe what's wrong, and the AI reads live hardware data to find the cause, then either surfaces the relevant metrics in the chat or gives you an action button to fix it on the spot. No navigation, no settings hunting.",
               images:      ["/Metrics.png", "/Features.png"],
               imageLabels: ["Hardware metrics response", "Feature suggestion with action"],
             },
@@ -160,8 +160,17 @@ export default function AmdAiProject() {
               title:  "Save the answer, not just the moment.",
               body:   "Every AI response can be pinned directly as a widget. Instead of repeating the same question next session, the control is already there. The chat stays focused on one-off queries while the panel builds up over time into something personal.",
               videos:      ["/ChatPin.mp4"],
-              images:      ["/Pinned Widgets.png"],
-              imageLabels: ["Pin directly from the chat", "Lives in your panel every session"],
+            },
+          ],
+        },
+        {
+          label: "Notifications",
+          hideToc: true,
+          contents: [
+            {
+              title:  "A home for everything the system wants to tell you.",
+              body:   "Alerts used to interrupt or disappear before users could act on them. I gave the panel a dedicated notification page where system messages, driver updates, and performance warnings collect in one place, ready to review and act on whenever it suits the session.",
+              videos: ["/DedicatedNotif.mp4"],
             },
           ],
         },
@@ -210,21 +219,21 @@ export default function AmdAiProject() {
         {
           label: "Outcome",
           title: "From exploration to direction.",
-          body: "The overlay designs were presented to stakeholders and received their support, but the real impact was in how the work reframed the team's thinking.",
+          body: "The designs earned stakeholder support, but the real impact was how the work reframed the team's thinking.",
           contents: [
             {
               highlight: true,
               minimal:   true,
               icon:      "stack",
               title:     "AI as a layer, not the foundation.",
-              body:      "Early explorations positioned AI as the primary interface. The design process made a clearer argument: direct control had to come first, and AI worked best on top of it, not as a replacement.",
+              body:      "Early explorations put AI first. The process made a clearer case: direct control comes first, with AI layered on top, not as a replacement.",
             },
             {
               highlight: true,
               minimal:   true,
               icon:      "compass",
               title:     "Navigation became the primary factor.",
-              body:      "The thinking carried into the Full View. The question shifted from how do we surface everything through AI to how do we design a system where users always know where they are and can get there without friction.",
+              body:      "That thinking carried into the Full View, shifting the question from surfacing everything through AI to helping users always know where they are.",
             },
           ],
         },
