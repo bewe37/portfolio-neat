@@ -37,18 +37,18 @@ export default function AmdAiProject() {
             {
               title: "Ask anything, get a fix. Then pin it.",
               body:  "Describe what's wrong. The AI reads your live hardware data, surfaces a one-tap fix, and lets you pin it straight to your panel.",
-              videos: ["/ChatPin.mp4"],
+              videos: ["/ChatDemoTop.mp4"],
             },
             {
               title: "Your controls, your panel.",
               body:  "Everything you've pinned lives in one place, ready every time you open the overlay.",
-              videos: ["/PinnedPanel.mp4"],
+              videos: ["/CollapsePanel.mp4"],
               objectPosition: "left center",
             },
             {
               title: "Built for mid-session.",
               body:  "Recording, graphics tuning, and your most-used settings, without ever leaving your game.",
-              videos: ["/InGameIntegration.mp4"],
+              videos: ["/InGameDemoTop.mp4"],
               objectPosition: "left center",
             },
           ],
@@ -57,7 +57,7 @@ export default function AmdAiProject() {
           label: "Research",
           lineBefore: true,
           title: "From control panel to read-only dashboard.",
-          body:  "Two versions ago, the overlay was a control panel. Users could adjust settings, toggle features, and act on their system without leaving their game. Then, over a series of updates, those controls were gradually removed in favor of a cleaner, more focused metrics display. Each update trimmed a little more until, by the current version, every interactive element was gone. What remained was a read-only dashboard: it could show you your GPU temperature or frame rate, but it couldn't let you do anything about them. The overlay had quietly shifted from a tool for doing into a screen for watching.",
+          body:  "Two versions ago, the overlay was a control panel. You could adjust settings, toggle features, and act on your system without leaving your game. Update by update, those controls were trimmed away in favor of a cleaner metrics display, until every interactive element was gone. What remained was read-only: it could show your GPU temperature or frame rate, but not let you do anything about them. The overlay had quietly shifted from a tool for doing into a screen for watching.",
           images:      ["/OldOverlay.png", "/MetricsIssue.png"],
           imageLabels: ["Previous overlay with direct controls", "Current version, metrics only"],
         },
@@ -103,7 +103,7 @@ export default function AmdAiProject() {
         {
           label: "Initial Exploration",
           title: "Starting with a familiar pattern.",
-          body:  "The first concept introduced a traditional multi-message chatbot within the Overlay View. Users could engage in threaded conversations and refine requests over time. While familiar, the interface quickly became visually dense and required users to manage chat history in a space meant for quick interactions.",
+          body:  "The first concept introduced a traditional multi-message chatbot within the Overlay View. Users could engage in threaded conversations and refine requests over time.",
           contents: [
             {
               image:        "/InitialChat.png",
@@ -172,7 +172,7 @@ export default function AmdAiProject() {
             {
               title:  "For users who know what they want.",
               body:   "Not everyone needs the AI to get started. Power users can skip the chat entirely, browse the widget library by category, find the control, and add it directly to their panel.",
-              videos: ["/ManuallyAddedWidget.mp4"],
+              videos: ["/AddManual.mp4"],
             },
           ],
         },
@@ -193,7 +193,7 @@ export default function AmdAiProject() {
             {
               title:  "Start recording without leaving the game.",
               body:   "Screen recording is one of the most-used features in AMD Software, but getting to it meant leaving the game entirely. I brought it directly into the in-game mode so users can start capturing with a single tap, right from the overlay.",
-              videos: ["/ScreenRecording.mp4"],
+              videos: ["/RecordInGame.mp4"],
             },
           ],
         },

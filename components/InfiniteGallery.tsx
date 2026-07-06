@@ -93,16 +93,13 @@ export function GalleryCanvas({ fullPage = false, showFilters = false, showClose
   const [activeFilter, setActiveFilter] = useState<ImageTag | "all">("all")
   const filterRef        = useRef<ImageTag | "all">("all")
   const pendingFilterRef = useRef<ImageTag | "all">("all")
-  const rebuildRef = useRef<(() => void) | null>(null)
-  const alphaRef      = useRef(1)
-  const fadeStateRef  = useRef<"idle" | "out" | "in">("idle")
+  const flipRef       = useRef<(() => void) | null>(null)
   const mountedRef    = useRef(false)
 
   useEffect(() => {
     if (!mountedRef.current) { mountedRef.current = true; return }
     pendingFilterRef.current = activeFilter
-    if (fadeStateRef.current !== "idle") return
-    fadeStateRef.current = "out"
+    flipRef.current?.()
   }, [activeFilter])
 
   useEffect(() => {
@@ -227,26 +224,58 @@ export function GalleryCanvas({ fullPage = false, showFilters = false, showClose
       img.src = item.src
     })
 
-    interface Card { imgIdx: number; x: number; y: number }
+    // imgIdx = currently shown image; nextIdx = image to swap to at flip midpoint.
+    // flip 0 = face fully visible, 1 = edge-on; delay staggers the flip across the grid.
+    interface Card { imgIdx: number; nextIdx: number; x: number; y: number; row: number; col: number; flip: number; delay: number; swapped: boolean }
     let cards: Card[] = []
     const TILE_W = COLS * GAP_X
     const TILE_H = ROWS * GAP_Y
 
+    function filteredFor(f: ImageTag | "all") {
+      return IMAGES.map((img, i) => ({ img, i })).filter(({ img }) => f === "all" || img.tag === f)
+    }
+
     function buildCards() {
-      const f = filterRef.current
-      const filtered = IMAGES.map((img, i) => ({ img, i })).filter(({ img }) => f === "all" || img.tag === f)
+      const filtered = filteredFor(filterRef.current)
       cards = []
       let idx = 0
       for (let row = 0; row < ROWS; row++) {
         for (let col = 0; col < COLS; col++) {
           const item = filtered[idx % filtered.length]
-          cards.push({ imgIdx: item.i, x: col * GAP_X, y: row * GAP_Y })
+          cards.push({ imgIdx: item.i, nextIdx: item.i, x: col * GAP_X, y: row * GAP_Y, row, col, flip: 0, delay: 0, swapped: true })
           idx++
         }
       }
     }
     buildCards()
-    rebuildRef.current = buildCards
+
+    // Flip animation state. When active, each card rotates edge-on, swaps its
+    // image at the midpoint, then rotates back — staggered diagonally so the
+    // reveal ripples across the deck like a card fan.
+    let flipActive = false
+    let flipT = 0
+    const FLIP_SPEED = 0.022   // per-frame progress (~lower = slower)
+    const FLIP_STAGGER = 0.16  // extra time budget consumed by the diagonal stagger
+
+    function startFlip() {
+      const next = filteredFor(pendingFilterRef.current)
+      const maxDiag = (ROWS - 1) + (COLS - 1)
+      cards.forEach(card => {
+        const item = next[(card.row * COLS + card.col) % next.length]
+        // start the new flip from whatever image is currently on screen
+        card.imgIdx = card.swapped ? card.nextIdx : card.imgIdx
+        card.nextIdx = item.i
+        card.swapped = false
+        card.flip = 0
+        // Diagonal wave: top-left flips first, bottom-right last.
+        card.delay = ((card.row + card.col) / maxDiag) * FLIP_STAGGER
+      })
+      filterRef.current = pendingFilterRef.current
+      flipActive = true
+      flipT = 0
+      idle = false
+    }
+    flipRef.current = startFlip
 
     function getCardW(imgIdx: number) {
       const img = imgs[imgIdx]
@@ -264,19 +293,36 @@ export function GalleryCanvas({ fullPage = false, showFilters = false, showClose
       ctx2d.closePath()
     }
 
-    function drawCard(card: Card, wx: number, wy: number) {
-      const img = imgs[card.imgIdx]; if (!img) return
-      const cw = getCardW(card.imgIdx)
-      const x = wx - cw/2, y = wy - CARD_H/2
-      ctx2d.save()
-      ctx2d.shadowColor = "rgba(0,0,0,0.35)"; ctx2d.shadowBlur = 14; ctx2d.shadowOffsetY = 4
-      ctx2d.save(); roundRect(x,y,cw,CARD_H,6); ctx2d.clip()
-      ctx2d.shadowColor = "transparent"
+    function drawImageCover(img: HTMLImageElement, x: number, y: number, cw: number) {
       const ar = img.naturalWidth/img.naturalHeight, cardAr = cw/CARD_H
       let sw=cw,sh=CARD_H,sx=x,sy=y
       if (ar>cardAr) { sw=CARD_H*ar; sx=x-(sw-cw)/2 } else { sh=cw/ar; sy=y-(sh-CARD_H)/2 }
       ctx2d.drawImage(img,sx,sy,sw,sh)
-      ctx2d.restore(); ctx2d.restore()
+    }
+
+    function drawCard(card: Card, wx: number, wy: number) {
+      // During a flip, scale horizontally to fake a Y-axis rotation. The image
+      // shown swaps from imgIdx -> nextIdx exactly when the card is edge-on.
+      const flipping = card.flip > 0.001
+      const shown = card.swapped ? card.nextIdx : card.imgIdx
+      const img = imgs[shown]; if (!img) return
+      const cw = getCardW(shown)
+      ctx2d.save()
+      if (flipping) {
+        // scaleX goes 1 -> 0 (edge-on) -> 1; slight brightness dip near the edge
+        const scaleX = Math.max(0.02, Math.abs(Math.cos(card.flip * Math.PI)))
+        ctx2d.translate(wx, wy)
+        ctx2d.scale(scaleX, 1)
+        ctx2d.translate(-wx, -wy)
+        ctx2d.globalAlpha = 0.55 + 0.45 * scaleX
+      }
+      const x = wx - cw/2, y = wy - CARD_H/2
+      ctx2d.shadowColor = "rgba(0,0,0,0.35)"; ctx2d.shadowBlur = 14; ctx2d.shadowOffsetY = 4
+      ctx2d.save(); roundRect(x,y,cw,CARD_H,6); ctx2d.clip()
+      ctx2d.shadowColor = "transparent"
+      drawImageCover(img, x, y, cw)
+      ctx2d.restore()
+      ctx2d.restore()
     }
 
     let ox = 0, oy = 0
@@ -303,23 +349,27 @@ export function GalleryCanvas({ fullPage = false, showFilters = false, showClose
       ox = ((ox%TILE_W)+TILE_W)%TILE_W
       oy = ((oy%TILE_H)+TILE_H)%TILE_H
 
-      // Drive filter fade inside the RAF loop — no setInterval needed
-      const fs = fadeStateRef.current
-      if (fs === "out") {
-        alphaRef.current = Math.max(0, alphaRef.current - 0.08)
-        if (alphaRef.current <= 0) {
-          filterRef.current = pendingFilterRef.current
-          rebuildRef.current?.()
-          fadeStateRef.current = "in"
+      // Drive the staggered card-flip inside the RAF loop — no setInterval needed
+      if (flipActive) {
+        flipT += FLIP_SPEED
+        let allDone = true
+        for (const card of cards) {
+          // local progress 0..1 once this card's stagger delay has elapsed
+          const local = Math.min(1, Math.max(0, (flipT - card.delay) / (1 - FLIP_STAGGER)))
+          card.flip = local < 1 ? local : 0
+          // swap image at the edge-on midpoint
+          if (!card.swapped && local >= 0.5) card.swapped = true
+          if (local < 1) allDone = false
         }
-        idle = false
-      } else if (fs === "in") {
-        alphaRef.current = Math.min(1, alphaRef.current + 0.06)
-        if (alphaRef.current >= 1) fadeStateRef.current = "idle"
+        if (allDone) {
+          // collapse next->current so subsequent layout/getCardW uses final image
+          cards.forEach(c => { c.imgIdx = c.nextIdx; c.flip = 0; c.swapped = true })
+          flipActive = false
+        }
         idle = false
       }
 
-      const isIdle = !dragging && Math.abs(vx)<0.05 && Math.abs(vy)<0.05 && alphaRef.current>=1
+      const isIdle = !dragging && Math.abs(vx)<0.05 && Math.abs(vy)<0.05 && !flipActive
       if (isIdle && idle) return
       idle = isIdle
 
@@ -341,18 +391,17 @@ export function GalleryCanvas({ fullPage = false, showFilters = false, showClose
         ctx2d.fillRect(0, 0, offscreen.width, offscreen.height)
       }
       ctx2d.save(); ctx2d.scale(dpr,dpr)
-      ctx2d.globalAlpha = alphaRef.current
       for (let tx=-1; tx<=Math.ceil(W/TILE_W)+1; tx++) {
         for (let ty=-1; ty<=Math.ceil(H/TILE_H)+1; ty++) {
           for (const card of cards) {
             const sx=card.x+ox-TILE_W+tx*TILE_W, sy=card.y+oy-TILE_H+ty*TILE_H
-            const cw=getCardW(card.imgIdx)
+            const cw=getCardW(card.swapped ? card.nextIdx : card.imgIdx)
             if (sx+cw<-GAP_X||sx>W+GAP_X||sy+CARD_H<-GAP_Y||sy>H+GAP_Y) continue
             drawCard(card, sx+cw/2, sy+CARD_H/2)
           }
         }
       }
-      ctx2d.globalAlpha = 1; ctx2d.restore()
+      ctx2d.restore()
 
       // Don't render until at least a few images are loaded — prevents black flash
       if (loadedCount === 0) return
