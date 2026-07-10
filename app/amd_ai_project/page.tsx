@@ -25,7 +25,7 @@ export default function AmdAiProject() {
         {
           label: "The Problem",
           title: "A passive display in a product that needed action.",
-          body: "The overlay had been reduced to a passive metrics display. To change any setting, users had to leave what they were doing and open the full application, which had its own navigation complexity and usability issues. The result was a product that felt frustrating to use at every level, with no fast path for the actions users needed most.",
+          body: "The overlay had been reduced to a passive metrics display. To change any setting, users had to leave what they were doing and open the full application. There was no fast path for the actions users needed most, and as the research below shows, the full application was no refuge either.",
           image: "/Frustrating.png",
         },
         {
@@ -62,7 +62,7 @@ export default function AmdAiProject() {
           imageLabels: ["Previous overlay with direct controls", "Current version, metrics only"],
         },
         {
-          label: "Research",
+          label: "Usability Sessions",
           hideToc: true,
           title: "Why not just use the full view?",
           body:  "The full application had its own problems. We ran moderated usability sessions with 6 users to understand the scope, and two friction points surfaced consistently.",
@@ -103,12 +103,12 @@ export default function AmdAiProject() {
         {
           label: "Initial Exploration",
           title: "Starting with a familiar pattern.",
-          body:  "The first concept introduced a traditional multi-message chatbot within the Overlay View. Users could engage in threaded conversations and refine requests over time.",
+          body:  "The first concept introduced a traditional multi-message chatbot within the Overlay View. Users could engage in threaded conversations and refine requests over time. It was the obvious answer, and I built it out before taking it to the team.",
           contents: [
             {
               image:        "/InitialChat.png",
               insightTitle: "The familiar pattern came with a hidden cost.",
-              insight:      "Fast actions shouldn't require a conversation. With AI as the only entry point, users had to describe things they could've just tapped.",
+              insight:      "Critique surfaced the flaw: enabling anti-lag meant typing a sentence and waiting for a reply, when a toggle would have been one tap. Fast actions shouldn't require a conversation. With AI as the only entry point, users had to describe things they could've just tapped. I dropped the thread model and started over.",
             },
           ],
         },
@@ -146,7 +146,7 @@ export default function AmdAiProject() {
           contents: [
             {
               title:  "Not just text. A response built around what you need.",
-              body:   "The chat is built on one principle: don't make users think. Describe what's wrong, and the AI reads live hardware data to find the cause, then either surfaces the relevant metrics in the chat or gives you an action button to fix it on the spot. No navigation, no settings hunting.",
+              body:   "I built the chat on one principle: don't make users think. Describe what's wrong, and the AI reads live hardware data to find the cause, then either surfaces the relevant metrics in the chat or gives you an action button to fix it on the spot. No navigation, no settings hunting.",
               images:      ["/Metrics.png", "/Features.png"],
               imageLabels: ["Hardware metrics response", "Feature suggestion with action"],
             },
@@ -158,7 +158,7 @@ export default function AmdAiProject() {
           contents: [
             {
               title:  "Save the answer, not just the moment.",
-              body:   "Every AI response can be pinned directly as a widget. Instead of repeating the same question next session, the control is already there. The chat stays focused on one-off queries while the panel builds up over time into something personal.",
+              body:   "I made every AI response pinnable as a widget. Instead of repeating the same question next session, the control is already there. The chat stays focused on one-off queries while the panel builds up over time into something personal.",
               videos:      ["/ChatPin.mp4"],
             },
           ],
@@ -169,7 +169,7 @@ export default function AmdAiProject() {
           contents: [
             {
               title:  "A home for everything the system wants to tell you.",
-              body:   "Alerts used to interrupt or disappear before users could act on them. I gave the panel a dedicated notification page where system messages, driver updates, and performance warnings collect in one place, ready to review and act on whenever it suits the session.",
+              body:   "Notifications had the same problem as the overlay itself: they told you something was wrong without letting you do anything about it. I gave the panel a dedicated notification page where system messages, driver updates, and performance warnings collect in one place, each one actionable on the spot rather than dismissed and forgotten.",
               videos: ["/DedicatedNotif.mp4"],
             },
           ],
@@ -219,7 +219,7 @@ export default function AmdAiProject() {
         {
           label: "Outcome",
           title: "From exploration to direction.",
-          body: "The designs earned stakeholder support, but the real impact was how the work reframed the team's thinking.",
+          body: "The designs earned support to move forward, but the bigger win was reframing what \"AI as a differentiator\" actually meant: usable beats impressive.",
           contents: [
             {
               highlight: true,
