@@ -18,7 +18,7 @@ const VIBE_PROJECTS = [
     date: "Check em out →",
     description: "A self-initiated archive of every painted utility box found across Toronto — documenting the street artists turning infrastructure into canvas.",
     href: "https://outside-the-box-tau.vercel.app/gallery",
-    cover: "/OTBPortfolio.mp4",
+    cover: "/ThumbnailDarkOTB.mp4",
     coverFit: "contain" as const,
     coverBg: "#ffffff",
     coverPadding: 20,
@@ -60,7 +60,7 @@ const PROJECTS = [
     date: "May - Dec 2025",
     description: "Designing a conversational AI assistant embedded in AMD's Adrenalin software for millions of gamers.",
     href: "/amd_ai_project",
-    cover: "/ThumbnailAMDAI.mp4",
+    cover: "/ThumbnailNewAMD.mp4",
     badge: "/amdchip.svg",
   },
   {
