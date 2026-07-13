@@ -897,7 +897,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
               fontWeight:    400,
               color:         "var(--c-body)",
               letterSpacing: "-0.01em",
-              lineHeight:    1.65,
+              lineHeight:    1.75,
               margin:        0,
               whiteSpace:    "pre-line",
             }}>
@@ -968,26 +968,26 @@ function renderContentBlock(block: ContentBlock, bi: number) {
               <line x1="9" y1="5" x2="9" y2="10.5" stroke="var(--c-primary)" strokeWidth="1.5" strokeLinecap="round" />
               <circle cx="9" cy="13" r="1" fill="var(--c-primary)" />
             </svg>
-            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {block.insightTitle && (
                 <p style={{
                   fontFamily:    "var(--font-sans)",
-                  fontSize:      15,
+                  fontSize:      22,
                   fontWeight:    500,
                   color:         "var(--c-primary)",
-                  lineHeight:    1.4,
+                  lineHeight:    1.2,
                   margin:        0,
-                  letterSpacing: "-0.02em",
+                  letterSpacing: "-0.025em",
                 }}>
                   {block.insightTitle}
                 </p>
               )}
               <p style={{
                 fontFamily:    "var(--font-sans)",
-                fontSize:      15,
+                fontSize:      16,
                 fontWeight:    400,
                 color:         "var(--c-body)",
-                lineHeight:    1.7,
+                lineHeight:    1.75,
                 margin:        0,
                 letterSpacing: "-0.01em",
               }}>
@@ -1004,13 +1004,13 @@ function renderContentBlock(block: ContentBlock, bi: number) {
             <line x1="9" y1="5" x2="9" y2="10.5" stroke="var(--c-primary)" strokeWidth="1.5" strokeLinecap="round" />
             <circle cx="9" cy="13" r="1" fill="var(--c-primary)" />
           </svg>
-          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {block.insightTitle && (
-              <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 500, color: "var(--c-primary)", lineHeight: 1.4, margin: 0, letterSpacing: "-0.02em" }}>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: 22, fontWeight: 500, color: "var(--c-primary)", lineHeight: 1.2, margin: 0, letterSpacing: "-0.025em" }}>
                 {block.insightTitle}
               </p>
             )}
-            <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 400, color: "var(--c-body)", lineHeight: 1.7, margin: 0, letterSpacing: "-0.01em" }}>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: 16, fontWeight: 400, color: "var(--c-body)", lineHeight: 1.75, margin: 0, letterSpacing: "-0.01em" }}>
               {block.insight}
             </p>
           </div>
@@ -1860,7 +1860,7 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
           fontWeight:    400,
           color:         "var(--c-body)",
           letterSpacing: "-0.01em",
-          lineHeight:    1.65,
+          lineHeight:    1.75,
           margin:        `0 0 ${hasTopMedia || sec.cards || sec.bento ? 32 : 0}px`,
           whiteSpace:    "pre-line",
         }}>
