@@ -108,7 +108,7 @@ export default function AmdAiProject() {
             {
               image:        "/InitialChat.png",
               insightTitle: "The familiar pattern came with a hidden cost.",
-              insight:      "Critique surfaced the flaw: enabling anti-lag meant typing a sentence and waiting for a reply, when a toggle would have been one tap. Fast actions shouldn't require a conversation. With AI as the only entry point, users had to describe things they could've just tapped. I dropped the thread model and started over.",
+              insight:      "Critique surfaced the flaw: enabling anti-lag meant typing a sentence when a toggle would have been one tap. Fast actions shouldn't require a conversation, so I dropped the thread model and started over.",
             },
           ],
         },
@@ -210,11 +210,17 @@ export default function AmdAiProject() {
           label: "Final Design",
           hideToc: true,
           title: "Where it all came together.",
-          body:  "Two modes, one overlay. The default view gives users a persistent panel of pinned controls and AMD Chat as the primary entry point. The in-game mode builds on that with an additional modal, surfacing the most-reached-for controls one tap away without interrupting the session.",
-          tabs: [
-            { label: "Default View",  image: "/DefaultView.webp" },
-            { label: "In-Game View",  image: "/InGameView.webp" },
-          ],
+          body:  "Two modes, one overlay. Direct controls, pinned widgets, and AMD Chat live together in a single panel, with everything one tap away without leaving the session.",
+          chapterVideo: {
+            src: "/FinalVid.mp4",
+            chapters: [
+              { time:  0,  label: "Graphic Optimization" },
+              { time:  5,  label: "Screen Recording"     },
+              { time: 13,  label: "Chat Interaction"     },
+              { time: 22,  label: "Pinning"              },
+              { time: 25,  label: "Manually Add Widget"  },
+            ],
+          },
         },
         {
           label: "Outcome",

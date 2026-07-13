@@ -58,6 +58,7 @@ interface Section {
   footnote?: string
   beforeAfter?: [string, string]
   tabs?: { label: string; image: string }[]
+  chapterVideo?: { src: string; chapters: { time: number; label: string }[] }
   imageLabels?: string[]
   hideToc?: boolean
   dividerAfter?: boolean
@@ -406,6 +407,179 @@ function BeforeAfterSlider({ before, after }: { before: string; after: string })
       </div>
       <div style={{ position: "absolute", top: 10, left: 10, padding: "2px 6px", borderRadius: 4, backgroundColor: "rgba(0,0,0,0.4)", color: "white", fontSize: 9, fontWeight: 500, letterSpacing: "0.06em", pointerEvents: "none" }}>BLUEPRINT</div>
       <div style={{ position: "absolute", top: 10, right: 10, padding: "2px 6px", borderRadius: 4, backgroundColor: "rgba(0,0,0,0.4)", color: "white", fontSize: 9, fontWeight: 500, letterSpacing: "0.06em", pointerEvents: "none" }}>FINAL DESIGN</div>
+    </div>
+  )
+}
+
+function ChapterVideo({ src, chapters }: { src: string; chapters: { time: number; label: string }[] }) {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const trackRef = useRef<HTMLDivElement>(null)
+  const [duration, setDuration] = useState(0)
+  const [time, setTime]         = useState(0)
+  const [playing, setPlaying]   = useState(true)
+  const [dragging, setDragging] = useState(false)
+
+  // timeupdate only fires ~4x/sec, which makes the progress bar visibly step.
+  // Drive it off rAF instead, but only while playing and not mid-drag.
+  useEffect(() => {
+    if (!playing || dragging) return
+    let raf = 0
+    const tick = () => {
+      const v = videoRef.current
+      if (v) setTime(v.currentTime)
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [playing, dragging])
+
+  const activeIdx = chapters.reduce((acc, c, i) => (time >= c.time ? i : acc), 0)
+
+  // Equal-width segments: each chapter owns 1/n of the bar regardless of its
+  // duration, so labels always fit. Fill moves through the active segment
+  // proportional to that chapter's own progress (stories-style).
+  const segs = chapters
+    .map((c, i) => ({
+      label: c.label,
+      start: c.time,
+      end:   i < chapters.length - 1 ? chapters[i + 1].time : (duration || c.time + 1),
+    }))
+    .filter(s => duration === 0 || s.start < duration)
+    .map(s => ({ ...s, end: duration > 0 ? Math.min(s.end, duration) : s.end }))
+
+  const segProgress = (i: number) => {
+    if (i < activeIdx) return 100
+    if (i > activeIdx) return 0
+    const s = segs[i]
+    if (!s || s.end <= s.start) return 0
+    return Math.min(100, Math.max(0, ((time - s.start) / (s.end - s.start)) * 100))
+  }
+
+  const seek = useCallback((seconds: number) => {
+    const v = videoRef.current
+    if (!v) return
+    v.currentTime = seconds
+    setTime(seconds)
+  }, [])
+
+  // Map a clientX onto the equal-width segments: which segment the pointer is
+  // in decides the chapter, the position inside it decides the time within.
+  const seekToClientX = useCallback((clientX: number) => {
+    const track = trackRef.current
+    const v = videoRef.current
+    if (!track || !v || !v.duration || segs.length === 0) return
+    const { left, width } = track.getBoundingClientRect()
+    const ratio = Math.min(0.9999, Math.max(0, (clientX - left) / width))
+    const segFloat = ratio * segs.length
+    const idx  = Math.floor(segFloat)
+    const frac = segFloat - idx
+    const s = segs[idx]
+    seek(Math.min(s.start + frac * (s.end - s.start), v.duration - 0.05))
+  }, [seek, segs])
+
+  const togglePlay = useCallback(() => {
+    const v = videoRef.current
+    if (!v) return
+    if (v.paused) { v.play().catch(() => {}) } else { v.pause() }
+  }, [])
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ borderRadius: 8, overflow: "hidden", backgroundColor: "var(--surface)", position: "relative" }}>
+        <video
+          ref={videoRef}
+          src={src}
+          autoPlay muted loop playsInline preload="metadata"
+          onClick={togglePlay}
+          onLoadedMetadata={e => setDuration(e.currentTarget.duration)}
+          onPlay={() => setPlaying(true)}
+          onPause={() => setPlaying(false)}
+          style={{ width: "100%", display: "block", cursor: "pointer" }}
+        />
+        {/* Pause affordance — visible only while paused */}
+        <div style={{
+          position: "absolute", inset: 0, display: "flex", alignItems: "center",
+          justifyContent: "center", pointerEvents: "none",
+          opacity: playing ? 0 : 1, transition: "opacity 0.2s ease",
+        }}>
+          <div style={{
+            width: 56, height: 56, borderRadius: "50%",
+            backgroundColor: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="white">
+              <path d="M5.5 3.3v13.4a.8.8 0 0 0 1.2.7l10.6-6.7a.8.8 0 0 0 0-1.4L6.7 2.6a.8.8 0 0 0-1.2.7Z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      {/* Equal-width chapter segments, stories-style per-segment fill */}
+      <div
+        ref={trackRef}
+        // Pointer capture (not window listeners): the up event is guaranteed to
+        // reach this element even when released off the bar or off the window,
+        // and the handlers exist from first render — no missed-pointerup race
+        // that would leave `dragging` stuck and freeze the rAF-driven fill.
+        onPointerDown={e => {
+          e.preventDefault()
+          e.currentTarget.setPointerCapture(e.pointerId)
+          playClick()
+          setDragging(true)
+          seekToClientX(e.clientX)
+        }}
+        onPointerMove={e => { if (dragging) seekToClientX(e.clientX) }}
+        onPointerUp={() => setDragging(false)}
+        onPointerCancel={() => setDragging(false)}
+        style={{
+          display: "flex", gap: 6, cursor: "pointer",
+          userSelect: "none", touchAction: "none",
+        }}
+      >
+        {segs.map((s, i) => {
+          const isActive = i === activeIdx
+          const fill = segProgress(i)
+          return (
+            <div
+              key={i}
+              style={{
+                flex: 1, minWidth: 0, height: 36, position: "relative",
+                borderRadius: 7, overflow: "hidden",
+                backgroundColor: "var(--surface)",
+                border: "1px solid var(--border)",
+                display: "flex", alignItems: "center",
+                pointerEvents: "none",
+              }}
+            >
+              <div style={{
+                position: "absolute", left: 0, top: 0, bottom: 0, width: `${fill}%`,
+                backgroundColor: "var(--c-primary)",
+                opacity: isActive ? 0.35 : 0.14,
+                transition: dragging ? "none" : "width 0.08s linear",
+              }} />
+              {/* Bright leading edge so the playhead position is unmistakable */}
+              {isActive && fill > 0 && fill < 100 && (
+                <div style={{
+                  position: "absolute", top: 0, bottom: 0, left: `${fill}%`,
+                  width: 2, backgroundColor: "var(--c-primary)", opacity: 0.9,
+                  transform: "translateX(-100%)",
+                  transition: dragging ? "none" : "left 0.08s linear",
+                }} />
+              )}
+              <span className="rsp-chapter-label" style={{
+                position: "relative", padding: "0 12px",
+                fontFamily: "var(--font-sans)", fontSize: 12,
+                fontWeight: isActive ? 600 : 400, letterSpacing: "-0.01em",
+                color: isActive ? "var(--c-primary)" : fill > 0 ? "var(--c-dim)" : "var(--c-faint)",
+                whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+                transition: "color 0.2s ease",
+              }}>
+                {s.label}
+              </span>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }
@@ -1662,7 +1836,7 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
           color:         "var(--c-primary)",
           letterSpacing: "-0.03em",
           lineHeight:    1.2,
-          margin:        `0 0 ${sec.body ? 16 : hasTopMedia || sec.bento || sec.accordion ? 28 : 0}px`,
+          margin:        `0 0 ${sec.body ? 16 : hasTopMedia || sec.bento || sec.accordion || sec.contents ? 32 : 0}px`,
         }}>
           {sec.href ? (
             <Link href={sec.href} onClick={() => playClick()}
@@ -1686,7 +1860,7 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
           fontWeight:    400,
           color:         "var(--c-body)",
           letterSpacing: "-0.01em",
-          lineHeight:    1.85,
+          lineHeight:    1.65,
           margin:        `0 0 ${hasTopMedia || sec.cards || sec.bento ? 32 : 0}px`,
           whiteSpace:    "pre-line",
         }}>
@@ -1705,6 +1879,12 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
       {sec.tabs && (
         <div style={{ marginTop: 32 }}>
           <TabView tabs={sec.tabs} />
+        </div>
+      )}
+
+      {sec.chapterVideo && (
+        <div style={{ marginTop: 32 }}>
+          <ChapterVideo src={sec.chapterVideo.src} chapters={sec.chapterVideo.chapters} />
         </div>
       )}
 
@@ -1763,13 +1943,13 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
 
       {sec.contents && (
         sec.accordion
-          ? <div style={{ marginTop: (hasTopMedia || sec.bento || sec.body) ? 20 : 0 }}>
+          ? <div style={{ marginTop: (hasTopMedia || sec.bento || sec.body) ? 32 : 0 }}>
               <AccordionContents contents={sec.contents} />
             </div>
           : (() => {
               const allHighlight   = sec.contents!.every(b => b.highlight)
               const multiHighlight = allHighlight && sec.contents!.length > 1
-              const mt = (hasTopMedia || sec.bento || sec.body) ? 28 : 0
+              const mt = (hasTopMedia || sec.bento || sec.body) ? 32 : 0
               if (multiHighlight) {
                 return <MultiHighlight contents={sec.contents!} marginTop={mt} />
               }

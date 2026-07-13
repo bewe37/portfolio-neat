@@ -305,6 +305,8 @@ a {
 @media (max-width: 768px) {
   /* Padding */
   .rsp-px        { padding-left: 20px !important; padding-right: 20px !important; }
+  /* Chapter video: segment labels don't fit five-up on mobile — bare progress chips */
+  .rsp-chapter-label { display: none !important; }
   .rsp-pb        { padding-bottom: 80px !important; }
 
   /* Grids → single column */
