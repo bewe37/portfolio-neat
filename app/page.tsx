@@ -18,7 +18,7 @@ const VIBE_PROJECTS = [
     date: "Check em out →",
     description: "A self-initiated archive of every painted utility box found across Toronto — documenting the street artists turning infrastructure into canvas.",
     href: "https://outside-the-box-tau.vercel.app/gallery",
-    cover: "/ThumbnailDarkOTB.mp4",
+    cover: "/OTBThumbnailDark.mp4",
     coverFit: "contain" as const,
     coverBg: "#ffffff",
     coverPadding: 20,
