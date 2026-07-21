@@ -27,10 +27,11 @@ const VIBE_PROJECTS = [
   {
     title: "An On/Off Toggle, But Traffic Light",
     category: "Vibe Coded",
-    date: "Check em out →",
+    date: "",
     description: "A tactile power switch that glows red when it's off — the kind of small detail that makes a toggle feel like it's actually doing something.",
-    href: "https://x.com/gbryanwt/status/2079303418657575255?s=20",
+    href: "https://github.com/bewe37",
     cover: "/ToggleSkeuo.mp4",
+    comingSoon: true,
   },
   {
     title: "My Unhealthy Obsession Over Skeuomorphic Design",
