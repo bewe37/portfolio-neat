@@ -294,7 +294,7 @@ function StatCallout({ stat }: { stat: StatBlock }) {
     }}>
       <span style={{
         fontFamily:    "var(--font-sans)",
-        fontSize:      88,
+        fontSize:      "clamp(48px, 11vw, 88px)",
         fontWeight:    800,
         color:         "var(--c-primary)",
         letterSpacing: "-0.04em",
@@ -514,8 +514,11 @@ function ChapterVideo({ src, chapters }: { src: string; chapters: { time: number
         </div>
       </div>
 
-      {/* Equal-width chapter segments, stories-style per-segment fill */}
+      {/* Equal-width chapter segments, stories-style per-segment fill — desktop only.
+          Five draggable segments don't work as a mobile pattern; the video just
+          autoplays/loops there like every other clip in this case study. */}
       <div
+        className="rsp-hide-mobile"
         ref={trackRef}
         // Pointer capture (not window listeners): the up event is guaranteed to
         // reach this element even when released off the bar or off the window,
@@ -566,14 +569,17 @@ function ChapterVideo({ src, chapters }: { src: string; chapters: { time: number
                   transition: dragging ? "none" : "left 0.08s linear",
                 }} />
               )}
-              <span className="rsp-chapter-label" style={{
-                position: "relative", padding: "0 12px",
-                fontFamily: "var(--font-sans)", fontSize: 12,
-                fontWeight: isActive ? 600 : 400, letterSpacing: "-0.01em",
-                color: isActive ? "var(--c-primary)" : fill > 0 ? "var(--c-dim)" : "var(--c-faint)",
-                whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
-                transition: "color 0.2s ease",
-              }}>
+              <span
+                className={isActive ? undefined : "rsp-chapter-label-hide"}
+                style={{
+                  position: "relative", padding: "0 12px",
+                  fontFamily: "var(--font-sans)", fontSize: 12,
+                  fontWeight: isActive ? 600 : 400, letterSpacing: "-0.01em",
+                  color: isActive ? "var(--c-primary)" : fill > 0 ? "var(--c-dim)" : "var(--c-faint)",
+                  whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+                  transition: "color 0.2s ease",
+                }}
+              >
                 {s.label}
               </span>
             </div>
@@ -720,13 +726,13 @@ function renderContentBlock(block: ContentBlock, bi: number) {
           )}
         </div>
         {block.body && (
-          <p style={{
+          <p className="rsp-cs-body" style={{
             fontFamily:    "var(--font-sans)",
-            fontSize:      15,
+            fontSize:      16,
             fontWeight:    400,
             color:         "var(--c-body)",
             letterSpacing: "-0.01em",
-            lineHeight:    1.7,
+            lineHeight:    1.75,
             margin:        0,
           }}>
             {block.body}
@@ -891,7 +897,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
             </h3>
           )}
           {block.body && (
-            <p style={{
+            <p className="rsp-cs-body" style={{
               fontFamily:    "var(--font-sans)",
               fontSize:      16,
               fontWeight:    400,
@@ -982,7 +988,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
                   {block.insightTitle}
                 </p>
               )}
-              <p style={{
+              <p className="rsp-cs-body" style={{
                 fontFamily:    "var(--font-sans)",
                 fontSize:      16,
                 fontWeight:    400,
@@ -1010,7 +1016,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
                 {block.insightTitle}
               </p>
             )}
-            <p style={{ fontFamily: "var(--font-sans)", fontSize: 16, fontWeight: 400, color: "var(--c-body)", lineHeight: 1.75, margin: 0, letterSpacing: "-0.01em" }}>
+            <p className="rsp-cs-body" style={{ fontFamily: "var(--font-sans)", fontSize: 16, fontWeight: 400, color: "var(--c-body)", lineHeight: 1.75, margin: 0, letterSpacing: "-0.01em" }}>
               {block.insight}
             </p>
           </div>
@@ -1088,11 +1094,11 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
               )}
               {/* Text */}
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                <p style={{ fontFamily: "var(--font-sans)", fontSize: 20, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.03em", lineHeight: 1.3, margin: 0, textWrap: "balance" }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.4, margin: 0, textWrap: "balance" }}>
                   {item.title}
                 </p>
                 {item.body && (
-                  <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 400, color: "var(--c-body)", lineHeight: 1.75, letterSpacing: "-0.01em", margin: 0 }}>
+                  <p className="rsp-cs-body" style={{ fontFamily: "var(--font-sans)", fontSize: 16, fontWeight: 400, color: "var(--c-body)", lineHeight: 1.75, letterSpacing: "-0.01em", margin: 0 }}>
                     {item.body}
                   </p>
                 )}
@@ -1134,11 +1140,11 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <div style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 0 }}>
-                    <span style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.015em", lineHeight: 1.3 }}>
+                    <span style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.4 }}>
                       {item.title}
                     </span>
                     {item.body && (
-                      <span style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 400, color: "var(--c-primary)", lineHeight: 1.75, letterSpacing: "-0.01em", wordBreak: "break-word" }}>
+                      <span className="rsp-cs-body" style={{ fontFamily: "var(--font-sans)", fontSize: 16, fontWeight: 400, color: "var(--c-body)", lineHeight: 1.75, letterSpacing: "-0.01em", wordBreak: "break-word" }}>
                         {item.body}
                       </span>
                     )}
@@ -1854,7 +1860,7 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
       )}
 
       {sec.body && (
-        <p style={{
+        <p className="rsp-cs-body" style={{
           fontFamily:    "var(--font-sans)",
           fontSize:      16,
           fontWeight:    400,

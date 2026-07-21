@@ -225,7 +225,7 @@ export default function AmdAiProject() {
         {
           label: "Outcome",
           title: "From exploration to direction.",
-          body: "The designs earned support to move forward, but the bigger win was reframing what \"AI as a differentiator\" actually meant: usable beats impressive.",
+          body: "The designs earned support to move forward, but the bigger win was changing how the team saw AI: not a differentiator on its own, but something that only works when the basics work first.",
           contents: [
             {
               highlight: true,

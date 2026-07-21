@@ -68,9 +68,9 @@ export default function AboutPage() {
 
               {/* Bio + Principles — three column */}
               <div style={{ padding: "32px 0", borderBottom: "1px solid var(--divider)", display: "grid", gridTemplateColumns: "clamp(120px, 14vw, 200px) 1fr 1fr", gap: "0 clamp(24px, 5vw, 72px)", alignItems: "start" }} className="rsp-stack">
-                <p style={LABEL}>How I think · (𖡎ᝰ𖡎)</p>
+                <p style={{ ...LABEL, fontSize: 13, fontWeight: 400, color: "var(--c-faint)" }}>How I think · (𖡎ᝰ𖡎)</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                  <p style={{ ...LABEL, color: "var(--c-primary)", fontSize: 15, fontWeight: 600 }}>How I got into design</p>
+                  <p style={{ fontFamily: "var(--font-sans)", fontSize: 19, fontWeight: 600, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.3, margin: 0 }}>How I got into design</p>
                   <p style={BODY}>
                     Growing up, I was always making things. Drawing, painting, shooting video on whatever camera I could get my hands on. I wasn&apos;t thinking about design. I was just obsessed with how things made people feel.
                   </p>
@@ -79,7 +79,7 @@ export default function AboutPage() {
                   </p>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                  <p style={{ ...LABEL, color: "var(--c-primary)", fontSize: 15, fontWeight: 600 }}>What I believe</p>
+                  <p style={{ fontFamily: "var(--font-sans)", fontSize: 19, fontWeight: 600, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.3, margin: 0 }}>What I believe</p>
                   <p style={BODY}>
                     Good design doesn&apos;t announce itself. The best interfaces I&apos;ve ever used felt inevitable, like someone had already thought through every edge case before I got there.
                   </p>

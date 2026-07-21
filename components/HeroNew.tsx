@@ -100,7 +100,7 @@ export default function HeroNew() {
         ref={nameRef}
         style={{
           fontFamily:    "var(--font-sans)",
-          fontSize:      "clamp(96px, 16vw, 220px)",
+          fontSize:      "clamp(42px, 16vw, 220px)",
           fontWeight:    600,
           letterSpacing: "-0.05em",
           lineHeight:    0.88,

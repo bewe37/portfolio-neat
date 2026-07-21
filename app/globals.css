@@ -305,8 +305,12 @@ a {
 @media (max-width: 768px) {
   /* Padding */
   .rsp-px        { padding-left: 20px !important; padding-right: 20px !important; }
-  /* Chapter video: segment labels don't fit five-up on mobile — bare progress chips */
-  .rsp-chapter-label { display: none !important; }
+  /* Chapter video: only the active chapter's label shows on mobile — five don't fit,
+     but leaving every chip blank (previous rule) read as a broken, empty control. */
+  .rsp-chapter-label-hide { display: none !important; }
+  /* Case study body copy: same 16px on every viewport read too large once columns
+     narrow to phone width — one shared step down keeps every paragraph type in sync. */
+  .rsp-cs-body { font-size: 15px !important; line-height: 1.65 !important; }
   .rsp-pb        { padding-bottom: 80px !important; }
 
   /* Grids → single column */
