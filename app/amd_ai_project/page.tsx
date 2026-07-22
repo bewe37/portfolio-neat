@@ -169,7 +169,7 @@ export default function AmdAiProject() {
           contents: [
             {
               title:  "A home for everything the system wants to tell you.",
-              body:   "Notifications had the same problem as the overlay itself: they told you something was wrong without letting you do anything about it. I gave the panel a dedicated notification page where system messages, driver updates, and performance warnings collect in one place, each one actionable on the spot rather than dismissed and forgotten.",
+              body:   "A dedicated notification page where system messages, driver updates, and performance warnings collect in one place, each one actionable on the spot.",
               videos: ["/DedicatedNotif.mp4"],
             },
           ],

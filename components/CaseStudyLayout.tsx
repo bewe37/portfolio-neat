@@ -669,8 +669,11 @@ function renderContentBlock(block: ContentBlock, bi: number) {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={VIEWPORT}
         transition={{ ...FADE, delay: bi * 0.05 }}
-        style={{ display: "flex", flexDirection: "column", gap: 16, borderTop: "1px solid var(--border)", paddingTop: 20, height: "100%", justifyContent: "space-between" }}
+        style={{ display: "flex", flexDirection: "column", gap: 16, borderTop: "1px solid var(--border)", paddingTop: 20, height: "100%" }}
       >
+        {/* Fixed-height text block so the image below starts at the same y
+            across sibling cards, regardless of how many lines the body wraps to */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 16, minHeight: 108 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           {block.icon && (
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
@@ -738,6 +741,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
             {block.body}
           </p>
         )}
+        </div>
         {block.images && block.images.length > 0 && (
           <div style={{ borderRadius: 8, overflow: "hidden" }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
