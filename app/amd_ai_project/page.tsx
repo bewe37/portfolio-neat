@@ -56,10 +56,10 @@ export default function AmdAiProject() {
         {
           label: "Research",
           lineBefore: true,
-          title: "From control panel to read-only dashboard.",
-          body:  "Two versions ago, the overlay was a control panel. You could adjust settings, toggle features, and act on your system without leaving your game. Update by update, those controls were trimmed away in favor of a cleaner metrics display, until every interactive element was gone. What remained was read-only: it could show your GPU temperature or frame rate, but not let you do anything about them. The overlay had quietly shifted from a tool for doing into a screen for watching.",
-          images:      ["/OldOverlay.png", "/MetricsIssue.png"],
-          imageLabels: ["Previous overlay with direct controls", "Current version, metrics only"],
+          title: "A read-only dashboard.",
+          body:  "The overlay had been stripped down to a read-only dashboard. It could show your GPU temperature or frame rate, but not let you do anything about them, no adjusting settings, no toggling features, nothing to act on without leaving your game.",
+          images:      ["/MetricsIssue.png"],
+          imageLabels: ["Current version, metrics only"],
         },
         {
           label: "Usability Sessions",

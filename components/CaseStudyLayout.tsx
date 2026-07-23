@@ -2100,9 +2100,9 @@ export default function CaseStudyLayout({
         className="rsp-cs-grid"
         style={{
           width:               "100%",
-          maxWidth:            1200,
+          maxWidth:            1264 + 260,
           display:             "grid",
-          gridTemplateColumns: "260px 1fr",
+          gridTemplateColumns: "260px 1fr 260px",
           alignItems:          "start",
           padding:             "0 48px",
         }}
@@ -2177,13 +2177,12 @@ export default function CaseStudyLayout({
                   marginBottom:    24,
                   border:          "1px solid var(--border)",
                   backgroundColor: "var(--surface)",
-                  maxHeight:       540,
                 }}
               >
                 {cover.endsWith(".mp4") || cover.endsWith(".webm")
-                  ? <video src={cover} autoPlay muted loop playsInline preload="metadata" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                  ? <video src={cover} autoPlay muted loop playsInline preload="metadata" style={{ width: "100%", objectFit: "contain", display: "block" }} />
                   : /* eslint-disable-next-line @next/next/no-img-element */
-                    <img src={cover} alt={title} draggable={false} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                    <img src={cover} alt={title} draggable={false} style={{ width: "100%", objectFit: "contain", display: "block" }} />
                 }
               </motion.div>
             )}
