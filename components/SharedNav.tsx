@@ -84,7 +84,7 @@ export default function SharedNav() {
             alignItems:     "center",
             gap:            6,
             fontFamily:     "var(--font-sans)",
-            fontSize:       14,
+            fontSize:       "0.875rem",
             fontWeight:     500,
             letterSpacing:  "-0.01em",
             color:          "var(--c-primary)",

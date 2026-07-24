@@ -155,7 +155,7 @@ function BuddyCard({ buddy, selected, dimmed, onSelect }: {
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-        <span style={{ fontFamily: "var(--font-sans)", fontSize: 18, fontWeight: 700, color: "var(--c-primary)", letterSpacing: "-0.01em" }}>
+        <span style={{ fontFamily: "var(--font-sans)", fontSize: "1.125rem", fontWeight: 700, color: "var(--c-primary)", letterSpacing: "-0.01em" }}>
           {buddy.name}
         </span>
       </div>
@@ -272,7 +272,7 @@ function WelcomeStep({ onContinue, onSkip }: { onContinue: () => void; onSkip: (
 
           <div style={{ animation: "fadeUp 0.55s 0.22s cubic-bezier(0.22,1,0.36,1) both", marginBottom: 40 }}>
             <p style={{
-              fontSize: 15, fontWeight: 450, color: "rgba(244,244,245,0.52)",
+              fontSize: "0.9375rem", fontWeight: 450, color: "rgba(244,244,245,0.52)",
               margin: 0, lineHeight: 1.65, maxWidth: 400,
             }}>
               Every good portfolio needs a companion. Pick one and they'll keep you company as you browse.
@@ -282,7 +282,7 @@ function WelcomeStep({ onContinue, onSkip }: { onContinue: () => void; onSkip: (
           <div style={{ display: "flex", gap: 10, animation: "fadeUp 0.55s 0.30s cubic-bezier(0.22,1,0.36,1) both", marginBottom: 48 }}>
             <button className="btn-dark-fill" onClick={() => { playClick(); onContinue() }} style={{
               padding: "12px 28px", borderRadius: 99, border: "none",
-              fontSize: 14, fontWeight: 600, fontFamily: "var(--font-sans)",
+              fontSize: "0.875rem", fontWeight: 600, fontFamily: "var(--font-sans)",
               cursor: "pointer", letterSpacing: "-0.01em", position: "relative", overflow: "hidden",
             }}>
               Pick a companion →
@@ -290,7 +290,7 @@ function WelcomeStep({ onContinue, onSkip }: { onContinue: () => void; onSkip: (
             <button onClick={() => { playClick(); onSkip() }} style={{
               padding: "12px 20px", borderRadius: 99,
               border: "1px solid rgba(244,244,245,0.12)", background: "rgba(255,255,255,0.04)",
-              color: "rgba(244,244,245,0.38)", fontSize: 14, fontWeight: 500,
+              color: "rgba(244,244,245,0.38)", fontSize: "0.875rem", fontWeight: 500,
               fontFamily: "var(--font-sans)", cursor: "pointer", letterSpacing: "-0.01em",
               transition: "color 0.15s ease, border-color 0.15s ease, background 0.15s ease",
             }}
@@ -307,7 +307,7 @@ function WelcomeStep({ onContinue, onSkip }: { onContinue: () => void; onSkip: (
         <div style={{
           position: "absolute", bottom: 28, left: 52, zIndex: 2,
           animation: "fadeUp 0.55s 0.40s cubic-bezier(0.22,1,0.36,1) both",
-          fontFamily: "'Departure Mono', monospace", fontSize: 10,
+          fontFamily: "'Departure Mono', monospace", fontSize: "0.625rem",
           color: "rgba(244,244,245,0.30)", letterSpacing: "0.06em", lineHeight: 1.6, userSelect: "none",
         }}>
           Georgius Bryan<br />
@@ -589,7 +589,7 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
                 flex: 1, padding: "7px 0", borderRadius: 8, border: "1px solid var(--border-mid)",
                 background: btn.active ? "var(--c-primary)" : "transparent",
                 color: btn.disabled ? "var(--c-faint)" : btn.active ? "var(--bg)" : "var(--c-secondary)",
-                fontSize: 10, fontWeight: 700, fontFamily: "var(--font-sans)",
+                fontSize: "0.625rem", fontWeight: 700, fontFamily: "var(--font-sans)",
                 letterSpacing: "0.06em", textTransform: "uppercase" as const,
                 cursor: btn.disabled ? "default" : "pointer", transition: "all 0.15s ease",
               }}>{btn.label}</button>
@@ -602,7 +602,7 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
 
           {/* Preview */}
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <span style={{ fontFamily: "var(--font-sans)", fontSize: 10, fontWeight: 700, color: "var(--c-secondary)", letterSpacing: "0.08em", textTransform: "uppercase" as const }}>Preview</span>
+            <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.625rem", fontWeight: 700, color: "var(--c-secondary)", letterSpacing: "0.08em", textTransform: "uppercase" as const }}>Preview</span>
             <motion.div
               animate={{ y: [0, -6, 0] }}
               transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
@@ -622,7 +622,7 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
 
           {/* Palette */}
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <span style={{ fontFamily: "var(--font-sans)", fontSize: 10, fontWeight: 700, color: "var(--c-secondary)", letterSpacing: "0.08em", textTransform: "uppercase" as const }}>Colors</span>
+            <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.625rem", fontWeight: 700, color: "var(--c-secondary)", letterSpacing: "0.08em", textTransform: "uppercase" as const }}>Colors</span>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 32px)", gap: 5 }}>
               {DRAW_PALETTE.map(c => (
                 <motion.button key={c}
@@ -653,7 +653,7 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
         style={{
           padding: "11px 32px", borderRadius: 99, border: "none",
           background: "var(--c-primary)", color: "var(--bg)",
-          fontSize: 14, fontWeight: 700, fontFamily: "var(--font-sans)",
+          fontSize: "0.875rem", fontWeight: 700, fontFamily: "var(--font-sans)",
           cursor: hasContent ? "pointer" : "default", letterSpacing: "-0.01em",
           position: "relative", overflow: "hidden",
         }}
@@ -775,7 +775,7 @@ function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, o
                 color: isGallery
                   ? "rgba(255,255,255,0.4)"
                   : (tab === t ? "var(--c-primary)" : "var(--c-secondary)"),
-                fontSize: 13, fontWeight: 600, fontFamily: "var(--font-sans)",
+                fontSize: "0.8125rem", fontWeight: 600, fontFamily: "var(--font-sans)",
                 cursor: "pointer", letterSpacing: "-0.01em",
                 display: "flex", alignItems: "center", gap: 6,
                 position: "relative", zIndex: 1,
@@ -811,7 +811,7 @@ function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, o
               padding: "8px 20px", borderRadius: 99, border: "none",
               background: "transparent",
               color: isGallery ? "rgba(255,255,255,0.9)" : "var(--c-secondary)",
-              fontSize: 13, fontWeight: 600, fontFamily: "var(--font-sans)",
+              fontSize: "0.8125rem", fontWeight: 600, fontFamily: "var(--font-sans)",
               cursor: "pointer", letterSpacing: "-0.01em",
               display: "flex", alignItems: "center", gap: 6,
               position: "relative", zIndex: 1,
@@ -913,7 +913,7 @@ function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, o
                   <button className="btn-shiny" onClick={() => { playClick(); onConfirm() }} style={{
                     padding: "12px 36px", borderRadius: 99, border: "none",
                     background: "var(--c-primary)", color: "var(--bg)",
-                    fontSize: 14, fontWeight: 700, fontFamily: "var(--font-sans)",
+                    fontSize: "0.875rem", fontWeight: 700, fontFamily: "var(--font-sans)",
                     cursor: "pointer", letterSpacing: "-0.01em", position: "relative", overflow: "hidden",
                   }}>
                     {`Let's go with ${BUDDIES.find(b => b.id === selected)?.name ?? ""} →`}

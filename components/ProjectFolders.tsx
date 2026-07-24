@@ -140,7 +140,7 @@ function FolderItem({ project, index }: { project: Project; index: number }) {
               transition={{ duration: 0.2 }}
               style={{
                 fontFamily:    "var(--font-sans)",
-                fontSize:      11,
+                fontSize:      "0.6875rem",
                 fontWeight:    700,
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",
@@ -162,7 +162,7 @@ function FolderItem({ project, index }: { project: Project; index: number }) {
               <motion.span
                 animate={{ rotate: hovered ? [0, -12, 10, -6, 4, 0] : 0 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
-                style={{ display: "inline-block", fontSize: 12 }}
+                style={{ display: "inline-block", fontSize: "0.75rem" }}
               >
                 ✦
               </motion.span>
@@ -296,10 +296,10 @@ function FolderItem({ project, index }: { project: Project; index: number }) {
       </motion.div>
 
       <div style={{ textAlign: "start", width: "100%" }}>
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 600, color: "var(--c-faint)", letterSpacing: "-0.02em", margin: "12px 16px 5px" }}>
+        <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 600, color: "var(--c-faint)", letterSpacing: "-0.02em", margin: "12px 16px 5px" }}>
           {project.category}
         </p>
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 600, color: "var(--c-mid)", letterSpacing: "-0.02em", lineHeight: 1.35, margin: " 0 16px 0" }}>
+        <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.875rem", fontWeight: 600, color: "var(--c-mid)", letterSpacing: "-0.02em", lineHeight: 1.35, margin: " 0 16px 0" }}>
           {project.title}
         </p>
       </div>
@@ -367,7 +367,7 @@ function MobilePapers({ project }: { project: Project }) {
           alignItems:    "center",
           gap:           6,
           fontFamily:    "var(--font-sans)",
-          fontSize:      11,
+          fontSize:      "0.6875rem",
           fontWeight:    700,
           letterSpacing: "0.08em",
           textTransform: "uppercase" as const,
@@ -470,8 +470,8 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
         </div>
         <div style={{ padding: "12px 4px 4px", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
           <div>
-            <p style={{ fontFamily: "var(--font-sans)", fontSize: 11, fontWeight: 600, color: "var(--c-faint)", letterSpacing: "-0.01em", margin: "0 0 4px" }}>{project.category}</p>
-            <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 600, color: "var(--c-mid)", letterSpacing: "-0.02em", lineHeight: 1.35, margin: 0 }}>{project.title}</p>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.6875rem", fontWeight: 600, color: "var(--c-faint)", letterSpacing: "-0.01em", margin: "0 0 4px" }}>{project.category}</p>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.9375rem", fontWeight: 600, color: "var(--c-mid)", letterSpacing: "-0.02em", lineHeight: 1.35, margin: 0 }}>{project.title}</p>
           </div>
           <motion.div
             className="rsp-folder-arrow"

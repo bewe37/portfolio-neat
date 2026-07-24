@@ -23,7 +23,7 @@ export default function MarqueeFooter() {
 
   const label: React.CSSProperties = {
     fontFamily:     "var(--font-sans)",
-    fontSize:       13,
+    fontSize:       "0.8125rem",
     fontWeight:     400,
     letterSpacing:  "-0.01em",
     color:          "var(--c-secondary)",

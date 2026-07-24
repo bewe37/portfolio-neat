@@ -56,7 +56,7 @@ function NavItem({ href, active, Icon, label, onClick }: {
         padding: active ? "0 16px" : "0 14px",
         color: active ? "var(--c-primary)" : "var(--c-dim)",
         transition: "color 0.2s ease, padding 0.25s cubic-bezier(0.34,1.56,0.64,1)",
-        fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 500,
+        fontFamily: "var(--font-sans)", fontSize: "0.8125rem", fontWeight: 500,
         letterSpacing: "-0.01em", whiteSpace: "nowrap",
       }}
     >
@@ -121,7 +121,7 @@ function NavInner({ theme, toggleTheme }: { theme: Theme; toggleTheme: () => voi
                 display: "flex", alignItems: "center", justifyContent: "center",
                 gap: 6, padding: "0 14px", height: 44,
                 color: "var(--c-dim)", textDecoration: "none",
-                fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 500,
+                fontFamily: "var(--font-sans)", fontSize: "0.8125rem", fontWeight: 500,
                 letterSpacing: "-0.01em", whiteSpace: "nowrap",
                 transition: "color 0.15s ease",
               }}

@@ -89,7 +89,7 @@ export default function CompanionThumbnail() {
                 border: "1px solid #e8e8e8",
                 borderRadius: 10,
                 padding: "7px 11px",
-                fontSize: 11,
+                fontSize: "0.6875rem",
                 fontFamily: "var(--font-sans)",
                 fontWeight: 600,
                 color: "#222222",

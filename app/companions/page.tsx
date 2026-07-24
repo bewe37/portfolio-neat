@@ -219,7 +219,7 @@ export default function CompanionsPage() {
         style={{
           position:      "fixed", top: 24, left: 24, zIndex: 20,
           display:       "inline-flex", alignItems: "center", gap: 6,
-          fontFamily:    "var(--font-sans)", fontSize: 12, fontWeight: 600,
+          fontFamily:    "var(--font-sans)", fontSize: "0.75rem", fontWeight: 600,
           letterSpacing: "-0.01em", color: "rgba(255,255,255,0.45)",
           textDecoration:"none",
           padding:       "7px 12px 7px 8px",
@@ -253,10 +253,10 @@ export default function CompanionsPage() {
         fontFamily: "'Departure Mono', monospace",
         lineHeight: 1.5, userSelect: "none",
       }}>
-        <p style={{ fontSize: 11, fontWeight: 400, color: "rgba(255,255,255,0.5)", letterSpacing: "0.04em", margin: 0 }}>
+        <p style={{ fontSize: "0.6875rem", fontWeight: 400, color: "rgba(255,255,255,0.5)", letterSpacing: "0.04em", margin: 0 }}>
           The companions
         </p>
-        <p style={{ fontSize: 11, fontWeight: 400, color: "rgba(255,255,255,0.22)", letterSpacing: "0.04em", margin: 0 }}>
+        <p style={{ fontSize: "0.6875rem", fontWeight: 400, color: "rgba(255,255,255,0.22)", letterSpacing: "0.04em", margin: 0 }}>
           Hand-drawn — {SAMPLES.length + 1} visitors
         </p>
       </div>

@@ -264,7 +264,7 @@ function CityScene({ period }: { period?: TimePeriod }) {
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10 }}>
+    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.625rem" }}>
       <span style={{ opacity: 0.5 }}>{label}</span>
       <span style={{ fontWeight: 700 }}>{value}</span>
     </div>
@@ -439,7 +439,7 @@ export default function TamagotchiWidget() {
           position: "absolute", top: 22, left: 0, right: 0,
           textAlign: "center",
           fontFamily: "'Uncut Sans', system-ui, sans-serif",
-          fontSize: 13, fontWeight: 800, letterSpacing: "0.09em",
+          fontSize: "0.8125rem", fontWeight: 800, letterSpacing: "0.09em",
           color: "rgba(40,40,55,0.82)",
           textShadow: "0 1px 0 rgba(255,255,255,0.55), 0 -1px 0 rgba(0,0,0,0.18)",
           fontStyle: "italic",
@@ -488,7 +488,7 @@ export default function TamagotchiWidget() {
                   {/* Z's when sleeping */}
                   {charAction === "sleep" && (<>
                     <span style={{ position: "absolute", bottom: 57, left: charX + 30, fontFamily: "monospace", fontSize: 8, fontWeight: 700, color: PX, animation: "tama-zzz 1.8s ease-out infinite", animationDelay: "0s" }}>z</span>
-                    <span style={{ position: "absolute", bottom: 64, left: charX + 36, fontFamily: "monospace", fontSize: 10, fontWeight: 700, color: PX, animation: "tama-zzz 1.8s ease-out infinite", animationDelay: "0.7s" }}>Z</span>
+                    <span style={{ position: "absolute", bottom: 64, left: charX + 36, fontFamily: "monospace", fontSize: "0.625rem", fontWeight: 700, color: PX, animation: "tama-zzz 1.8s ease-out infinite", animationDelay: "0.7s" }}>Z</span>
                     <span style={{ position: "absolute", bottom: 70, left: charX + 26, fontFamily: "monospace", fontSize: 7,  fontWeight: 700, color: PX, animation: "tama-zzz 1.8s ease-out infinite", animationDelay: "1.3s" }}>z</span>
                   </>)}
 
@@ -527,7 +527,7 @@ export default function TamagotchiWidget() {
               {screen === "mood" && (
                 <div style={{ display: "flex", height: 96, padding: "6px 7px 4px" }}>
                   <div style={{ display: "flex", flexDirection: "column", gap: 3, width: "56%" }}>
-                    <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.08em", opacity: 0.55 }}>MOOD //</span>
+                    <span style={{ fontSize: "0.5625rem", fontWeight: 700, letterSpacing: "0.08em", opacity: 0.55 }}>MOOD //</span>
                     <div style={{ height: 1, background: `${PX}28` }} />
                     <Row label="state"  value="happy"    />
                     <Row label="energy" value="high"     />
@@ -547,7 +547,7 @@ export default function TamagotchiWidget() {
                 <div style={{ position: "relative", display: "flex", height: 96, padding: "4px 7px 2px" }}>
                   <CityScene period={period} />
                   <div style={{ width: "50%", display: "flex", flexDirection: "column", justifyContent: "flex-end", alignItems: "flex-end", paddingBottom: 3, gap: 3 }}>
-                    <span style={{ fontSize: 11, fontWeight: 700 }}>Toronto</span>
+                    <span style={{ fontSize: "0.6875rem", fontWeight: 700 }}>Toronto</span>
                     <span style={{ fontSize: 8, opacity: 0.6 }}>Ontario, CA</span>
                     <span style={{ fontSize: 8, opacity: 0.45 }}>YYZ · GMT-5</span>
                   </div>
@@ -559,7 +559,7 @@ export default function TamagotchiWidget() {
                 <div style={{ position: "relative", display: "flex", height: 96, padding: "6px 7px 2px", overflow: "hidden" }}>
                   {/* floating note */}
                   <span style={{
-                    position: "absolute", top: 4, right: 34, fontSize: 9,
+                    position: "absolute", top: 4, right: 34, fontSize: "0.5625rem",
                     animation: "tama-note 1.4s ease-out infinite",
                     pointerEvents: "none",
                   }}>♪</span>
@@ -569,10 +569,10 @@ export default function TamagotchiWidget() {
                     pointerEvents: "none",
                   }}>♫</span>
                   <div style={{ display: "flex", flexDirection: "column", gap: 3, width: "62%" }}>
-                    <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.08em", opacity: 0.55 }}>NOW PLAYING</span>
+                    <span style={{ fontSize: "0.5625rem", fontWeight: 700, letterSpacing: "0.08em", opacity: 0.55 }}>NOW PLAYING</span>
                     <div style={{ height: 1, background: `${PX}28` }} />
-                    <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "-0.01em" }}>Beast of Burden</span>
-                    <span style={{ fontSize: 9, opacity: 0.6 }}>Rolling Stones</span>
+                    <span style={{ fontSize: "0.625rem", fontWeight: 700, letterSpacing: "-0.01em" }}>Beast of Burden</span>
+                    <span style={{ fontSize: "0.5625rem", opacity: 0.6 }}>Rolling Stones</span>
                   </div>
                   <div style={{ flex: 1, display: "flex", alignItems: "flex-end", justifyContent: "flex-end" }}>
                     <CharListening />
@@ -585,7 +585,7 @@ export default function TamagotchiWidget() {
                 borderTop: `1px solid rgba(42,61,31,0.16)`,
                 display: "flex", justifyContent: "center", alignItems: "center",
                 padding: "3px 7px",
-                fontSize: 9, letterSpacing: "0.07em",
+                fontSize: "0.5625rem", letterSpacing: "0.07em",
               }}>
                 {time}
               </div>

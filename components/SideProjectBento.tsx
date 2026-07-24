@@ -62,7 +62,7 @@ function BentoCard({
             {project.tags.map(tag => (
               <span key={tag} style={{
                 fontFamily:      "var(--font-sans)",
-                fontSize:        10,
+                fontSize:        "0.625rem",
                 fontWeight:      600,
                 letterSpacing:   "0.04em",
                 color:           "rgba(0,0,0,0.35)",
@@ -90,7 +90,7 @@ function BentoCard({
         <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 20 }}>
           <span style={{
             fontFamily:    "var(--font-sans)",
-            fontSize:      14,
+            fontSize:      "0.875rem",
             fontWeight:    700,
             color:         hovered ? "rgba(0,0,0,0.88)" : "rgba(0,0,0,0.72)",
             letterSpacing: "-0.02em",
@@ -101,7 +101,7 @@ function BentoCard({
           </span>
           <span style={{
             fontFamily:    "var(--font-sans)",
-            fontSize:      12,
+            fontSize:      "0.75rem",
             fontWeight:    500,
             color:         "rgba(0,0,0,0.35)",
             letterSpacing: "-0.01em",
@@ -111,7 +111,7 @@ function BentoCard({
           </span>
           <span style={{
             fontFamily:    "var(--font-sans)",
-            fontSize:      11,
+            fontSize:      "0.6875rem",
             fontWeight:    500,
             color:         "rgba(0,0,0,0.2)",
             letterSpacing: "-0.01em",

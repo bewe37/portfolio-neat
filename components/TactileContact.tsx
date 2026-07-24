@@ -135,7 +135,7 @@ export default function TactileContact() {
         </p>
         <p style={{
           fontFamily:    "DM Mono, monospace",
-          fontSize:       18,
+          fontSize:       "1.125rem",
           fontWeight:     400,
           color:          "rgb(80,220,100)",
           letterSpacing:  "0.06em",

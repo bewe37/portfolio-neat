@@ -171,7 +171,7 @@ function CommandRow({ command, active, index, onHover, onClick }: {
         <div style={{
           flex: 1,
           fontFamily: "var(--font-sans)",
-          fontSize: 13, letterSpacing: "-0.01em", lineHeight: "18px",
+          fontSize: "0.8125rem", letterSpacing: "-0.01em", lineHeight: "18px",
           color: active ? "rgb(255,107,48)" : "#8F8D8D",
           transition: "color 160ms ease",
         }}>
@@ -346,7 +346,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
                 style={{
                   flex: 1, background: "none", border: "none", outline: "none",
                   fontFamily: "var(--font-sans)",
-                  fontSize: 13, fontWeight: 400,
+                  fontSize: "0.8125rem", fontWeight: 400,
                   color: "#c8c4bc", letterSpacing: "-0.01em",
                   caretColor: "rgb(255,107,48)",
                 }}
@@ -360,7 +360,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
                 <div style={{
                   padding: "20px 10px", textAlign: "center",
                   fontFamily: "var(--font-sans)",
-                  fontSize: 13, color: "#474747",
+                  fontSize: "0.8125rem", color: "#474747",
                 }}>
                   No results for &ldquo;{query}&rdquo;
                 </div>
@@ -370,7 +370,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
                     <div style={{
                       paddingInline: 10, paddingTop: gi === 0 ? 0 : 2,
                       fontFamily: "var(--font-sans)",
-                      fontSize: 11, fontWeight: 500, lineHeight: 1, letterSpacing: "0.02em",
+                      fontSize: "0.6875rem", fontWeight: 500, lineHeight: 1, letterSpacing: "0.02em",
                       color: "#4a4a4a", textTransform: "uppercase",
                     }}>
                       {group.name}
@@ -405,12 +405,12 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
                   <KbdBadge label="↑" active={navFlash === "up"}   small />
                   <KbdBadge label="↓" active={navFlash === "down"} small />
                 </div>
-                <span style={{ fontFamily: "var(--font-sans)", fontSize: 11, color: "#5B5B5B", letterSpacing: "0.01em" }}>Navigate</span>
+                <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.6875rem", color: "#5B5B5B", letterSpacing: "0.01em" }}>Navigate</span>
               </div>
               {[{ keys: ["↵"], label: "Select" }, { keys: ["Esc"], label: "Dismiss" }].map(({ keys, label }) => (
                 <div key={label} style={{ display: "flex", alignItems: "center", gap: 5 }}>
                   {keys.map((k) => <KbdBadge key={k} label={k} active={false} small />)}
-                  <span style={{ fontFamily: "var(--font-sans)", fontSize: 11, color: "#5B5B5B", letterSpacing: "0.01em" }}>{label}</span>
+                  <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.6875rem", color: "#5B5B5B", letterSpacing: "0.01em" }}>{label}</span>
                 </div>
               ))}
             </div>

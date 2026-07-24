@@ -86,7 +86,7 @@ export default function ContextualCursor() {
                 padding: "6px 14px",
                 whiteSpace: "nowrap",
                 fontFamily: "var(--font-sans)",
-                fontSize: 11,
+                fontSize: "0.6875rem",
                 fontWeight: 500,
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",

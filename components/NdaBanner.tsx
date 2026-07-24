@@ -30,7 +30,7 @@ export default function NdaBanner() {
       <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
         <span style={{
           fontFamily:    "var(--font-sans)",
-          fontSize:      13,
+          fontSize:      "0.8125rem",
           fontWeight:    700,
           color:         "var(--c-high)",
           letterSpacing: "-0.01em",
@@ -39,7 +39,7 @@ export default function NdaBanner() {
         </span>
         <span style={{
           fontFamily:    "var(--font-sans)",
-          fontSize:      13,
+          fontSize:      "0.8125rem",
           fontWeight:    500,
           color:         "var(--c-dim)",
           letterSpacing: "-0.01em",

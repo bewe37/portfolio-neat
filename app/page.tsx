@@ -242,7 +242,7 @@ export default function HomePage() {
           <div style={{ maxWidth: 1340, margin: "0 auto", paddingLeft: 17 }}>
             <p style={{
               fontFamily:    "var(--font-sans)",
-              fontSize:      12,
+              fontSize:      "0.75rem",
               fontWeight:    400,
               lineHeight:    1.7,
               letterSpacing: "-0.01em",
@@ -267,10 +267,10 @@ export default function HomePage() {
         <div id="work" style={{ position: "relative" }}>
           <FadeUp delay={0.2}>
             <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", paddingTop: 120, paddingBottom: 16 }}>
-              <p style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.01em", margin: 0 }}>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.875rem", fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.01em", margin: 0 }}>
                 Selected work
               </p>
-              <p style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 400, color: "var(--c-faint)", letterSpacing: "-0.01em", margin: 0 }}>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.8125rem", fontWeight: 400, color: "var(--c-faint)", letterSpacing: "-0.01em", margin: 0 }}>
                 End-to-end Design & Design System
               </p>
             </div>
@@ -284,10 +284,10 @@ export default function HomePage() {
 
           <FadeUp delay={0.4}>
             <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", paddingBottom: 16 }}>
-              <p style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.01em", margin: 0 }}>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.875rem", fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.01em", margin: 0 }}>
                 Built on Vibes ~
               </p>
-              <p style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 400, color: "var(--c-faint)", letterSpacing: "-0.01em", margin: 0 }}>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.8125rem", fontWeight: 400, color: "var(--c-faint)", letterSpacing: "-0.01em", margin: 0 }}>
                 Claude, Paper, Motion & React
               </p>
             </div>

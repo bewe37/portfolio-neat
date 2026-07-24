@@ -38,7 +38,7 @@ export default function SideProjectRow({
       <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <span style={{
-            fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 600,
+            fontFamily: "var(--font-sans)", fontSize: "0.875rem", fontWeight: 600,
             letterSpacing: "-0.01em",
             color: hovered ? "rgba(0,0,0,0.88)" : "rgba(0,0,0,0.65)",
             transition: "color 0.15s ease", lineHeight: 1.4,
@@ -48,7 +48,7 @@ export default function SideProjectRow({
           <div style={{ display: "flex", gap: 5, flexShrink: 0 }}>
             {tags.map((tag) => (
               <span key={tag} style={{
-                fontFamily: "var(--font-sans)", fontSize: 11, fontWeight: 500,
+                fontFamily: "var(--font-sans)", fontSize: "0.6875rem", fontWeight: 500,
                 letterSpacing: "0.02em", color: "rgba(0,0,0,0.3)",
                 backgroundColor: "rgba(0,0,0,0.04)",
                 border: "1px solid rgba(0,0,0,0.07)",
@@ -60,7 +60,7 @@ export default function SideProjectRow({
           </div>
         </div>
         <span style={{
-          fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 500,
+          fontFamily: "var(--font-sans)", fontSize: "0.8125rem", fontWeight: 500,
           letterSpacing: "-0.01em", color: "rgba(0,0,0,0.3)", lineHeight: 1.5,
         }}>
           {description}
@@ -69,7 +69,7 @@ export default function SideProjectRow({
 
       <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
         <span style={{
-          fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 500,
+          fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 500,
           color: "rgba(0,0,0,0.2)", letterSpacing: "-0.01em",
         }}>
           {year}

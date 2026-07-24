@@ -202,7 +202,7 @@ function SpeechBubble({ text }: { text: string }) {
       border:        "1px solid var(--border)",
       borderRadius:  10,
       padding:       "8px 12px",
-      fontSize:      12,
+      fontSize:      "0.75rem",
       fontFamily:    "var(--font-sans)",
       fontWeight:    500,
       color:         "var(--c-primary)",
@@ -242,7 +242,7 @@ function SpeechBubbleAbs({ text, bottom }: { text: string; bottom: number }) {
       border:        "1px solid var(--border)",
       borderRadius:  10,
       padding:       "8px 12px",
-      fontSize:      12,
+      fontSize:      "0.75rem",
       fontFamily:    "var(--font-sans)",
       fontWeight:    500,
       color:         "var(--c-primary)",
@@ -298,7 +298,7 @@ function CompanionEditModal({ currentId, onClose }: { currentId: string | null; 
           boxShadow: "0 24px 64px rgba(0,0,0,0.18)",
         }}
       >
-        <p style={{ margin: "0 0 14px", fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 700, color: "var(--c-primary)", letterSpacing: "-0.02em" }}>
+        <p style={{ margin: "0 0 14px", fontFamily: "var(--font-sans)", fontSize: "0.8125rem", fontWeight: 700, color: "var(--c-primary)", letterSpacing: "-0.02em" }}>
           Switch companion
         </p>
 
@@ -331,7 +331,7 @@ function CompanionEditModal({ currentId, onClose }: { currentId: string | null; 
                   backgroundPosition: `0px -${Math.round(idle.row * ph)}px`,
                   imageRendering: "pixelated",
                 }} />
-                <span style={{ fontFamily: "var(--font-sans)", fontSize: 10, fontWeight: 500, color: "var(--c-secondary)" }}>
+                <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.625rem", fontWeight: 500, color: "var(--c-secondary)" }}>
                   {b.name}
                 </span>
               </motion.button>
@@ -346,7 +346,7 @@ function CompanionEditModal({ currentId, onClose }: { currentId: string | null; 
             width: "100%", padding: "10px 12px", borderRadius: 12, cursor: "pointer",
             border: currentId === "custom" ? "2px solid var(--c-primary)" : "1.5px solid var(--border-mid)",
             background: currentId === "custom" ? "var(--surface)" : "transparent",
-            fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 600,
+            fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 600,
             color: "var(--c-primary)", display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
           }}
         >

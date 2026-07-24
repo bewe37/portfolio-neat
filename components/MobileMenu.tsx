@@ -124,7 +124,7 @@ export default function MobileMenu() {
                     textDecoration: "none",
                     color: "var(--c-primary)",
                     fontFamily: "var(--font-sans)",
-                    fontSize: 20,
+                    fontSize: "1.25rem",
                     fontWeight: 500,
                     letterSpacing: "-0.02em",
                   }}

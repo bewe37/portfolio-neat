@@ -185,7 +185,7 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
                   <span
                     style={{
                       fontFamily: "var(--font-sans)",
-                      fontSize: 12,
+                      fontSize: "0.75rem",
                       fontWeight: 600,
                       color: "rgba(0,0,0,0.8)",
                       letterSpacing: "-0.01em",
@@ -201,7 +201,7 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
                   <span
                     style={{
                       fontFamily: "var(--font-sans)",
-                      fontSize: 11,
+                      fontSize: "0.6875rem",
                       fontWeight: 500,
                       color: "rgba(0,0,0,0.3)",
                       letterSpacing: "-0.01em",
@@ -229,7 +229,7 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
           zIndex: 20,
         }}
       >
-        <div ref={handRef} style={{ willChange: "transform, opacity", fontSize: 40, lineHeight: 1, userSelect: "none" }}>
+        <div ref={handRef} style={{ willChange: "transform, opacity", fontSize: "2.5rem", lineHeight: 1, userSelect: "none" }}>
           👆
         </div>
       </div>

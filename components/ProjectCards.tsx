@@ -34,7 +34,7 @@ const carouselBtnStyle: React.CSSProperties = {
   background: "rgba(0,0,0,0.45)", border: "none",
   color: "#fff", cursor: "pointer", zIndex: 2,
   display: "flex", alignItems: "center", justifyContent: "center",
-  fontSize: 12, backdropFilter: "blur(4px)",
+  fontSize: "0.75rem", backdropFilter: "blur(4px)",
   transition: "background 0.15s ease",
 }
 
@@ -116,13 +116,13 @@ function ProjectCard({ project, onLightbox }: { project: Project; onLightbox?: (
       </div>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
         <p style={{
-          fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 500,
+          fontFamily: "var(--font-sans)", fontSize: "0.8125rem", fontWeight: 500,
           color: hovered ? "var(--c-mid)" : "var(--c-faint)",
           letterSpacing: "-0.01em", margin: 0, transition: "color 0.2s ease",
         }}>
           {project.title}
         </p>
-        <span style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 400, color: "var(--c-faint)", letterSpacing: "-0.01em", flexShrink: 0 }}>
+        <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 400, color: "var(--c-faint)", letterSpacing: "-0.01em", flexShrink: 0 }}>
           {project.date}
         </span>
       </div>

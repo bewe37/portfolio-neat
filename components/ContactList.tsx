@@ -23,7 +23,7 @@ export default function ContactList() {
           padding: "8px 0", gap: 12,
           borderBottom: i < arr.length - 1 ? "1px solid var(--divider)" : "none",
         }}>
-          <span style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.01em", whiteSpace: "nowrap" }}>
+          <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.8125rem", fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.01em", whiteSpace: "nowrap" }}>
             {label}
           </span>
           <a
@@ -35,7 +35,7 @@ export default function ContactList() {
             onMouseLeave={() => setHovered(null)}
             style={{
               display: "flex", alignItems: "center", gap: 3,
-              fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 400,
+              fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 400,
               color: hovered === label ? ORANGE : "var(--c-faint)",
               letterSpacing: "-0.01em", textDecoration: "none",
               transition: "color 0.15s ease",

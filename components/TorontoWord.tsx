@@ -47,7 +47,7 @@ export default function TorontoWord() {
       Toronto
       <span style={{
         fontFamily: "var(--font-sans)",
-        fontSize: 12,
+        fontSize: "0.75rem",
         fontWeight: 400,
         color: "var(--c-faint)",
         letterSpacing: "-0.01em",

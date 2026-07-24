@@ -18,20 +18,21 @@ export default function AmdAiProject() {
         {
           label: "Context",
           title: "A new direction for AMD Software.",
-          body:  "In the summer of 2025, I joined AMD as a Product Design Intern contributing to one of the largest redesigns AMD Software had undertaken in recent years. My focus was reworking the Overlay View, a lightweight interface that sits on top of any application, designed for quick, in-session control.",
+          body:  "In the summer of 2025, I joined AMD as a Product Design Intern on one of the largest redesigns the software had seen in years. My focus was reworking the Overlay View, a lightweight panel that floats above any game or app, designed for quick, in-session control.",
           image: "/FullOverlayView.png",
           footnote: "This case study covers the In-Session Overlay. The Full Application was developed in parallel by a separate workstream.",
         },
         {
           label: "The Problem",
           title: "A passive display in a product that needed action.",
-          body: "The overlay had been reduced to a passive metrics display. To change any setting, users had to leave what they were doing and open the full application. There was no fast path for the actions users needed most, and as the research below shows, the full application was no refuge either.",
-          image: "/Frustrating.png",
+          body:  "The overlay had been reduced to a metrics dashboard. It could show your GPU temperature or frame rate, but it couldn't act on any of it. To change a setting, users had to leave their session entirely and open the full application.",
+          images:      ["/MetricsIssue.png"],
+          imageLabels: ["Current version, metrics only"],
         },
         {
           label: "Highlights",
           title: "An overlay you can finally act on.",
-          body:  "AMD Software's overlay sits on top of any game or app, built for quick actions without breaking focus. This is a look at how I redesigned it from a passive metrics display into something users could actually do things with.",
+          body:  "I redesigned the overlay from a passive metrics display into a surface users could actually control, with an AI chat that reads live hardware data, a pinnable widget panel, and a dedicated in-game mode built for the pace of play.",
           accordion: true,
           contents: [
             {
@@ -54,18 +55,12 @@ export default function AmdAiProject() {
           ],
         },
         {
-          label: "Research",
-          lineBefore: true,
-          title: "A read-only dashboard.",
-          body:  "The overlay had been stripped down to a read-only dashboard. It could show your GPU temperature or frame rate, but not let you do anything about them, no adjusting settings, no toggling features, nothing to act on without leaving your game.",
-          images:      ["/MetricsIssue.png"],
-          imageLabels: ["Current version, metrics only"],
-        },
-        {
           label: "Usability Sessions",
-          hideToc: true,
-          title: "Why not just use the full view?",
-          body:  "The full application had its own problems. We ran moderated usability sessions with 6 users to understand the scope, and two friction points surfaced consistently.",
+          tocLabel: "Research",
+          dividerBefore: true,
+          dividerText: "Research",
+          title: "The full application wasn't the answer either.",
+          body:  "The overlay alone didn't tell the full story. To understand the depth of the problems the team was dealing with, I ran moderated usability sessions with 6 users, not just to evaluate the overlay, but to map out where the entire software experience was breaking down. Two friction points came up in almost every session.",
           contents: [
             {
               title: "Complex navigation.",
@@ -80,62 +75,36 @@ export default function AmdAiProject() {
           ],
         },
         {
-          label: "The Goals",
-          title: "The overlay needed a new job.",
-          body: "The usability sessions made one thing clear: the overlay wasn't missing features, it was missing its purpose. It's the only part of AMD Software users reach for mid-session, when they need a quick answer or fast adjustment without breaking focus. Fixing the full application wouldn't solve that, so the overlay needed to be rethought on its own terms. Two goals shaped the direction:",
-          contents: [
-            {
-              highlight: true,
-              minimal:   true,
-              icon:      "target",
-              title:     "Restore direct control.",
-              body:      "Bring back the quick controls users lost so they can act without ever leaving the session.",
-            },
-            {
-              highlight: true,
-              minimal:   true,
-              icon:      "spark",
-              title:     "Make settings accessible.",
-              body:      "Use AI to surface the right fix in plain language, no technical knowledge required.",
-            },
-          ],
+          label: "Research",
+          hideToc: true,
+          title: "What this pointed to.",
+          body:  "Across almost every session, the same two things kept surfacing: getting to the right control took too long, and once users got there, they didn't have the knowledge to act on it. Those two problems became the focus.",
+          hmw:   "How might we give users direct access to the controls they need, and help them understand settings they don't?",
         },
         {
-          label: "Initial Exploration",
-          title: "Starting with a familiar pattern.",
-          body:  "The first concept introduced a traditional multi-message chatbot within the Overlay View. Users could engage in threaded conversations and refine requests over time. It was the obvious answer, and I built it out before taking it to the team.",
-          contents: [
-            {
-              image:        "/InitialChat.png",
-              insightTitle: "The familiar pattern came with a hidden cost.",
-              insight:      "Critique surfaced the flaw: enabling anti-lag meant typing a sentence when a toggle would have been one tap. Fast actions shouldn't require a conversation, so I dropped the thread model and started over.",
-            },
-          ],
-        },
-        {
-          label: "Design Decisions",
+          label: "Design Direction",
           title: "Direct control first, AI second.",
-          body:  "The overlay needed more than a chatbot. Direct controls had to come back, not as a replacement for AI, but as the foundation that makes it actually useful.",
+          body:  "The overlay opens over a running game. Attention is already split, and there's no headspace to navigate or parse options. You want to act and get back. That constraint shaped the whole direction: direct controls had to be first-class, something you tap once and you're done, with AI alongside for the moments you don't know what to change. Based on the findings and studying how people actually moved around the software, I proposed three components to the team.",
           contents: [
             {
               highlight: true,
               minimal:   true,
               title:     "Contextual Chat",
-              body:      "Ask a question, get a direct answer or a one-tap fix. No thread, no history.",
+              body:      "Describe what's wrong. The AI reads live hardware data and surfaces a plain-language fix or a one-tap action.",
               images:    ["/CardChat.png"],
             },
             {
               highlight: true,
               minimal:   true,
               title:     "Pinned Widgets",
-              body:      "Controls you care about stay pinned and instantly accessible every session.",
+              body:      "Controls you care about stay pinned. No navigation, no hunting, just the things you reach for every session.",
               images:    ["/CardPin.png"],
             },
             {
               highlight: true,
               minimal:   true,
               title:     "Manual Discovery",
-              body:      "Browse and add controls yourself, no assistant required to get started.",
+              body:      "For users who already know what they want: browse the widget library by category and add controls directly.",
               images:    ["/CardManual.png"],
             },
           ],
@@ -146,7 +115,7 @@ export default function AmdAiProject() {
           contents: [
             {
               title:  "Not just text. A response built around what you need.",
-              body:   "I built the chat on one principle: don't make users think. Describe what's wrong, and the AI reads live hardware data to find the cause, then either surfaces the relevant metrics in the chat or gives you an action button to fix it on the spot. No navigation, no settings hunting.",
+              body:   "I built the chat around one principle: don't make users think. Describe what's wrong, and the AI reads live hardware data to find the cause, then surfaces the relevant metrics in the chat or gives you a one-tap action to fix it on the spot. No navigation, no settings hunting.",
               images:      ["/Metrics.png", "/Features.png"],
               imageLabels: ["Hardware metrics response", "Feature suggestion with action"],
             },
@@ -158,7 +127,7 @@ export default function AmdAiProject() {
           contents: [
             {
               title:  "Save the answer, not just the moment.",
-              body:   "I made every AI response pinnable as a widget. Instead of repeating the same question next session, the control is already there. The chat stays focused on one-off queries while the panel builds up over time into something personal.",
+              body:   "I made every AI response pinnable as a widget. Instead of asking the same question next session, the control is already waiting. The chat stays focused on one-off queries while the panel builds up over time into something personal.",
               videos:      ["/ChatPin.mp4"],
             },
           ],
@@ -169,7 +138,7 @@ export default function AmdAiProject() {
           contents: [
             {
               title:  "A home for everything the system wants to tell you.",
-              body:   "A dedicated notification page where system messages, driver updates, and performance warnings collect in one place, each one actionable on the spot.",
+              body:   "I added a dedicated notification page where system messages, driver updates, and performance warnings collect in one place, each one actionable on the spot, without digging through settings.",
               videos: ["/DedicatedNotif.mp4"],
             },
           ],
@@ -180,7 +149,7 @@ export default function AmdAiProject() {
           contents: [
             {
               title:  "For users who know what they want.",
-              body:   "Not everyone needs the AI to get started. Power users can skip the chat entirely, browse the widget library by category, find the control, and add it directly to their panel.",
+              body:   "Not everyone needs the AI to get started. I designed a browse path for power users who'd rather skip the chat entirely and search the widget library by category, find the control, and add it directly to the panel.",
               videos: ["/AddManual.mp4"],
             },
           ],
@@ -189,19 +158,19 @@ export default function AmdAiProject() {
           label: "In-Game Mode",
           hideToc: true,
           title: "Designed for the pace of play.",
-          body: "Gaming sessions move fast. Mid-game, you need the most common controls immediately accessible, not buried behind a panel. So I designed a dedicated in-game mode with a modal exclusive to this context. One click surfaces the most-reached-for controls and features without breaking focus.",
+          body: "Gaming sessions move fast. Mid-game, you need the most common controls immediately, not buried in a panel. I designed a dedicated in-game mode with its own modal, purpose-built for this context. One click surfaces the controls and features users reach for most, without breaking focus.",
           contents: [
             {
               image: "/In-Game Widgets.png",
             },
             {
               title:  "Tune performance without touching settings.",
-              body:   "Every system is different, and figuring out which settings actually improve your experience takes time most people don't want to spend mid-game. I designed a simplified slider that lets users tune between performance and quality on the fly, without touching a single advanced setting.",
+              body:   "Every system is different, and figuring out which settings actually help takes time most people don't want to spend mid-game. I designed a simplified slider that lets users tune between performance and quality on the fly, without touching a single advanced setting.",
               videos: ["/GraphicOptimization.mp4"],
             },
             {
               title:  "Start recording without leaving the game.",
-              body:   "Screen recording is one of the most-used features in AMD Software, but getting to it meant leaving the game entirely. I brought it directly into the in-game mode so users can start capturing with a single tap, right from the overlay.",
+              body:   "Screen recording is one of AMD Software's most-used features, but getting to it meant leaving the game entirely. I brought it directly into the in-game mode so users can start capturing with a single tap, right from the overlay.",
               videos: ["/RecordInGame.mp4"],
             },
           ],
@@ -210,7 +179,7 @@ export default function AmdAiProject() {
           label: "Final Design",
           hideToc: true,
           title: "Where it all came together.",
-          body:  "Two modes, one overlay. Direct controls, pinned widgets, and AMD Chat live together in a single panel, with everything one tap away without leaving the session.",
+          body:  "Two modes, one overlay. Direct controls, pinned widgets, and AMD Chat live together in a single panel, everything one tap away, without leaving the session.",
           chapterVideo: {
             src: "/FinalVid.mp4",
             chapters: [
@@ -225,14 +194,14 @@ export default function AmdAiProject() {
         {
           label: "Outcome",
           title: "From exploration to direction.",
-          body: "The designs earned support to move forward, but the bigger win was changing how the team saw AI: not a differentiator on its own, but something that only works when the basics work first.",
+          body: "The designs earned support to move forward. But the bigger shift wasn't in the product. It was in how the team thought about AI. The process kept coming back to the same point: AI only works when the basics work first. By the end, that framing had stuck.",
           contents: [
             {
               highlight: true,
               minimal:   true,
               icon:      "stack",
               title:     "AI as a layer, not the foundation.",
-              body:      "Early explorations put AI first. The process made a clearer case: direct control comes first, with AI layered on top, not as a replacement.",
+              body:      "The process made one thing clear: direct control has to come first. AI works best when it sits on top of that, not as a replacement for it.",
             },
             {
               highlight: true,

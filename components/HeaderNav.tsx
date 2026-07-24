@@ -80,7 +80,7 @@ export default function HeaderNav() {
               style={{
                 display:        "block",
                 fontFamily:     "var(--font-sans)",
-                fontSize:       14,
+                fontSize:       "0.875rem",
                 fontWeight:     500,
                 letterSpacing:  "-0.01em",
                 color:          active ? "var(--c-primary)" : "var(--c-dim)",
@@ -106,7 +106,7 @@ export default function HeaderNav() {
           style={{
             display:        "block",
             fontFamily:     "var(--font-sans)",
-            fontSize:       14,
+            fontSize:       "0.875rem",
             fontWeight:     500,
             letterSpacing:  "-0.01em",
             color:          contactOpen ? "var(--c-primary)" : "var(--c-dim)",
@@ -167,7 +167,7 @@ export default function HeaderNav() {
                 style={{
                   display:        "block",
                   fontFamily:     "var(--font-sans)",
-                  fontSize:       13,
+                  fontSize:       "0.8125rem",
                   fontWeight:     400,
                   color:          "var(--c-secondary)",
                   letterSpacing:  "-0.01em",

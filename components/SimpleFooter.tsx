@@ -23,7 +23,7 @@ function FooterLink({ label, href, dimmedColor, hoverColor }: {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 500,
+        fontFamily: "var(--font-sans)", fontSize: "0.8125rem", fontWeight: 500,
         letterSpacing: "-0.01em", textDecoration: "none",
         color: hovered ? hoverColor : dimmedColor,
         transition: "color 0.15s ease", whiteSpace: "nowrap",
@@ -47,7 +47,7 @@ function BackToTop({ dimmedColor, hoverColor }: { dimmedColor: string; hoverColo
         background: "none", border: "none", cursor: "pointer", padding: 0,
         display: "inline-flex", alignItems: "center", gap: 5,
         color: hovered ? hoverColor : dimmedColor,
-        fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 500,
+        fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 500,
         letterSpacing: "-0.01em", transition: "color 0.15s ease",
       }}
     >
@@ -85,10 +85,10 @@ export default function SimpleFooter({
       }}
     >
       <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-        <span style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 500, letterSpacing: "-0.01em", color: textColor, whiteSpace: "nowrap" }}>
+        <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.8125rem", fontWeight: 500, letterSpacing: "-0.01em", color: textColor, whiteSpace: "nowrap" }}>
           © {year} {name}. All rights reserved.
         </span>
-        <span style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 500, letterSpacing: "-0.01em", color: dimmedColor }}>
+        <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.8125rem", fontWeight: 500, letterSpacing: "-0.01em", color: dimmedColor }}>
           {tagline}
         </span>
       </div>

@@ -124,7 +124,7 @@ function Card({
           margin:        0,
           padding:       "9px 4px 0",
           fontFamily:    "'Departure Mono', monospace",
-          fontSize:      10,
+          fontSize:      "0.625rem",
           fontWeight:    400,
           color:         "rgba(0,0,0,0.38)",
           letterSpacing: "0.05em",
@@ -179,10 +179,10 @@ export default function PhotoGallery() {
       >
         {/* Caption inside gallery */}
         <div style={{ position: "absolute", bottom: 14, left: 20, right: 20, display: "flex", justifyContent: "space-between", alignItems: "baseline", zIndex: 0, pointerEvents: "none" }}>
-          <span style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 500, color: "var(--c-faint)", letterSpacing: "-0.01em" }}>
+          <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 500, color: "var(--c-faint)", letterSpacing: "-0.01em" }}>
             Through the lens
           </span>
-          <span style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 400, color: "var(--c-faint)", letterSpacing: "-0.01em" }}>
+          <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 400, color: "var(--c-faint)", letterSpacing: "-0.01em" }}>
             A collective memory of my 20s
           </span>
         </div>

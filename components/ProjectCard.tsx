@@ -82,7 +82,7 @@ export default function ProjectCard({ title, category, href, image }: ProjectCar
           <p
             style={{
               fontFamily: "var(--font-sans)",
-              fontSize: 14,
+              fontSize: "0.875rem",
               fontWeight: 600,
               color: hovered ? "rgba(0,0,0,0.88)" : "rgba(0,0,0,0.7)",
               letterSpacing: "-0.01em",
@@ -96,7 +96,7 @@ export default function ProjectCard({ title, category, href, image }: ProjectCar
           <span
             style={{
               fontFamily: "var(--font-sans)",
-              fontSize: 12,
+              fontSize: "0.75rem",
               fontWeight: 500,
               color: "rgba(0,0,0,0.3)",
               letterSpacing: "-0.01em",

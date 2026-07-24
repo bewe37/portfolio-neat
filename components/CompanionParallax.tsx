@@ -129,7 +129,7 @@ function CompanionFloat({
           {/* Name */}
           <p style={{
             fontFamily:    "var(--font-sans)",
-            fontSize:      13,
+            fontSize:      "0.8125rem",
             fontWeight:    700,
             color:         isYours
               ? "rgba(255,107,48,0.9)"
@@ -146,7 +146,7 @@ function CompanionFloat({
           {/* Tagline — desktop only */}
           <p className="rsp-hide-mobile" style={{
             fontFamily:    "var(--font-sans)",
-            fontSize:      10,
+            fontSize:      "0.625rem",
             fontWeight:    400,
             color:         "rgba(255,255,255,0.28)",
             letterSpacing: "-0.01em",
@@ -168,7 +168,7 @@ function CompanionFloat({
             {buddy.traits.map(t => (
               <span key={t} style={{
                 fontFamily:    "var(--font-sans)",
-                fontSize:      9,
+                fontSize:      "0.5625rem",
                 fontWeight:    600,
                 letterSpacing: "0.05em",
                 textTransform: "uppercase" as const,
@@ -249,7 +249,7 @@ export default function CompanionParallax() {
         <div style={{ marginBottom: 0 }}>
           <p style={{
             fontFamily:    "var(--font-sans)",
-            fontSize:      17,
+            fontSize:      "1.0625rem",
             fontWeight:    500,
             color:         "rgba(255,255,255,0.88)",
             letterSpacing: "-0.02em",
@@ -260,7 +260,7 @@ export default function CompanionParallax() {
           </p>
           <p style={{
             fontFamily:    "var(--font-sans)",
-            fontSize:      15,
+            fontSize:      "0.9375rem",
             fontWeight:    400,
             color:         "rgba(255,255,255,0.3)",
             letterSpacing: "-0.01em",
@@ -321,7 +321,7 @@ export default function CompanionParallax() {
                     whiteSpace: "nowrap" as const, boxShadow: "0 2px 10px rgba(255,107,48,0.5)",
                   }}>Yours</div>
                 </div>
-                <p style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 700, color: "rgba(255,107,48,0.9)", letterSpacing: "-0.02em", margin: 0, textAlign: "center" }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.8125rem", fontWeight: 700, color: "rgba(255,107,48,0.9)", letterSpacing: "-0.02em", margin: 0, textAlign: "center" }}>
                   Custom
                 </p>
               </div>
@@ -380,7 +380,7 @@ export default function CompanionParallax() {
                 )}
               </div>
               <p style={{
-                fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 700,
+                fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 700,
                 color: myBuddy === buddy.id ? "rgba(255,107,48,0.9)" : "rgba(255,255,255,0.72)",
                 letterSpacing: "-0.01em", margin: 0, textAlign: "center",
               }}>{buddy.name}</p>
@@ -412,7 +412,7 @@ export default function CompanionParallax() {
                   boxShadow: "0 2px 8px rgba(255,107,48,0.5)",
                 }}>Yours</div>
               </div>
-              <p style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 700, color: "rgba(255,107,48,0.9)", letterSpacing: "-0.01em", margin: 0, textAlign: "center" }}>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 700, color: "rgba(255,107,48,0.9)", letterSpacing: "-0.01em", margin: 0, textAlign: "center" }}>
                 Custom
               </p>
             </motion.div>

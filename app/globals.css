@@ -310,7 +310,7 @@ a {
   .rsp-chapter-label-hide { display: none !important; }
   /* Case study body copy: same 16px on every viewport read too large once columns
      narrow to phone width — one shared step down keeps every paragraph type in sync. */
-  .rsp-cs-body { font-size: 15px !important; line-height: 1.65 !important; }
+  .rsp-cs-body { font-size: 0.9375rem !important; line-height: 1.65 !important; }
   .rsp-pb        { padding-bottom: 80px !important; }
 
   /* Grids → single column */
@@ -321,14 +321,14 @@ a {
   .rsp-tama      { display: flex !important; justify-content: center !important; }
 
   /* Case study heading */
-  .rsp-cs-h1     { font-size: 22px !important; line-height: 1.2 !important; margin-bottom: 24px !important; }
+  .rsp-cs-h1     { font-size: 1.375rem !important; line-height: 1.2 !important; margin-bottom: 24px !important; }
 
   /* Hero profile row */
   .rsp-hero-row  { gap: 12px !important; align-items: center !important; z-index: 1001 !important; }
 
   /* Experience grid: stack columns */
   .rsp-exp-row   { grid-template-columns: 1fr !important; gap: 4px !important; padding: 16px 0 !important; }
-  .rsp-exp-period { font-size: 12px !important; margin-top: 2px !important; }
+  .rsp-exp-period { font-size: 0.75rem !important; margin-top: 2px !important; }
 
   /* Contact handle text: trim on very small screens */
   .rsp-handle    { display: none !important; }
@@ -394,7 +394,7 @@ a {
   .rsp-back-mobile   { display: flex !important; }
   .rsp-cs-main       { padding-top: 80px !important; }
   .project-badge     { opacity: 1 !important; transform: translateY(0) !important; }
-  .rsp-specs span    { font-size: 12px !important; }
+  .rsp-specs span    { font-size: 0.75rem !important; }
 
   /* Scale project folders down on mobile for breathing room */
   .rsp-project-card-bg {

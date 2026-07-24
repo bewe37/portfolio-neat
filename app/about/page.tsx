@@ -26,12 +26,12 @@ const ROW: React.CSSProperties = {
 }
 
 const LABEL: React.CSSProperties = {
-  fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500,
+  fontFamily: "var(--font-sans)", fontSize: "0.875rem", fontWeight: 500,
   color: "var(--c-primary)", letterSpacing: "-0.01em", margin: 0, paddingTop: 2,
 }
 
 const BODY: React.CSSProperties = {
-  fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 400,
+  fontFamily: "var(--font-sans)", fontSize: "0.875rem", fontWeight: 400,
   color: "var(--c-secondary)", letterSpacing: "-0.01em", lineHeight: 1.75, margin: 0,
 }
 
@@ -70,7 +70,7 @@ export default function AboutPage() {
               <div style={{ padding: "32px 0", borderBottom: "1px solid var(--divider)", display: "grid", gridTemplateColumns: "clamp(120px, 14vw, 200px) 1fr 1fr", gap: "0 clamp(24px, 5vw, 72px)", alignItems: "start" }} className="rsp-stack">
                 <p style={LABEL}>How I think · (𖡎ᝰ𖡎)</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                  <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 600, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.4, margin: 0 }}>How I got into design</p>
+                  <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.9375rem", fontWeight: 600, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.4, margin: 0 }}>How I got into design</p>
                   <p style={BODY}>
                     Growing up, I was always making things. Drawing, painting, shooting video on whatever camera I could get my hands on. I wasn&apos;t thinking about design. I was just obsessed with how things made people feel.
                   </p>
@@ -79,7 +79,7 @@ export default function AboutPage() {
                   </p>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                  <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 600, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.4, margin: 0 }}>What I believe</p>
+                  <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.9375rem", fontWeight: 600, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.4, margin: 0 }}>What I believe</p>
                   <p style={BODY}>
                     Good design doesn&apos;t announce itself. The best interfaces I&apos;ve ever used felt inevitable, like someone had already thought through every edge case before I got there.
                   </p>
@@ -101,10 +101,10 @@ export default function AboutPage() {
                       borderBottom: i < arr.length - 1 ? "1px solid var(--divider)" : "none",
                     }}>
                       <div style={{ display: "flex", alignItems: "baseline", gap: 8, minWidth: 0 }}>
-                        <span style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.01em", whiteSpace: "nowrap" }}>{exp.company}</span>
-                        <span style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 400, color: "var(--c-dim)", letterSpacing: "-0.01em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{exp.role}</span>
+                        <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.8125rem", fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.01em", whiteSpace: "nowrap" }}>{exp.company}</span>
+                        <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.8125rem", fontWeight: 400, color: "var(--c-dim)", letterSpacing: "-0.01em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{exp.role}</span>
                       </div>
-                      <span style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 400, color: "var(--c-faint)", letterSpacing: "-0.01em", whiteSpace: "nowrap", flexShrink: 0 }}>{exp.period}</span>
+                      <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 400, color: "var(--c-faint)", letterSpacing: "-0.01em", whiteSpace: "nowrap", flexShrink: 0 }}>{exp.period}</span>
                     </div>
                   ))}
                 </div>

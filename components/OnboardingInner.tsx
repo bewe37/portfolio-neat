@@ -155,7 +155,7 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
               border: btn.active ? "1px solid #111111" : "1px solid rgba(0,0,0,0.18)",
               background: btn.active ? "#111111" : "rgba(0,0,0,0.06)",
               color: btn.disabled ? "rgba(0,0,0,0.25)" : btn.active ? "#ffffff" : "rgba(0,0,0,0.65)",
-              fontSize: 10, fontWeight: 700, fontFamily: "var(--font-sans)",
+              fontSize: "0.625rem", fontWeight: 700, fontFamily: "var(--font-sans)",
               letterSpacing: "0.06em", textTransform: "uppercase" as const,
               cursor: btn.disabled ? "default" : "pointer", transition: "all 0.15s ease",
             }}>{btn.label}</button>
@@ -183,7 +183,7 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
           style={{
             padding: "11px 32px", borderRadius: 99, border: "none",
             background: "#111111", color: "#ffffff",
-            fontSize: 14, fontWeight: 700, fontFamily: "var(--font-sans)",
+            fontSize: "0.875rem", fontWeight: 700, fontFamily: "var(--font-sans)",
             cursor: hasContent ? "pointer" : "default", letterSpacing: "-0.01em",
             position: "relative", overflow: "hidden", width: canvasSize,
           }}
@@ -235,7 +235,7 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
                 border: btn.active ? "1px solid #111111" : "1px solid rgba(0,0,0,0.18)",
                 background: btn.active ? "#111111" : "rgba(0,0,0,0.06)",
                 color: btn.disabled ? "rgba(0,0,0,0.25)" : btn.active ? "#ffffff" : "rgba(0,0,0,0.65)",
-                fontSize: 10, fontWeight: 700, fontFamily: "var(--font-sans)",
+                fontSize: "0.625rem", fontWeight: 700, fontFamily: "var(--font-sans)",
                 letterSpacing: "0.06em", textTransform: "uppercase" as const,
                 cursor: btn.disabled ? "default" : "pointer", transition: "all 0.15s ease",
               }}>{btn.label}</button>
@@ -245,7 +245,7 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
 
         <div style={{ display: "flex", flexDirection: "column", gap: 14, minWidth: 140 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <span style={{ fontFamily: "var(--font-sans)", fontSize: 10, fontWeight: 700, color: "#888888", letterSpacing: "0.08em", textTransform: "uppercase" as const }}>Preview</span>
+            <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.625rem", fontWeight: 700, color: "#888888", letterSpacing: "0.08em", textTransform: "uppercase" as const }}>Preview</span>
             <motion.div
               animate={{ y: [0, -6, 0] }}
               transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
@@ -261,7 +261,7 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
             </motion.div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <span style={{ fontFamily: "var(--font-sans)", fontSize: 10, fontWeight: 700, color: "#888888", letterSpacing: "0.08em", textTransform: "uppercase" as const }}>Colors</span>
+            <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.625rem", fontWeight: 700, color: "#888888", letterSpacing: "0.08em", textTransform: "uppercase" as const }}>Colors</span>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 30px)", gap: 5 }}>
               {DRAW_PALETTE.map(c => (
                 <motion.button key={c}
@@ -289,7 +289,7 @@ function DrawCanvas({ onSave }: { onSave: () => void }) {
         style={{
           padding: "11px 32px", borderRadius: 99, border: "none",
           background: "#111111", color: "#ffffff",
-          fontSize: 14, fontWeight: 700, fontFamily: "var(--font-sans)",
+          fontSize: "0.875rem", fontWeight: 700, fontFamily: "var(--font-sans)",
           cursor: hasContent ? "pointer" : "default", letterSpacing: "-0.01em",
           position: "relative", overflow: "hidden",
         }}
@@ -512,7 +512,7 @@ function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, o
                   : (tab === id ? "#111111" : "#aaaaaa"),
                 cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
                 gap: 6, position: "relative", zIndex: 1,
-                fontSize: 13, fontWeight: 600, fontFamily: "var(--font-sans)", letterSpacing: "-0.01em",
+                fontSize: "0.8125rem", fontWeight: 600, fontFamily: "var(--font-sans)", letterSpacing: "-0.01em",
                 transition: "color 0.25s ease",
               }}
             >
@@ -591,7 +591,7 @@ function CompanionStep({ selected, onSelect, onConfirm, onConfirmDraw, onBack, o
                   <button className="btn-shiny" onClick={() => { playClick(); onConfirm() }} style={{
                     padding: "11px 32px", borderRadius: 99, border: "none",
                     background: "#111111", color: "#ffffff",
-                    fontSize: 14, fontWeight: 700, fontFamily: "var(--font-sans)",
+                    fontSize: "0.875rem", fontWeight: 700, fontFamily: "var(--font-sans)",
                     cursor: "pointer", letterSpacing: "-0.01em", position: "relative", overflow: "hidden",
                   }}>
                     {`Let's go with ${BUDDIES.find(b => b.id === selected)?.name ?? ""} →`}

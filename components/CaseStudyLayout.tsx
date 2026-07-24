@@ -45,6 +45,7 @@ interface Section {
   title?: string
   href?: string
   body?: string
+  hmw?: string
   image?: string
   images?: string[]
   videos?: string[]
@@ -199,7 +200,7 @@ function SectionLabel({ text }: { text: string }) {
     <div style={{ marginBottom: 12 }}>
       <span style={{
         fontFamily: "var(--font-sans)",
-        fontSize:   14,
+        fontSize:   "0.875rem",
         fontWeight: 400,
         color:      "var(--c-secondary)",
       }}>
@@ -269,7 +270,7 @@ function Bento({ items }: { items: BentoItem[] }) {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             {item.image && <img src={item.image} alt={item.label ?? ""} draggable={false} style={{ width: "100%", display: "block" }} />}
             {item.label && (
-              <div style={{ padding: "6px 12px", fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "var(--c-faint)" }}>
+              <div style={{ padding: "6px 12px", fontSize: "0.5625rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "var(--c-faint)" }}>
                 {item.label}
               </div>
             )}
@@ -304,11 +305,11 @@ function StatCallout({ stat }: { stat: StatBlock }) {
         {stat.value}
       </span>
       <div style={{ width: 40, height: 2, backgroundColor: "var(--border)", margin: "20px 0 16px" }} />
-      <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 500, color: "var(--c-mid)", margin: 0, letterSpacing: "-0.01em" }}>
+      <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.9375rem", fontWeight: 500, color: "var(--c-mid)", margin: 0, letterSpacing: "-0.01em" }}>
         {stat.label}
       </p>
       {stat.body && (
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 400, color: "var(--c-body)", margin: "8px 0 0", lineHeight: 1.7 }}>
+        <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.875rem", fontWeight: 400, color: "var(--c-body)", margin: "8px 0 0", lineHeight: 1.7 }}>
           {stat.body}
         </p>
       )}
@@ -332,11 +333,11 @@ function Cards({ cards }: { cards: CardItem[] }) {
           backgroundColor: "var(--surface)",
         }}>
           {card.icon && (
-            <span style={{ fontSize: 18, display: "block", marginBottom: 12 }}>{card.icon}</span>
+            <span style={{ fontSize: "1.125rem", display: "block", marginBottom: 12 }}>{card.icon}</span>
           )}
           <h4 style={{
             fontFamily:    "var(--font-sans)",
-            fontSize:      14,
+            fontSize:      "0.875rem",
             fontWeight:    500,
             color:         "var(--c-high)",
             letterSpacing: "-0.01em",
@@ -346,7 +347,7 @@ function Cards({ cards }: { cards: CardItem[] }) {
           </h4>
           <p style={{
             fontFamily:    "var(--font-sans)",
-            fontSize:      14,
+            fontSize:      "0.875rem",
             fontWeight:    400,
             color:         "var(--c-body)",
             margin:        0,
@@ -405,8 +406,8 @@ function BeforeAfterSlider({ before, after }: { before: string; after: string })
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4 2L1 6L4 10M8 2L11 6L8 10" stroke="#333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
         </div>
       </div>
-      <div style={{ position: "absolute", top: 10, left: 10, padding: "2px 6px", borderRadius: 4, backgroundColor: "rgba(0,0,0,0.4)", color: "white", fontSize: 9, fontWeight: 500, letterSpacing: "0.06em", pointerEvents: "none" }}>BLUEPRINT</div>
-      <div style={{ position: "absolute", top: 10, right: 10, padding: "2px 6px", borderRadius: 4, backgroundColor: "rgba(0,0,0,0.4)", color: "white", fontSize: 9, fontWeight: 500, letterSpacing: "0.06em", pointerEvents: "none" }}>FINAL DESIGN</div>
+      <div style={{ position: "absolute", top: 10, left: 10, padding: "2px 6px", borderRadius: 4, backgroundColor: "rgba(0,0,0,0.4)", color: "white", fontSize: "0.5625rem", fontWeight: 500, letterSpacing: "0.06em", pointerEvents: "none" }}>BLUEPRINT</div>
+      <div style={{ position: "absolute", top: 10, right: 10, padding: "2px 6px", borderRadius: 4, backgroundColor: "rgba(0,0,0,0.4)", color: "white", fontSize: "0.5625rem", fontWeight: 500, letterSpacing: "0.06em", pointerEvents: "none" }}>FINAL DESIGN</div>
     </div>
   )
 }
@@ -573,7 +574,7 @@ function ChapterVideo({ src, chapters }: { src: string; chapters: { time: number
                 className={isActive ? undefined : "rsp-chapter-label-hide"}
                 style={{
                   position: "relative", padding: "0 12px",
-                  fontFamily: "var(--font-sans)", fontSize: 12,
+                  fontFamily: "var(--font-sans)", fontSize: "0.75rem",
                   fontWeight: isActive ? 600 : 400, letterSpacing: "-0.01em",
                   color: isActive ? "var(--c-primary)" : fill > 0 ? "var(--c-dim)" : "var(--c-faint)",
                   whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
@@ -606,7 +607,7 @@ function TabView({ tabs }: { tabs: { label: string; image: string }[] }) {
               border:          `1px solid ${i === active ? "var(--c-primary)" : "var(--border)"}`,
               background:      i === active ? "var(--c-primary)" : "transparent",
               color:           i === active ? "var(--bg)" : "var(--c-secondary)",
-              fontSize:        12,
+              fontSize:        "0.75rem",
               fontWeight:      500,
               fontFamily:      "var(--font-sans)",
               letterSpacing:   "-0.01em",
@@ -717,7 +718,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
           {block.title && (
             <p style={{
               fontFamily:    "var(--font-sans)",
-              fontSize:      15,
+              fontSize:      "0.9375rem",
               fontWeight:    500,
               color:         "var(--c-primary)",
               letterSpacing: "-0.02em",
@@ -731,7 +732,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
         {block.body && (
           <p className="rsp-cs-body" style={{
             fontFamily:    "var(--font-sans)",
-            fontSize:      16,
+            fontSize:      "1rem",
             fontWeight:    400,
             color:         "var(--c-body)",
             letterSpacing: "-0.01em",
@@ -776,7 +777,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
           {isNumbered && (
             <span style={{
               fontFamily:    "var(--font-sans)",
-              fontSize:      11,
+              fontSize:      "0.6875rem",
               fontWeight:    700,
               letterSpacing: "0.1em",
               color:         "var(--c-faint)",
@@ -789,7 +790,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
           {!isNumbered && block.title && (
             <p style={{
               fontFamily:    "var(--font-sans)",
-              fontSize:      16,
+              fontSize:      "1rem",
               fontWeight:    500,
               color:         "var(--c-primary)",
               letterSpacing: "-0.025em",
@@ -836,7 +837,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
           {block.title && (
             <span className="sticky-note-label" style={{
               fontFamily:    "'Departure Mono', monospace",
-              fontSize:      9,
+              fontSize:      "0.5625rem",
               fontWeight:    700,
               letterSpacing: "0.1em",
               textTransform: "uppercase" as const,
@@ -846,7 +847,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
           )}
           <p className="sticky-note-body" style={{
             fontFamily:    "var(--font-sans)",
-            fontSize:      13,
+            fontSize:      "0.8125rem",
             fontWeight:    500,
             lineHeight:    1.75,
             margin:        0,
@@ -890,7 +891,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
           {block.title && (
             <h3 style={{
               fontFamily:    "var(--font-sans)",
-              fontSize:      22,
+              fontSize:      "1.3rem",
               fontWeight:    500,
               color:         "var(--c-primary)",
               letterSpacing: "-0.025em",
@@ -903,7 +904,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
           {block.body && (
             <p className="rsp-cs-body" style={{
               fontFamily:    "var(--font-sans)",
-              fontSize:      16,
+              fontSize:      "1rem",
               fontWeight:    400,
               color:         "var(--c-body)",
               letterSpacing: "-0.01em",
@@ -947,7 +948,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
                 {block.imageLabels![i] && (
                   <p style={{
                     fontFamily:    "var(--font-sans)",
-                    fontSize:      13,
+                    fontSize:      "0.8125rem",
                     fontWeight:    400,
                     color:         "var(--c-secondary)",
                     letterSpacing: "-0.01em",
@@ -982,7 +983,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
               {block.insightTitle && (
                 <p style={{
                   fontFamily:    "var(--font-sans)",
-                  fontSize:      22,
+                  fontSize:      "1.3rem",
                   fontWeight:    500,
                   color:         "var(--c-primary)",
                   lineHeight:    1.2,
@@ -994,7 +995,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
               )}
               <p className="rsp-cs-body" style={{
                 fontFamily:    "var(--font-sans)",
-                fontSize:      16,
+                fontSize:      "1rem",
                 fontWeight:    400,
                 color:         "var(--c-body)",
                 lineHeight:    1.75,
@@ -1016,11 +1017,11 @@ function renderContentBlock(block: ContentBlock, bi: number) {
           </svg>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {block.insightTitle && (
-              <p style={{ fontFamily: "var(--font-sans)", fontSize: 22, fontWeight: 500, color: "var(--c-primary)", lineHeight: 1.2, margin: 0, letterSpacing: "-0.025em" }}>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: "1.3rem", fontWeight: 500, color: "var(--c-primary)", lineHeight: 1.2, margin: 0, letterSpacing: "-0.025em" }}>
                 {block.insightTitle}
               </p>
             )}
-            <p className="rsp-cs-body" style={{ fontFamily: "var(--font-sans)", fontSize: 16, fontWeight: 400, color: "var(--c-body)", lineHeight: 1.75, margin: 0, letterSpacing: "-0.01em" }}>
+            <p className="rsp-cs-body" style={{ fontFamily: "var(--font-sans)", fontSize: "1rem", fontWeight: 400, color: "var(--c-body)", lineHeight: 1.75, margin: 0, letterSpacing: "-0.01em" }}>
               {block.insight}
             </p>
           </div>
@@ -1098,11 +1099,11 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
               )}
               {/* Text */}
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.4, margin: 0, textWrap: "balance" }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.9375rem", fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.4, margin: 0, textWrap: "balance" }}>
                   {item.title}
                 </p>
                 {item.body && (
-                  <p className="rsp-cs-body" style={{ fontFamily: "var(--font-sans)", fontSize: 16, fontWeight: 400, color: "var(--c-body)", lineHeight: 1.75, letterSpacing: "-0.01em", margin: 0 }}>
+                  <p className="rsp-cs-body" style={{ fontFamily: "var(--font-sans)", fontSize: "1rem", fontWeight: 400, color: "var(--c-body)", lineHeight: 1.75, letterSpacing: "-0.01em", margin: 0 }}>
                     {item.body}
                   </p>
                 )}
@@ -1140,15 +1141,15 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
                   </div>
                 )}
                 <div style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
-                  <span style={{ fontFamily: "var(--font-sans)", fontSize: 11, fontWeight: 500, color: "var(--c-faint)", letterSpacing: "0.06em", paddingTop: 2, flexShrink: 0 }}>
+                  <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.6875rem", fontWeight: 500, color: "var(--c-faint)", letterSpacing: "0.06em", paddingTop: 2, flexShrink: 0 }}>
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <div style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 0 }}>
-                    <span style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.4 }}>
+                    <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.9375rem", fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.4 }}>
                       {item.title}
                     </span>
                     {item.body && (
-                      <span className="rsp-cs-body" style={{ fontFamily: "var(--font-sans)", fontSize: 16, fontWeight: 400, color: "var(--c-body)", lineHeight: 1.75, letterSpacing: "-0.01em", wordBreak: "break-word" }}>
+                      <span className="rsp-cs-body" style={{ fontFamily: "var(--font-sans)", fontSize: "1rem", fontWeight: 400, color: "var(--c-body)", lineHeight: 1.75, letterSpacing: "-0.01em", wordBreak: "break-word" }}>
                         {item.body}
                       </span>
                     )}
@@ -1205,7 +1206,7 @@ function MobileBackBar({ href }: { href: string }) {
       style={{
         display: "none", alignItems: "center", gap: 8,
         position: "fixed", top: 20, left: 20, zIndex: 1001,
-        fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 500,
+        fontFamily: "var(--font-sans)", fontSize: "0.875rem", fontWeight: 500,
         letterSpacing: "-0.01em", color: "var(--c-primary)",
         textDecoration: "none",
         background: "var(--bg)", border: "1px solid var(--border)",
@@ -1243,7 +1244,7 @@ function BackButton({ href }: { href: string }) {
       style={{
         position:      "fixed", top: 28, left: 32, zIndex: 200,
         fontFamily:    "var(--font-sans)",
-        fontSize:      14,
+        fontSize:      "0.875rem",
         fontWeight:    500,
         letterSpacing: "-0.01em",
         color:         hovered ? "var(--c-primary)" : "var(--c-dim)",
@@ -1385,7 +1386,7 @@ function HighlightsButton({ id, isActive, onClick, prefix }: { id: string; isAct
       {prefix && (
         <span style={{
           fontFamily:    "var(--font-sans)",
-          fontSize:      13,
+          fontSize:      "0.8125rem",
           fontWeight:    isActive ? 500 : 400,
           letterSpacing: "-0.01em",
           lineHeight:    1.4,
@@ -1397,7 +1398,7 @@ function HighlightsButton({ id, isActive, onClick, prefix }: { id: string; isAct
       )}
       <span style={{
         fontFamily:    "var(--font-sans)",
-        fontSize:      13,
+        fontSize:      "0.8125rem",
         fontWeight:    isActive ? 500 : 400,
         letterSpacing: "-0.01em",
         lineHeight:    1.4,
@@ -1468,7 +1469,7 @@ function TableOfContents({ backHref, items, activeId, revealed }: {
           onMouseLeave={() => setHovHome(false)}
           style={{
             fontFamily:     "var(--font-sans)",
-            fontSize:       13,
+            fontSize:       "0.8125rem",
             fontWeight:     400,
             color:          hovHome ? "var(--c-primary)" : "var(--c-dim)",
             letterSpacing:  "-0.01em",
@@ -1551,7 +1552,7 @@ function TableOfContents({ backHref, items, activeId, revealed }: {
             >
               <span style={{
                 fontFamily:    "var(--font-sans)",
-                fontSize:      13,
+                fontSize:      "0.8125rem",
                 fontWeight:    isActive ? 500 : 400,
                 letterSpacing: "-0.01em",
                 lineHeight:    1.4,
@@ -1837,13 +1838,63 @@ function DitherDivider({ text = "discovery", linesOnly = false }: { text?: strin
   )
 }
 
+function SimpleDivider({ text }: { text?: string }) {
+  return (
+    <div style={{
+      display: "flex", alignItems: "center", gap: 16,
+      margin: "56px 0",
+    }}>
+      <div style={{ flex: 1, height: 1, background: "var(--border-mid)" }} />
+      {text && (
+        <span style={{
+          fontFamily: "var(--font-sans)", fontSize: "0.875rem", fontWeight: 400,
+          color: "var(--c-secondary)",
+          whiteSpace: "nowrap",
+        }}>
+          {text}
+        </span>
+      )}
+      <div style={{ flex: 1, height: 1, background: "var(--border-mid)" }} />
+    </div>
+  )
+}
+
+function HMWCallout({ text }: { text: string }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={VIEWPORT}
+      transition={FADE}
+      style={{
+        borderLeft:  "2px solid var(--c-primary)",
+        paddingLeft: 20,
+        margin:      "28px 0",
+      }}
+    >
+      <p style={{
+        fontFamily:    "var(--font-sans)",
+        fontSize:      "1.125rem",
+        fontWeight:    400,
+        fontStyle:     "italic",
+        color:         "var(--c-primary)",
+        letterSpacing: "-0.01em",
+        lineHeight:    1.55,
+        margin:        0,
+      }}>
+        {text}
+      </p>
+    </motion.div>
+  )
+}
+
 function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
   const topImages   = sec.image ? [sec.image] : (sec.images ?? [])
   const hasTopMedia = topImages.length > 0 || (sec.videos?.length ?? 0) > 0
 
   return (
     <>
-      {sec.dividerBefore && <DitherDivider text={sec.dividerText} />}
+      {sec.dividerBefore && <SimpleDivider text={sec.dividerText} />}
       {sec.lineBefore && <DitherDivider linesOnly />}
       <motion.div
         id={id}
@@ -1860,7 +1911,7 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
       {sec.title && (
         <h2 style={{
           fontFamily:    "var(--font-sans)",
-          fontSize:      22,
+          fontSize:      "1.3rem",
           fontWeight:    500,
           color:         "var(--c-primary)",
           letterSpacing: "-0.03em",
@@ -1885,7 +1936,7 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
       {sec.body && (
         <p className="rsp-cs-body" style={{
           fontFamily:    "var(--font-sans)",
-          fontSize:      16,
+          fontSize:      "1rem",
           fontWeight:    400,
           color:         "var(--c-body)",
           letterSpacing: "-0.01em",
@@ -1896,6 +1947,8 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
           {sec.body}
         </p>
       )}
+
+      {sec.hmw && <HMWCallout text={sec.hmw} />}
 
       {sec.bento && <Bento items={sec.bento} />}
 
@@ -1931,7 +1984,7 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
               {sec.imageLabels![i] && (
                 <p style={{
                   fontFamily:    "var(--font-sans)",
-                  fontSize:      13,
+                  fontSize:      "0.8125rem",
                   fontWeight:    400,
                   color:         "var(--c-secondary)",
                   letterSpacing: "-0.01em",
@@ -1954,7 +2007,7 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
           {sec.contacts.map(c => (
             <a key={c.platform} href={c.href} target="_blank" rel="noopener noreferrer" onClick={() => playClick()} style={{
               fontFamily:      "var(--font-sans)",
-              fontSize:        13,
+              fontSize:        "0.8125rem",
               fontWeight:      500,
               color:           "var(--c-mid)",
               letterSpacing:   "-0.01em",
@@ -1993,7 +2046,7 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
       {sec.footnote && (
         <p style={{
           fontFamily:    "var(--font-sans)",
-          fontSize:      13,
+          fontSize:      "0.8125rem",
           fontWeight:    400,
           fontStyle:     "italic",
           color:         "var(--c-faint)",
@@ -2024,9 +2077,9 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
                 borderBottom:        "1px solid var(--divider)",
               }}
             >
-              <span style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 700, color: "var(--c-high)" }}>{exp.company}</span>
-              <span style={{ fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 400, color: "var(--c-secondary)" }}>{exp.role}</span>
-              <span style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 500, color: "var(--c-faint)", textAlign: "right" }}>{exp.period}</span>
+              <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.875rem", fontWeight: 700, color: "var(--c-high)" }}>{exp.company}</span>
+              <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.875rem", fontWeight: 400, color: "var(--c-secondary)" }}>{exp.role}</span>
+              <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.8125rem", fontWeight: 500, color: "var(--c-faint)", textAlign: "right" }}>{exp.period}</span>
             </motion.div>
           ))}
         </div>
@@ -2043,7 +2096,7 @@ function SpecValue({ value }: { value: string | string[] }) {
       {items.map((v, i) => (
         <span key={i} style={{
           fontFamily:    "var(--font-sans)",
-          fontSize:      16,
+          fontSize:      "1rem",
           fontWeight:    400,
           color:         "var(--c-body)",
           letterSpacing: "-0.01em",
@@ -2171,7 +2224,7 @@ export default function CaseStudyLayout({
             {category && (
               <span style={{
                 fontFamily:    "var(--font-sans)",
-                fontSize:      13,
+                fontSize:      "0.8125rem",
                 fontWeight:    400,
                 color:         "var(--c-secondary)",
                 display:       "block",
@@ -2182,7 +2235,7 @@ export default function CaseStudyLayout({
             )}
             <h1 className="rsp-cs-h1" style={{
               fontFamily:    "var(--font-sans)",
-              fontSize:      26,
+              fontSize:      "1.625rem",
               fontWeight:    500,
               color:         "var(--c-primary)",
               letterSpacing: "-0.025em",
@@ -2224,7 +2277,7 @@ export default function CaseStudyLayout({
                 <div key={s.label} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                   <span style={{
                     fontFamily: "var(--font-sans)",
-                    fontSize:   14,
+                    fontSize:   "0.875rem",
                     fontWeight: 400,
                     color:      "var(--c-secondary)",
                   }}>
@@ -2262,7 +2315,7 @@ export default function CaseStudyLayout({
               {passwordDesc && (
                 <p style={{
                   fontFamily:    "var(--font-sans)",
-                  fontSize:      16,
+                  fontSize:      "1rem",
                   fontWeight:    400,
                   color:         "var(--c-body)",
                   lineHeight:    1.85,
@@ -2292,7 +2345,7 @@ export default function CaseStudyLayout({
                     border:          "none",
                     backgroundColor: "transparent",
                     fontFamily:      "var(--font-sans)",
-                    fontSize:        14,
+                    fontSize:        "0.875rem",
                     color:           "var(--c-primary)",
                     outline:         "none",
                     minWidth:        0,
@@ -2307,7 +2360,7 @@ export default function CaseStudyLayout({
                     borderLeft:      "1px solid var(--border)",
                     backgroundColor: "transparent",
                     fontFamily:      "var(--font-sans)",
-                    fontSize:        13,
+                    fontSize:        "0.8125rem",
                     fontWeight:      500,
                     letterSpacing:   "-0.01em",
                     color:           "var(--c-primary)",
@@ -2321,7 +2374,7 @@ export default function CaseStudyLayout({
                 </button>
               </div>
               {pwError && (
-                <p style={{ fontFamily: "var(--font-sans)", fontSize: 12, color: "rgb(220,60,50)", margin: "8px 0 0" }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "rgb(220,60,50)", margin: "8px 0 0" }}>
                   Incorrect password
                 </p>
               )}
@@ -2340,7 +2393,7 @@ export default function CaseStudyLayout({
     {nextProject && (
       <div style={{ borderTop: "1px solid var(--divider)", padding: "48px", display: "flex", justifyContent: "center" }}>
         <div style={{ width: "100%", maxWidth: 1200, padding: "0 48px" }}>
-          <span style={{ fontFamily: "var(--font-sans)", fontSize: 11, fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--c-primary)" }}>
+          <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.6875rem", fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--c-primary)" }}>
             {nextProject.label}
           </span>
           <Link

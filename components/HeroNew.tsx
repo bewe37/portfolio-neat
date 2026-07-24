@@ -76,7 +76,7 @@ export default function HeroNew() {
       }}>
         <span style={{
           fontFamily:    "'Departure Mono', monospace",
-          fontSize:      11,
+          fontSize:      "0.6875rem",
           letterSpacing: "0.1em",
           textTransform: "uppercase",
           color:         "var(--c-dim)",
@@ -86,7 +86,7 @@ export default function HeroNew() {
         <CyclingFlipBoard words={ROLES} tileH={20} intervalMs={2600} />
         <span style={{
           fontFamily:    "'Departure Mono', monospace",
-          fontSize:      11,
+          fontSize:      "0.6875rem",
           letterSpacing: "0.1em",
           textTransform: "uppercase",
           color:         "var(--c-dim)",
@@ -138,7 +138,7 @@ export default function HeroNew() {
         <div ref={bodyRef} style={{ maxWidth: 400 }}>
           <p style={{
             fontFamily:    "var(--font-sans)",
-            fontSize:      16,
+            fontSize:      "1rem",
             fontWeight:    400,
             letterSpacing: "-0.01em",
             lineHeight:    1.8,
@@ -167,7 +167,7 @@ export default function HeroNew() {
         >
           <span style={{
             fontFamily:    "'Departure Mono', monospace",
-            fontSize:      9,
+            fontSize:      "0.5625rem",
             letterSpacing: "0.1em",
             textTransform: "uppercase",
             color:         "var(--c-dim)",
@@ -176,7 +176,7 @@ export default function HeroNew() {
           </span>
           <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
             <InlineLogoChip src="/amdchip.svg"  alt="AMD"           link="https://www.amd.com"  size={48} />
-            <span style={{ color: "var(--c-dim)", fontSize: 13 }}>&amp;</span>
+            <span style={{ color: "var(--c-dim)", fontSize: "0.8125rem" }}>&amp;</span>
             <InlineLogoChip src="/safechip.svg" alt="Safe Software" link="https://www.safe.com" size={64} />
           </div>
         </div>
