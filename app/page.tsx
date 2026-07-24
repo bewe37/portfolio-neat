@@ -96,7 +96,7 @@ const PROJECTS = [
     date: "February 2026 – Now",
     description: "Designing a clear, humane dashboard for nonprofits to manage donor relationships at scale.",
     href: "/blueprint",
-    cover: "/YUBlueprintThumbnail.png",
+    cover: "/BlueprintThumb.png",
     badge: "/bpLogo.svg",
   },
 ]

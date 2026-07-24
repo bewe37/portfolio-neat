@@ -1416,10 +1416,11 @@ function HighlightsButton({ id, isActive, onClick, prefix }: { id: string; isAct
   )
 }
 
-function TableOfContents({ backHref, items, activeId }: {
+function TableOfContents({ backHref, items, activeId, revealed }: {
   backHref: string
   items: Array<{ label: string; id: string }>
   activeId: string
+  revealed: boolean
 }) {
   const [hovId, setHovId] = useState<string | null>(null)
   const [hovHome, setHovHome] = useState(false)
@@ -1444,9 +1445,22 @@ function TableOfContents({ backHref, items, activeId }: {
     setTimeout(() => document.body.classList.remove("theme-switching"), 600)
   }
 
+  // Stagger step shared by the header row (index 0) and every nav item
+  // below it (index 1..n), so the whole sidebar cascades as one sequence
+  // instead of the header snapping while only the nav list staggers.
+  const STEP = 0.035
+  const stagger = (i: number) => ({
+    initial: false as const,
+    animate: revealed ? { opacity: 1, x: 0 } : { opacity: 0, x: -14 },
+    transition: {
+      type: "spring" as const, visualDuration: 0.4, bounce: 0.32,
+      delay: revealed ? i * STEP : (items.length - i) * (STEP * 0.85),
+    },
+  })
+
   return (
     <div style={{ display: "flex", flexDirection: "column", paddingTop: 56 }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <motion.div {...stagger(0)} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <Link
           href={backHref}
           onClick={() => playClick()}
@@ -1503,28 +1517,33 @@ function TableOfContents({ backHref, items, activeId }: {
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
           </svg>
         </button>
-      </div>
-      <div style={{ height: 1, backgroundColor: "var(--divider)", margin: "16px 0" }} />
+      </motion.div>
+      <motion.div {...stagger(0)} style={{ height: 1, backgroundColor: "var(--divider)", margin: "16px 0" }} />
       <nav style={{ display: "flex", flexDirection: "column", gap: 1 }}>
-        {items.map(({ label, id }) => {
+        {items.map(({ label, id }, i) => {
           const isActive = activeId === id
           const isHov    = hovId === id
+          // Header row is index 0, so nav items continue the same cascade
+          // from index 1 — the whole sidebar reveals/hides as one sequence.
+          const itemMotion = stagger(i + 1)
 
           if (label === "Highlights" || label === "Overview / Highlights") {
             return (
-              <HighlightsButton
-                key={id}
-                id={id}
-                isActive={isActive}
-                prefix={label === "Overview / Highlights" ? "Overview / " : undefined}
-                onClick={() => { playClick(); document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }) }}
-              />
+              <motion.div key={id} {...itemMotion}>
+                <HighlightsButton
+                  id={id}
+                  isActive={isActive}
+                  prefix={label === "Overview / Highlights" ? "Overview / " : undefined}
+                  onClick={() => { playClick(); document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }) }}
+                />
+              </motion.div>
             )
           }
 
           return (
-            <button
+            <motion.button
               key={id}
+              {...itemMotion}
               onClick={() => { playClick(); document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }) }}
               onMouseEnter={() => setHovId(id)}
               onMouseLeave={() => setHovId(null)}
@@ -1541,7 +1560,7 @@ function TableOfContents({ backHref, items, activeId }: {
               }}>
                 {label}
               </span>
-            </button>
+            </motion.button>
           )
         })}
       </nav>
@@ -2058,6 +2077,9 @@ export default function CaseStudyLayout({
   ]
 
   const [activeId, setActiveId] = useState(tocItems[0]?.id ?? "")
+  // TOC sidebar stays hidden on load and slides in once the reader has
+  // actually started scrolling — keeps the hero's first impression clean.
+  const [tocRevealed, setTocRevealed] = useState(false)
 
   const tocIds = tocItems.map(t => t.id).join(",")
 
@@ -2071,6 +2093,7 @@ export default function CaseStudyLayout({
         if (el.getBoundingClientRect().top <= window.innerHeight * 0.4) best = id
       }
       setActiveId(best)
+      setTocRevealed(window.scrollY > 120)
     }
     window.addEventListener("scroll", onScroll, { passive: true })
     onScroll()
@@ -2107,7 +2130,9 @@ export default function CaseStudyLayout({
           padding:             "0 48px",
         }}
       >
-        {/* TOC Sidebar — desktop only */}
+        {/* TOC Sidebar — desktop only, hidden until the reader scrolls.
+            No opacity here: each nav row owns its own fade so the reveal
+            and the reverse-stagger exit both play out row by row. */}
         <div
           className="rsp-toc-sidebar"
           style={{
@@ -2119,10 +2144,11 @@ export default function CaseStudyLayout({
             alignItems:    "flex-start",
             gap:           16,
             paddingRight:  12,
+            pointerEvents: tocRevealed ? "auto" : "none",
           }}
         >
           <div style={{ flex: 1, minWidth: 0 }}>
-            <TableOfContents backHref={backHref} items={tocItems} activeId={activeId} />
+            <TableOfContents backHref={backHref} items={tocItems} activeId={activeId} revealed={tocRevealed} />
           </div>
           <div style={{ paddingTop: 56, display: "flex", flexDirection: "column", justifyContent: "center" }}>
             <NoodleAnimation />
