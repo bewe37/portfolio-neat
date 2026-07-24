@@ -128,7 +128,18 @@ export default function AmdAiProject() {
             {
               title:  "Save the answer, not just the moment.",
               body:   "I made every AI response pinnable as a widget. Instead of asking the same question next session, the control is already waiting. The chat stays focused on one-off queries while the panel builds up over time into something personal.",
-              videos:      ["/ChatPin.mp4"],
+              videos:      ["/ChatPinVid.mp4"],
+            },
+          ],
+        },
+        {
+          label: "Manual Discovery",
+          hideToc: true,
+          contents: [
+            {
+              title:  "For users who know what they want.",
+              body:   "Not everyone needs the AI to get started. I designed a browse path for power users who'd rather skip the chat entirely and search the widget library by category, find the control, and add it directly to the panel.",
+              videos: ["/ManuallyPin.mp4"],
             },
           ],
         },
@@ -140,17 +151,6 @@ export default function AmdAiProject() {
               title:  "A home for everything the system wants to tell you.",
               body:   "I added a dedicated notification page where system messages, driver updates, and performance warnings collect in one place, each one actionable on the spot, without digging through settings.",
               videos: ["/DedicatedNotif.mp4"],
-            },
-          ],
-        },
-        {
-          label: "Manual Discovery",
-          hideToc: true,
-          contents: [
-            {
-              title:  "For users who know what they want.",
-              body:   "Not everyone needs the AI to get started. I designed a browse path for power users who'd rather skip the chat entirely and search the widget library by category, find the control, and add it directly to the panel.",
-              videos: ["/AddManual.mp4"],
             },
           ],
         },
