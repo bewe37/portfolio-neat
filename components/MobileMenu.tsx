@@ -1,10 +1,13 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { ArrowUpRight } from "@phosphor-icons/react"
 import Link from "next/link"
 import { playClick } from "@/lib/click-sound"
+
+const HIDDEN_NAV_PATHS = ["/explore"]
 
 const MotionLink = motion(Link)
 
@@ -17,11 +20,15 @@ const NAV_ITEMS = [
 
 export default function MobileMenu() {
   const [open, setOpen] = useState(false)
+  const pathname = usePathname()
+  const isHidden = HIDDEN_NAV_PATHS.some(p => pathname.startsWith(p))
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : ""
     return () => { document.body.style.overflow = "" }
   }, [open])
+
+  if (isHidden) return null
 
   const barBase: React.CSSProperties = {
     display: "block",

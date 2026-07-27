@@ -673,8 +673,9 @@ function renderContentBlock(block: ContentBlock, bi: number) {
         style={{ display: "flex", flexDirection: "column", gap: 16, borderTop: "1px solid var(--border)", paddingTop: 20, height: "100%" }}
       >
         {/* Fixed-height text block so the image below starts at the same y
-            across sibling cards, regardless of how many lines the body wraps to */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 16, minHeight: 108 }}>
+            across sibling cards, regardless of how many lines the body wraps to.
+            Only applied when a body exists — title-only cards sit flush above the image. */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 16, minHeight: block.body ? 108 : undefined }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           {block.icon && (
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>

@@ -84,27 +84,24 @@ export default function AmdAiProject() {
         {
           label: "Design Direction",
           title: "Direct control first, AI second.",
-          body:  "The overlay opens over a running game. Attention is already split, and there's no headspace to navigate or parse options. You want to act and get back. That constraint shaped the whole direction: direct controls had to be first-class, something you tap once and you're done, with AI alongside for the moments you don't know what to change. Based on the findings and studying how people actually moved around the software, I proposed three components to the team.",
+          body:  "This overlay opens mid-game, when attention is already split. There's no room to hunt through menus or parse a setting, so the interaction has to ask almost nothing: see the control, tap it, get back to the game. Direct, one-tap controls became the foundation, with AI in reserve for when someone doesn't know what to change. From there, I proposed three components to the team.",
           contents: [
             {
               highlight: true,
               minimal:   true,
               title:     "Contextual Chat",
-              body:      "Describe what's wrong. The AI reads live hardware data and surfaces a plain-language fix or a one-tap action.",
               images:    ["/CardChat.png"],
             },
             {
               highlight: true,
               minimal:   true,
               title:     "Pinned Widgets",
-              body:      "Controls you care about stay pinned. No navigation, no hunting, just the things you reach for every session.",
               images:    ["/CardPin.png"],
             },
             {
               highlight: true,
               minimal:   true,
               title:     "Manual Discovery",
-              body:      "For users who already know what they want: browse the widget library by category and add controls directly.",
               images:    ["/CardManual.png"],
             },
           ],

@@ -38,10 +38,12 @@ function Sparkle({ spinning }: { spinning: boolean }) {
 }
 
 const CASE_STUDY_PATHS = ["/amd_ai_project", "/amd_project", "/fme_annotation_project", "/blueprint", "/gallery"]
+const HIDDEN_NAV_PATHS = ["/explore"]
 
 export default function SharedNav() {
   const pathname = usePathname()
   const isCaseStudy = CASE_STUDY_PATHS.some(p => pathname.startsWith(p))
+  const isHidden = HIDDEN_NAV_PATHS.some(p => pathname.startsWith(p))
   const [spinning, setSpinning] = useState(false)
 
   const handleClick = useCallback(() => {
@@ -50,7 +52,7 @@ export default function SharedNav() {
     window.scrollTo({ top: 0, behavior: "smooth" })
   }, [])
 
-  if (isCaseStudy) return null
+  if (isCaseStudy || isHidden) return null
 
   return (
     <div

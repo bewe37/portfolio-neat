@@ -184,6 +184,12 @@ a {
   animation-delay: inherit;
 }
 
+/* ── Explore bento grid ──────────────────────────────────── */
+.explore-tile:hover .explore-tile-caption {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
 
 /* ── Tamagotchi ───────────────────────────────────────────── */
 .tama-egg {
@@ -356,6 +362,17 @@ a {
   .project-badge-img { height: 16px !important; }
   .rsp-mobile-only  { display: flex !important; }
   .rsp-show-mobile { display: flex !important; flex-direction: column !important; }
+
+  /* Explore layout: stack bio above the bento grid, collapse grid to a single column */
+  .rsp-explore-row  { flex-direction: column !important; gap: 32px !important; }
+  .rsp-explore-grid {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: repeat(5, minmax(220px, auto)) !important;
+    grid-template-areas:
+      "wide" "top-right-a" "top-right-b" "bottom-a" "bottom-b" !important;
+    aspect-ratio: unset !important;
+    gap: 12px !important;
+  }
   .rsp-show-mobile-grid { display: grid !important; }
 
   /* Mobile hamburger menu button */
