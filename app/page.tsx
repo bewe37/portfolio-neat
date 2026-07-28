@@ -49,7 +49,7 @@ const VIBE_PROJECTS = [
     date: "",
     description: "A multi-step subscription flow with animated billing toggle, payment form, and success state — built from a static design.",
     href: "/subscription_plan",
-    cover: "/PricingComponents.mp4",
+    cover: "/SubThumb.mp4",
     comingSoon: true,
   },
   {

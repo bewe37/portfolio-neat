@@ -1100,7 +1100,7 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
               )}
               {/* Text */}
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.9375rem", fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.4, margin: 0, textWrap: "balance" }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: "1.25rem", fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.35, margin: 0, textWrap: "balance" }}>
                   {item.title}
                 </p>
                 {item.body && (
@@ -1146,7 +1146,7 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <div style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 0 }}>
-                    <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.9375rem", fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.4 }}>
+                    <span style={{ fontFamily: "var(--font-sans)", fontSize: "1.125rem", fontWeight: 500, color: "var(--c-primary)", letterSpacing: "-0.02em", lineHeight: 1.35 }}>
                       {item.title}
                     </span>
                     {item.body && (
