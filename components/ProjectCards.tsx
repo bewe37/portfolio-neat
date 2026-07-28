@@ -1,8 +1,10 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { useState, useRef } from "react"
 import { playClick } from "@/lib/click-sound"
+import { useLazyVideo } from "@/lib/use-lazy-video"
 
 interface Project {
   title: string
@@ -87,6 +89,8 @@ function ProjectCard({ project, onLightbox }: { project: Project; onLightbox?: (
   const bg = project.coverBg ?? "var(--surface)"
   const coverPadding = project.coverPadding ?? 0
   const coverBorder = project.coverBorder ?? undefined
+  const coverVideoRef = useRef<HTMLVideoElement>(null)
+  useLazyVideo(coverVideoRef)
 
   const inner = (
     <>
@@ -94,10 +98,17 @@ function ProjectCard({ project, onLightbox }: { project: Project; onLightbox?: (
         {project.carousel ? (
           <CarouselCover videos={project.carousel} hovered={hovered} />
         ) : project.coverNode ? project.coverNode : isVideo ? (
-          <video src={project.cover} autoPlay loop muted playsInline preload="metadata" style={coverStyle(hovered, fit)} />
+          <video ref={coverVideoRef} src={project.cover} autoPlay loop muted playsInline preload="metadata" style={coverStyle(hovered, fit)} />
         ) : (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={project.cover} alt={project.title} draggable={false} loading="eager" width={800} height={600} style={coverStyle(hovered, fit)} />
+          <Image
+            src={project.cover}
+            alt={project.title}
+            fill
+            quality={90}
+            sizes="(max-width: 768px) 100vw, 50vw"
+            draggable={false}
+            style={{ ...coverStyle(hovered, fit), objectFit: fit }}
+          />
         )}
         {project.badge && (
           <div className="project-badge" style={{

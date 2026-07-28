@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 
 const PROJECTS = [
   {
@@ -71,11 +72,13 @@ function ProjectTile({ project }: { project: (typeof PROJECTS)[number] }) {
           style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
         />
       ) : (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <Image
           src={project.cover}
           alt={project.title}
-          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          fill
+          quality={90}
+          sizes="(max-width: 768px) 100vw, 34vw"
+          style={{ objectFit: "cover" }}
         />
       )}
 

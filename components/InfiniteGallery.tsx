@@ -51,6 +51,10 @@ const IMAGES: GalleryImage[] = [
   { src: "/IMG_5840.jpg",                                    tag: "places" },
   { src: "/IMG_9527.jpg",                                    tag: "places" },
   { src: "/IMG_1235.jpg",                                    tag: "places" },
+  { src: "/Vict.JPG",                                        tag: "places" },
+  { src: "/Vict2.JPG",                                       tag: "places" },
+  { src: "/Vict3.JPG",                                       tag: "places" },
+  { src: "/Oysters.JPG",                                     tag: "food"   },
 ]
 
 const CARD_H           = 180

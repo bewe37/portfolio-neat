@@ -52,6 +52,7 @@ export default function AmdProject() {
           title: "Auditing the existing product before building anything.",
           images:      ["/colorMismatch.png", "/inconsistentStyling.png"],
           imageLabels: ["Inconsistent color application", "Inconsistent component styling"],
+          stackImages: true,
           body:   "Before building anything new, I audited the product. Two issues surfaced immediately:\n\n1. Colors had no source of truth, so the same UI state looked different depending on who built it.\n2. Components drifted. Buttons alone varied in corner radius, spacing, and weight, with no documented standard.\n\nWithout a governance layer, the product drifted further from consistency with each new screen.",
         },
         {

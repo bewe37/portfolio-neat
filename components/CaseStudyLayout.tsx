@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { useState, useRef, useEffect, useContext, createContext, useCallback } from "react"
 import { createPortal } from "react-dom"
 import { useRouter } from "next/navigation"
@@ -8,6 +9,8 @@ import { motion, AnimatePresence } from "framer-motion"
 import MarqueeFooter from "@/components/MarqueeFooter"
 import FloatingNav from "@/components/FloatingNav"
 import { playClick } from "@/lib/click-sound"
+import { useLazyVideo } from "@/lib/use-lazy-video"
+import { IMAGE_DIMENSIONS } from "@/lib/image-dims"
 
 interface Spec       { label: string; value: string | string[] }
 interface Contact    { platform: string; handle: string; href: string }
@@ -30,6 +33,7 @@ interface ContentBlock {
   minimal?: boolean
   icon?: string
   imageLabels?: string[]
+  stackImages?: boolean
   note?: string
   insight?: string
   insightTitle?: string
@@ -61,6 +65,7 @@ interface Section {
   tabs?: { label: string; image: string }[]
   chapterVideo?: { src: string; chapters: { time: number; label: string }[] }
   imageLabels?: string[]
+  stackImages?: boolean
   hideToc?: boolean
   dividerAfter?: boolean
   dividerBefore?: boolean
@@ -146,13 +151,9 @@ function Lightbox({ item, onClose }: { item: LightboxItem; onClose: () => void }
           }}
         >
           {item.video
-            ? <video
+            ? <VideoWithControls
                 src={item.src}
-                autoPlay
-                muted
-                loop
-                playsInline
-                style={{ display: "block", maxWidth: "min(1100px, 90vw)", maxHeight: "85vh", objectFit: "contain" }}
+                videoStyle={{ maxWidth: "min(1100px, 90vw)", maxHeight: "85vh", objectFit: "contain" }}
               />
             /* eslint-disable-next-line @next/next/no-img-element */
             : <img
@@ -195,6 +196,88 @@ function Lightbox({ item, onClose }: { item: LightboxItem; onClose: () => void }
 
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Autoplaying video with a floating pause/replay control pair, top-right —
+// for standalone video moments (cover, lightbox), not thumbnails that already
+// open into the lightbox on click.
+function VideoWithControls({
+  src,
+  style,
+  videoStyle,
+}: {
+  src: string
+  style?: React.CSSProperties
+  videoStyle?: React.CSSProperties
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [playing, setPlaying] = useState(true)
+
+  const togglePlay = useCallback(() => {
+    const v = videoRef.current
+    if (!v) return
+    if (v.paused) { v.play().catch(() => {}) } else { v.pause() }
+  }, [])
+
+  const replay = useCallback(() => {
+    const v = videoRef.current
+    if (!v) return
+    v.currentTime = 0
+    v.play().catch(() => {})
+  }, [])
+
+  const btnStyle: React.CSSProperties = {
+    width: 36, height: 36, borderRadius: "50%",
+    backgroundColor: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)",
+    border: "none", cursor: "pointer",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    color: "#fff", padding: 0,
+  }
+
+  return (
+    <div style={{ position: "relative", lineHeight: 0, ...style }}>
+      <video
+        ref={videoRef}
+        src={src}
+        autoPlay
+        muted
+        loop={false}
+        playsInline
+        preload="metadata"
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+        style={{ width: "100%", display: "block", ...videoStyle }}
+      />
+      <div style={{ position: "absolute", top: 12, right: 12, display: "flex", gap: 8 }}>
+        <button
+          onClick={togglePlay}
+          aria-label={playing ? "Pause" : "Play"}
+          style={btnStyle}
+        >
+          {playing ? (
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+              <rect x="3" y="2" width="3" height="10" rx="1" />
+              <rect x="8" y="2" width="3" height="10" rx="1" />
+            </svg>
+          ) : (
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+              <path d="M3.5 2.3v9.4a.6.6 0 0 0 .9.5l7.4-4.7a.6.6 0 0 0 0-1L4.4 1.8a.6.6 0 0 0-.9.5Z" />
+            </svg>
+          )}
+        </button>
+        <button
+          onClick={replay}
+          aria-label="Replay"
+          style={btnStyle}
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M11.5 7A4.5 4.5 0 1 1 9.7 3.3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+            <path d="M9.2 1.6l.6 2.1-2.1.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  )
+}
+
 function SectionLabel({ text }: { text: string }) {
   return (
     <div style={{ marginBottom: 12 }}>
@@ -210,12 +293,87 @@ function SectionLabel({ text }: { text: string }) {
   )
 }
 
+// Renders a case-study image via next/image when its real dimensions are
+// known (so the browser gets responsive, correctly-sized variants instead of
+// full source resolution), falling back to a plain <img> otherwise so an
+// uncatalogued path never breaks — width/height only affects srcset
+// selection here since CSS still governs the rendered box size.
+function CaseStudyImage({
+  src,
+  alt,
+  style,
+  draggable,
+  quality = 90,
+  priority,
+  sizes = "(max-width: 900px) 100vw, 1264px",
+}: {
+  src: string
+  alt: string
+  style?: React.CSSProperties
+  draggable?: boolean
+  quality?: number
+  priority?: boolean
+  sizes?: string
+}) {
+  const dims = IMAGE_DIMENSIONS[src]
+  if (!dims) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={src} alt={alt} draggable={draggable} style={style} />
+    )
+  }
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      width={dims.width}
+      height={dims.height}
+      quality={quality}
+      priority={priority}
+      sizes={sizes}
+      draggable={draggable}
+      style={{ ...style, width: style?.width ?? "100%", height: style?.height ?? "auto" }}
+    />
+  )
+}
+
 function MediaBox({ src, video }: { src: string; video?: boolean }) {
   const openLightbox = useContext(LightboxContext)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [hovered, setHovered] = useState(false)
+  const [playing, setPlaying] = useState(true)
+  useLazyVideo(videoRef)
+
+  const togglePlay = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    const v = videoRef.current
+    if (!v) return
+    if (v.paused) { v.play().catch(() => {}) } else { v.pause() }
+  }, [])
+
+  const replay = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    const v = videoRef.current
+    if (!v) return
+    v.currentTime = 0
+    v.play().catch(() => {})
+  }, [])
+
+  const btnStyle: React.CSSProperties = {
+    width: 30, height: 30, borderRadius: "50%",
+    backgroundColor: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)",
+    border: "none", cursor: "pointer",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    color: "#fff", padding: 0,
+  }
+
   return (
     <div
       onClick={() => openLightbox({ src, video: !!video })}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       style={{
+        position: "relative",
         borderRadius: 8, overflow: "hidden",
         backgroundColor: "var(--surface)",
         border: "1px solid var(--border)",
@@ -223,10 +381,36 @@ function MediaBox({ src, video }: { src: string; video?: boolean }) {
       }}
     >
       {video
-        ? <video src={src} autoPlay muted loop playsInline preload="metadata" style={{ width: "100%", display: "block", pointerEvents: "none" }} />
+        ? <video ref={videoRef} src={src} autoPlay muted loop playsInline preload="metadata" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} style={{ width: "100%", display: "block" }} />
         /* eslint-disable-next-line @next/next/no-img-element */
-        : <img src={src} alt="" draggable={false} style={{ width: "100%", display: "block" }} />
+        : <CaseStudyImage src={src} alt="" draggable={false} style={{ width: "100%", display: "block" }} />
       }
+      {video && (
+        <div style={{
+          position: "absolute", top: 8, right: 8, display: "flex", gap: 6,
+          opacity: hovered ? 1 : 0, transition: "opacity 0.15s ease",
+          pointerEvents: hovered ? "auto" : "none",
+        }}>
+          <button onClick={togglePlay} aria-label={playing ? "Pause" : "Play"} style={btnStyle}>
+            {playing ? (
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="currentColor">
+                <rect x="3" y="2" width="3" height="10" rx="1" />
+                <rect x="8" y="2" width="3" height="10" rx="1" />
+              </svg>
+            ) : (
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="currentColor">
+                <path d="M3.5 2.3v9.4a.6.6 0 0 0 .9.5l7.4-4.7a.6.6 0 0 0 0-1L4.4 1.8a.6.6 0 0 0-.9.5Z" />
+              </svg>
+            )}
+          </button>
+          <button onClick={replay} aria-label="Replay" style={btnStyle}>
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+              <path d="M11.5 7A4.5 4.5 0 1 1 9.7 3.3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+              <path d="M9.2 1.6l.6 2.1-2.1.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
+      )}
     </div>
   )
 }
@@ -244,39 +428,176 @@ function MediaGrid({ srcs, videos }: { srcs?: string[]; videos?: string[] }) {
   )
 }
 
-function Bento({ items }: { items: BentoItem[] }) {
+// 16:10 cropped tile with a caption below — used for side-by-side labeled
+// comparisons. Hover reveals pause/replay for video tiles.
+function LabeledMediaTile({ src, video }: { src: string; video?: boolean }) {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [hovered, setHovered] = useState(false)
+  const [playing, setPlaying] = useState(true)
+  useLazyVideo(videoRef)
+
+  const togglePlay = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    const v = videoRef.current
+    if (!v) return
+    if (v.paused) { v.play().catch(() => {}) } else { v.pause() }
+  }, [])
+
+  const replay = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    const v = videoRef.current
+    if (!v) return
+    v.currentTime = 0
+    v.play().catch(() => {})
+  }, [])
+
+  const btnStyle: React.CSSProperties = {
+    width: 30, height: 30, borderRadius: "50%",
+    backgroundColor: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)",
+    border: "none", cursor: "pointer",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    color: "#fff", padding: 0,
+  }
+
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position:        "relative",
+        borderRadius:    8,
+        overflow:        "hidden",
+        backgroundColor: "var(--surface)",
+        border:          "1px solid var(--border)",
+        aspectRatio:     "16/10",
+        cursor:          "zoom-in",
+      }}
+    >
+      {video
+        ? <video ref={videoRef} src={src} autoPlay muted loop playsInline onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} style={{ width: "100%", height: "100%", display: "block", objectFit: "cover" }} />
+        /* eslint-disable-next-line @next/next/no-img-element */
+        : <CaseStudyImage src={src} alt="" draggable={false} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+      }
+      {video && (
+        <div style={{
+          position: "absolute", top: 8, right: 8, display: "flex", gap: 6,
+          opacity: hovered ? 1 : 0, transition: "opacity 0.15s ease",
+          pointerEvents: hovered ? "auto" : "none",
+        }}>
+          <button onClick={togglePlay} aria-label={playing ? "Pause" : "Play"} style={btnStyle}>
+            {playing ? (
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="currentColor">
+                <rect x="3" y="2" width="3" height="10" rx="1" />
+                <rect x="8" y="2" width="3" height="10" rx="1" />
+              </svg>
+            ) : (
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="currentColor">
+                <path d="M3.5 2.3v9.4a.6.6 0 0 0 .9.5l7.4-4.7a.6.6 0 0 0 0-1L4.4 1.8a.6.6 0 0 0-.9.5Z" />
+              </svg>
+            )}
+          </button>
+          <button onClick={replay} aria-label="Replay" style={btnStyle}>
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+              <path d="M11.5 7A4.5 4.5 0 1 1 9.7 3.3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+              <path d="M9.2 1.6l.6 2.1-2.1.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function BentoTile({ item }: { item: BentoItem }) {
   const openLightbox = useContext(LightboxContext)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [hovered, setHovered] = useState(false)
+  const [playing, setPlaying] = useState(true)
+  const mediaSrc = item.video ?? item.image
+  const isVideo  = !!item.video
+  useLazyVideo(videoRef)
+
+  const togglePlay = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    const v = videoRef.current
+    if (!v) return
+    if (v.paused) { v.play().catch(() => {}) } else { v.pause() }
+  }, [])
+
+  const replay = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    const v = videoRef.current
+    if (!v) return
+    v.currentTime = 0
+    v.play().catch(() => {})
+  }, [])
+
+  const btnStyle: React.CSSProperties = {
+    width: 30, height: 30, borderRadius: "50%",
+    backgroundColor: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)",
+    border: "none", cursor: "pointer",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    color: "#fff", padding: 0,
+  }
+
+  return (
+    <div
+      onClick={() => mediaSrc && openLightbox({ src: mediaSrc, video: isVideo })}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position:        "relative",
+        gridColumn:      item.span === 2 ? "span 2" : "span 1",
+        borderRadius:    8,
+        overflow:        "hidden",
+        border:          "1px solid var(--border)",
+        backgroundColor: "var(--surface)",
+        cursor:          mediaSrc ? "zoom-in" : undefined,
+      }}
+    >
+      {item.video && (
+        <video ref={videoRef} src={item.video} autoPlay muted loop playsInline preload="metadata" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} style={{ width: "100%", display: "block" }} />
+      )}
+      {item.image && <CaseStudyImage src={item.image} alt={item.label ?? ""} draggable={false} style={{ width: "100%", display: "block" }} />}
+      {item.video && (
+        <div style={{
+          position: "absolute", top: 8, right: 8, display: "flex", gap: 6,
+          opacity: hovered ? 1 : 0, transition: "opacity 0.15s ease",
+          pointerEvents: hovered ? "auto" : "none",
+        }}>
+          <button onClick={togglePlay} aria-label={playing ? "Pause" : "Play"} style={btnStyle}>
+            {playing ? (
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="currentColor">
+                <rect x="3" y="2" width="3" height="10" rx="1" />
+                <rect x="8" y="2" width="3" height="10" rx="1" />
+              </svg>
+            ) : (
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="currentColor">
+                <path d="M3.5 2.3v9.4a.6.6 0 0 0 .9.5l7.4-4.7a.6.6 0 0 0 0-1L4.4 1.8a.6.6 0 0 0-.9.5Z" />
+              </svg>
+            )}
+          </button>
+          <button onClick={replay} aria-label="Replay" style={btnStyle}>
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+              <path d="M11.5 7A4.5 4.5 0 1 1 9.7 3.3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+              <path d="M9.2 1.6l.6 2.1-2.1.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
+      )}
+      {item.label && (
+        <div style={{ padding: "6px 12px", fontSize: "0.5625rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "var(--c-faint)" }}>
+          {item.label}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function Bento({ items }: { items: BentoItem[] }) {
   return (
     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-      {items.map((item, i) => {
-        const mediaSrc = item.video ?? item.image
-        const isVideo  = !!item.video
-        return (
-          <div
-            key={i}
-            onClick={() => mediaSrc && openLightbox({ src: mediaSrc, video: isVideo })}
-            style={{
-              gridColumn:      item.span === 2 ? "span 2" : "span 1",
-              borderRadius:    8,
-              overflow:        "hidden",
-              border:          "1px solid var(--border)",
-              backgroundColor: "var(--surface)",
-              cursor:          mediaSrc ? "zoom-in" : undefined,
-            }}
-          >
-            {item.video && (
-              <video src={item.video} autoPlay muted loop playsInline preload="metadata" style={{ width: "100%", display: "block", pointerEvents: "none" }} />
-            )}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            {item.image && <img src={item.image} alt={item.label ?? ""} draggable={false} style={{ width: "100%", display: "block" }} />}
-            {item.label && (
-              <div style={{ padding: "6px 12px", fontSize: "0.5625rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "var(--c-faint)" }}>
-                {item.label}
-              </div>
-            )}
-          </div>
-        )
-      })}
+      {items.map((item, i) => <BentoTile key={i} item={item} />)}
     </div>
   )
 }
@@ -419,6 +740,7 @@ function ChapterVideo({ src, chapters }: { src: string; chapters: { time: number
   const [time, setTime]         = useState(0)
   const [playing, setPlaying]   = useState(true)
   const [dragging, setDragging] = useState(false)
+  useLazyVideo(videoRef)
 
   // timeupdate only fires ~4x/sec, which makes the progress bar visibly step.
   // Drive it off rAF instead, but only while playing and not mid-drag.
@@ -621,8 +943,7 @@ function TabView({ tabs }: { tabs: { label: string; image: string }[] }) {
       </div>
       <div style={{ borderRadius: 8, overflow: "hidden", border: "1px solid var(--border)", cursor: "zoom-in" }}
         onClick={() => openLightbox({ src: tabs[active].image, video: false })}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={tabs[active].image} alt={tabs[active].label} style={{ width: "100%", display: "block" }} />
+        <CaseStudyImage src={tabs[active].image} alt={tabs[active].label} style={{ width: "100%", display: "block" }} />
       </div>
     </div>
   )
@@ -634,8 +955,7 @@ function HighlightCarousel({ images }: { images: string[] }) {
   return (
     <div style={{ marginTop: 20 }}>
       <div style={{ overflow: "hidden", cursor: "zoom-in" }} onClick={() => openLightbox({ src: images[active], video: false })}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={images[active]} alt="" style={{ width: "100%", display: "block" }} />
+        <CaseStudyImage src={images[active]} alt="" style={{ width: "100%", display: "block" }} />
       </div>
       {images.length > 1 && (
         <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 12 }}>
@@ -746,8 +1066,7 @@ function renderContentBlock(block: ContentBlock, bi: number) {
         </div>
         {block.images && block.images.length > 0 && (
           <div style={{ borderRadius: 8, overflow: "hidden" }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={block.images[0]} alt="" style={{ width: "100%", display: "block" }} />
+            <CaseStudyImage src={block.images[0]} alt="" style={{ width: "100%", display: "block" }} />
           </div>
         )}
       </motion.div>
@@ -927,25 +1246,10 @@ function renderContentBlock(block: ContentBlock, bi: number) {
           ...allImages.map(s => ({ src: s, video: false })),
         ]
         return (
-          <div className="rsp-stack" style={{ display: "grid", gridTemplateColumns: `repeat(${allMedia.length}, 1fr)`, gap: 16, alignItems: "start" }}>
+          <div className="rsp-stack" style={{ display: "grid", gridTemplateColumns: block.stackImages ? "1fr" : `repeat(${allMedia.length}, 1fr)`, gap: 16, alignItems: "start" }}>
             {allMedia.map(({ src, video }, i) => (
               <div key={i} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                <div
-                  onClick={() => {}}
-                  style={{
-                    borderRadius:    8,
-                    overflow:        "hidden",
-                    backgroundColor: "var(--surface)",
-                    border:          "1px solid var(--border)",
-                    aspectRatio:     "16/10",
-                    cursor:          "zoom-in",
-                  }}
-                >
-                  {video
-                    ? <video src={src} autoPlay muted loop playsInline style={{ width: "100%", height: "100%", display: "block", objectFit: "cover", pointerEvents: "none" }} />
-                    : <img src={src} alt="" draggable={false} style={{ width: "100%", height: "100%", display: "block", objectFit: "cover" }} />
-                  }
-                </div>
+                <LabeledMediaTile src={src} video={video} />
                 {block.imageLabels![i] && (
                   <p style={{
                     fontFamily:    "var(--font-sans)",
@@ -1032,6 +1336,115 @@ function renderContentBlock(block: ContentBlock, bi: number) {
   )
 }
 
+// Media tile used inside the accordion's media/text rows — hover reveals
+// pause/replay for video tiles; clicking the tile body still opens the lightbox.
+function AccordionMediaTile({
+  src,
+  video,
+  objectPosition,
+  onOpen,
+  fill,
+}: {
+  src: string
+  video?: boolean
+  objectPosition?: string
+  onOpen: () => void
+  fill?: boolean
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [hovered, setHovered] = useState(false)
+  const [playing, setPlaying] = useState(true)
+  useLazyVideo(videoRef)
+
+  const togglePlay = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    const v = videoRef.current
+    if (!v) return
+    if (v.paused) { v.play().catch(() => {}) } else { v.pause() }
+  }, [])
+
+  const replay = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    const v = videoRef.current
+    if (!v) return
+    v.currentTime = 0
+    v.play().catch(() => {})
+  }, [])
+
+  const btnStyle: React.CSSProperties = {
+    width: 30, height: 30, borderRadius: "50%",
+    backgroundColor: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)",
+    border: "none", cursor: "pointer",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    color: "#fff", padding: 0,
+  }
+
+  return (
+    <div
+      onClick={onOpen}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position:     "relative",
+        borderRadius: fill ? 8 : 12,
+        overflow:     "hidden",
+        border:       "1px solid var(--border)",
+        cursor:       "zoom-in",
+        ...(fill ? { backgroundColor: "var(--surface)", height: "100%" } : {}),
+      }}
+    >
+      {video
+        ? <video
+            ref={videoRef}
+            src={src}
+            autoPlay muted loop playsInline preload="metadata"
+            onPlay={() => setPlaying(true)}
+            onPause={() => setPlaying(false)}
+            style={fill
+              ? { width: "100%", height: "100%", objectFit: "cover", objectPosition: objectPosition ?? "center center", display: "block" }
+              : { width: "100%", display: "block" }
+            }
+          />
+        : <CaseStudyImage
+            src={src}
+            alt=""
+            draggable={false}
+            style={fill
+              ? { width: "100%", height: "100%", objectFit: "cover", objectPosition: objectPosition ?? "center center" }
+              : { width: "100%", display: "block" }
+            }
+          />
+      }
+      {video && (
+        <div style={{
+          position: "absolute", top: 8, right: 8, display: "flex", gap: 6,
+          opacity: hovered ? 1 : 0, transition: "opacity 0.15s ease",
+          pointerEvents: hovered ? "auto" : "none",
+        }}>
+          <button onClick={togglePlay} aria-label={playing ? "Pause" : "Play"} style={btnStyle}>
+            {playing ? (
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="currentColor">
+                <rect x="3" y="2" width="3" height="10" rx="1" />
+                <rect x="8" y="2" width="3" height="10" rx="1" />
+              </svg>
+            ) : (
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="currentColor">
+                <path d="M3.5 2.3v9.4a.6.6 0 0 0 .9.5l7.4-4.7a.6.6 0 0 0 0-1L4.4 1.8a.6.6 0 0 0-.9.5Z" />
+              </svg>
+            )}
+          </button>
+          <button onClick={replay} aria-label="Replay" style={btnStyle}>
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+              <path d="M11.5 7A4.5 4.5 0 1 1 9.7 3.3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+              <path d="M9.2 1.6l.6 2.1-2.1.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
 function AccordionContents({ contents }: { contents: ContentBlock[] }) {
   const [active, setActive] = useState(0)
   const carouselRef = useRef<HTMLDivElement>(null)
@@ -1087,16 +1500,7 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
             >
               {/* Media — full bleed, rounded */}
               {src && (
-                <div
-                  onClick={() => openLightbox(src)}
-                  style={{ borderRadius: 12, overflow: "hidden", border: "1px solid var(--border)", cursor: "zoom-in" }}
-                >
-                  {src.video
-                    ? <video src={src.src} autoPlay muted loop playsInline preload="metadata" style={{ width: "100%", display: "block", pointerEvents: "none" }} />
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    : <img src={src.src} alt="" draggable={false} style={{ width: "100%", display: "block" }} />
-                  }
-                </div>
+                <AccordionMediaTile src={src.src} video={src.video} onOpen={() => openLightbox(src)} />
               )}
               {/* Text */}
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
@@ -1133,12 +1537,8 @@ function AccordionContents({ contents }: { contents: ContentBlock[] }) {
             return (
               <div key={i} style={{ minWidth: "100%", maxWidth: "100%", flexShrink: 0, overflow: "hidden", scrollSnapAlign: "start", display: "flex", flexDirection: "column", gap: 16 }}>
                 {src && (
-                  <div style={{ borderRadius: 8, overflow: "hidden", backgroundColor: "var(--surface)", border: "1px solid var(--border)", height: 260 }}>
-                    {src.video
-                      ? <video src={src.src} autoPlay muted loop playsInline preload="metadata" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: objPos, display: "block" }} />
-                      /* eslint-disable-next-line @next/next/no-img-element */
-                      : <img src={src.src} alt="" draggable={false} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: objPos, display: "block" }} />
-                    }
+                  <div style={{ height: 260 }}>
+                    <AccordionMediaTile src={src.src} video={src.video} objectPosition={objPos} onOpen={() => openLightbox(src)} fill />
                   </div>
                 )}
                 <div style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
@@ -1978,7 +2378,7 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
         />
       )}
       {!sec.beforeAfter && !sec.tabs && hasTopMedia && sec.imageLabels && (
-        <div className="rsp-stack" style={{ display: "grid", gridTemplateColumns: `repeat(${topImages.length}, 1fr)`, gap: 16 }}>
+        <div className="rsp-stack" style={{ display: "grid", gridTemplateColumns: sec.stackImages ? "1fr" : `repeat(${topImages.length}, 1fr)`, gap: 16 }}>
           {topImages.map((src, i) => (
             <div key={i} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <MediaBox src={src} />
@@ -2260,9 +2660,8 @@ export default function CaseStudyLayout({
                 }}
               >
                 {cover.endsWith(".mp4") || cover.endsWith(".webm")
-                  ? <video src={cover} autoPlay muted loop playsInline preload="metadata" style={{ width: "100%", objectFit: "contain", display: "block" }} />
-                  : /* eslint-disable-next-line @next/next/no-img-element */
-                    <img src={cover} alt={title} draggable={false} style={{ width: "100%", objectFit: "contain", display: "block" }} />
+                  ? <VideoWithControls src={cover} videoStyle={{ objectFit: "contain" }} />
+                  : <CaseStudyImage src={cover} alt={title} draggable={false} priority style={{ width: "100%", objectFit: "contain" }} />
                 }
               </motion.div>
             )}
