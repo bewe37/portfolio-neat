@@ -7,7 +7,7 @@ import { ArrowUpRight } from "@phosphor-icons/react"
 import Link from "next/link"
 import { playClick } from "@/lib/click-sound"
 
-const HIDDEN_NAV_PATHS = ["/explore"]
+const HIDDEN_NAV_PATHS = ["/explore", "/v2"]
 
 const MotionLink = motion(Link)
 

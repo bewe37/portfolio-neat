@@ -38,7 +38,7 @@ function Sparkle({ spinning }: { spinning: boolean }) {
 }
 
 const CASE_STUDY_PATHS = ["/amd_ai_project", "/amd_project", "/fme_annotation_project", "/blueprint", "/gallery"]
-const HIDDEN_NAV_PATHS = ["/explore"]
+const HIDDEN_NAV_PATHS = ["/explore", "/v2"]
 
 export default function SharedNav() {
   const pathname = usePathname()

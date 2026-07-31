@@ -6,7 +6,7 @@ import Link from "next/link"
 import { playClick } from "@/lib/click-sound"
 
 const LINKS = [
-  { href: "/", label: "Work" },
+  { href: "/#work", label: "Work" },
   { href: "/about", label: "About" },
 ]
 
@@ -18,8 +18,10 @@ export default function HeaderNav() {
   const [contactOpen, setContactOpen] = useState(false)
   const contactRef = useRef<HTMLDivElement>(null)
 
+  // "Work" links to a section anchor on the homepage, not a distinct route,
+  // so it never gets the active-pill treatment — only real pages (About) do.
   const activeIdx = LINKS.findIndex(({ href }) => {
-    if (href === "/") return pathname === "/"
+    if (href.startsWith("/#")) return false
     return pathname.startsWith(href)
   })
 

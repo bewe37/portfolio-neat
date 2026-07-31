@@ -41,14 +41,18 @@ export default function AboutPage() {
   return (
     <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
 
-      {/* Hero gallery — constrained to content width, text overlay */}
-      <div style={{ width: "100%", padding: "0 48px", marginTop: 80 }} className="rsp-px">
+      {/* Hero gallery — constrained to content width, text overlay. Sits
+          first on desktop; reordered to just above the footer on mobile
+          (see .rsp-about-gallery / .rsp-about-footer in globals.css) since a
+          full-width drag-to-pan canvas above the fold ate the whole first
+          screen on a phone before any bio copy was visible. */}
+      <div style={{ width: "100%", padding: "0 48px", marginTop: 80 }} className="rsp-px rsp-about-gallery">
         <div style={{ maxWidth: 1340, margin: "0 auto", borderRadius: 12, overflow: "hidden", height: 560 }}>
           <GalleryCanvas />
         </div>
       </div>
 
-      <main style={{ width: "100%", padding: "0 48px", display: "flex", flexDirection: "column" }} className="rsp-px">
+      <main style={{ width: "100%", padding: "0 48px", display: "flex", flexDirection: "column" }} className="rsp-px rsp-about-main">
         <FadeUp delay={0}>
           <section style={{ padding: "24px 0 64px", maxWidth: 1340, margin: "0 auto", width: "100%" }}>
             <div style={{ display: "flex", flexDirection: "column" }}>
@@ -116,7 +120,9 @@ export default function AboutPage() {
           </section>
         </FadeUp>
       </main>
-      <MarqueeFooter />
+      <div className="rsp-about-footer">
+        <MarqueeFooter />
+      </div>
     </div>
   )
 }

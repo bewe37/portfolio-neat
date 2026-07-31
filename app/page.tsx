@@ -7,6 +7,7 @@ import MarqueeFooter from "@/components/MarqueeFooter"
 import FadeUp from "@/components/FadeUp"
 import OnboardingLightbox from "@/components/OnboardingLightbox"
 import CompanionThumbnail from "@/components/CompanionThumbnail"
+import { playClick } from "@/lib/click-sound"
 import dynamic from "next/dynamic"
 
 const HeroParticles = dynamic<{ hovered: boolean; scrollProgress?: number }>(() => import("@/components/HeroParticles"), { ssr: false })
@@ -16,7 +17,7 @@ const VIBE_PROJECTS = [
     title: "An Archive of Toronto's Painted Utility Boxes",
     category: "Photography",
     date: "Check em out →",
-    description: "A self-initiated archive of every painted utility box found across Toronto — documenting the street artists turning infrastructure into canvas.",
+    description: "A self-initiated archive of every painted utility box found across Toronto, documenting the street artists turning infrastructure into canvas.",
     href: "https://outside-the-box-tau.vercel.app/gallery",
     cover: "/OTBThumbnailDark.mp4",
     coverFit: "contain" as const,
@@ -28,7 +29,7 @@ const VIBE_PROJECTS = [
     title: "An On/Off Toggle, But Traffic Light",
     category: "Vibe Coded",
     date: "",
-    description: "A tactile power switch that glows red when it's off — the kind of small detail that makes a toggle feel like it's actually doing something.",
+    description: "A tactile power switch that glows red when it's off, the kind of small detail that makes a toggle feel like it's actually doing something.",
     href: "https://github.com/bewe37",
     cover: "/ToggleSkeuo.mp4",
     comingSoon: true,
@@ -37,7 +38,7 @@ const VIBE_PROJECTS = [
     title: "My Unhealthy Obsession Over Skeuomorphic Design",
     category: "Vibe Coded",
     date: "",
-    description: "A skeuomorphic command palette — brushed metal, tactile keys, real physics. Built because flat design took something away.",
+    description: "A skeuomorphic command palette: brushed metal, tactile keys, real physics. Built because flat design took something away.",
     href: "https://github.com/bewe37",
     cover: "/skeuomorphicCommand.mp4",
     carousel: ["/skeuomorphicCommand.mp4", "/SkeuomorphicCalendarShort.mp4"],
@@ -47,7 +48,7 @@ const VIBE_PROJECTS = [
     title: "Subscription Plan Component",
     category: "Vibe Coded",
     date: "",
-    description: "A multi-step subscription flow with animated billing toggle, payment form, and success state — built from a static design.",
+    description: "A multi-step subscription flow with animated billing toggle, payment form, and success state, built from a static design.",
     href: "/subscription_plan",
     cover: "/SubThumb.mp4",
     comingSoon: true,
@@ -56,7 +57,7 @@ const VIBE_PROJECTS = [
     title: "CRT Portfolio Website",
     category: "Vibe Coded",
     date: "Check em out →",
-    description: "This portfolio — designed and built from scratch with Next.js, framer-motion stickers, and a lot of obsessing over details.",
+    description: "This portfolio, designed and built from scratch with Next.js, framer-motion stickers, and a lot of obsessing over details.",
     href: "https://gbryanwt.com/",
     cover: "/PortfolioThumbnail.mp4",
   },
@@ -69,7 +70,7 @@ const PROJECTS = [
     date: "May - Dec 2025",
     description: "Designing a conversational AI assistant embedded in AMD's Adrenalin software for millions of gamers.",
     href: "/amd_ai_project",
-    cover: "/ThumbnailNewAMD.mp4",
+    cover: "/AMDThumbnailNew.mp4",
     badge: "/amdchip.svg",
   },
   {
@@ -111,6 +112,7 @@ export default function HomePage() {
 
   function handleBeautifulClick(e: React.MouseEvent) {
     e.stopPropagation()
+    playClick()
     const next = !heroHovered
     setHeroHovered(next)
     if (flowerTimerRef.current) clearTimeout(flowerTimerRef.current)
@@ -203,7 +205,7 @@ export default function HomePage() {
               </button>
               {" "}
               <button
-                onClick={() => document.getElementById("work")?.scrollIntoView({ behavior: "smooth" })}
+                onClick={() => { playClick(); document.getElementById("work")?.scrollIntoView({ behavior: "smooth" }) }}
                 aria-label="Scroll to work"
                 className="rsp-hide-mobile"
                 style={{

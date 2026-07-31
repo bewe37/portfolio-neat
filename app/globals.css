@@ -136,6 +136,14 @@ body.theme-switching * {
 
 html {
   scroll-behavior: smooth;
+  /* Reserves the scrollbar's width whether or not it's actually showing,
+     so toggling document.body.style.overflow (e.g. locking scroll while a
+     modal/sheet is open) never changes the page's visible content width.
+     Without this, removing the scroll lock on close re-introduces the
+     scrollbar and shifts everything left by its width — enough to force
+     Framer Motion's layoutId-based shared-element animations (like the
+     /v2 tab pill) to recalculate their position and visibly snap. */
+  scrollbar-gutter: stable;
 }
 
 body.gallery-open [data-shared-nav],
@@ -325,6 +333,15 @@ a {
 
   /* About: center tamagotchi below text */
   .rsp-tama      { display: flex !important; justify-content: center !important; }
+
+  /* About: gallery moves from the top hero spot to just above the footer.
+     All three are direct children of the same flex column, so reordering
+     is just `order` — no JSX restructuring needed. Default (unset) order
+     is 0 for all three, so explicit values are needed on every sibling,
+     not just the one moving. */
+  .rsp-about-gallery { order: 2 !important; margin-top: 0 !important; }
+  .rsp-about-main    { order: 1 !important; }
+  .rsp-about-footer  { order: 3 !important; }
 
   /* Case study heading */
   .rsp-cs-h1     { font-size: 1.375rem !important; line-height: 1.2 !important; margin-bottom: 24px !important; }

@@ -89,9 +89,48 @@ interface GalleryCanvasProps {
   fullPage?: boolean
   showFilters?: boolean
   showClose?: boolean
+  // When provided, the expand/close button calls these instead of
+  // navigating via next/link — lets a caller swap to a fullscreen
+  // instance in place rather than routing to /gallery.
+  onExpand?: () => void
+  onClose?: () => void
+  // Static override for the boxed (non-fullPage) canvas height in px.
+  // Just a different constant — no dynamic/container-relative sizing
+  // (that path caused real WebGL resize bugs; see git history).
+  boxHeight?: number
+  // Canvas fills 100% of its parent's height instead of a fixed px
+  // value. Only safe when the parent's own height is static (not
+  // animating/resizing on every frame) — the existing ResizeObserver
+  // still handles legitimate one-off resizes (e.g. window resize) fine;
+  // what previously broke was a *continuously* animating parent racing
+  // the render loop's texture upload every frame.
+  fillParent?: boolean
+  // Overrides the click sound used by the filter pills and expand/close
+  // buttons. Defaults to the site-wide playClick so /about and /gallery
+  // are unaffected — /v2 passes its own playV2Click for consistency.
+  onSound?: () => void
+  // Restyles the filter pills to match /v2's tab look (light surface pill,
+  // white active tab with shadow, dark text) instead of the gallery's
+  // default dark/glassy treatment. /about and /gallery keep the default.
+  filterVariant?: "default" | "v2"
+  // Skips the card-flip animation on filter change — images swap instantly
+  // instead. /about and /gallery keep the flip; /v2/about opts out of it.
+  disableFlip?: boolean
 }
 
-export function GalleryCanvas({ fullPage = false, showFilters = false, showClose = false }: GalleryCanvasProps) {
+export function GalleryCanvas({
+  fullPage = false,
+  showFilters = false,
+  showClose = false,
+  onExpand,
+  onClose,
+  boxHeight = 600,
+  fillParent = false,
+  onSound,
+  filterVariant = "default",
+  disableFlip = false,
+}: GalleryCanvasProps) {
+  const sound = onSound ?? playClick
   const canvasRef    = useRef<HTMLCanvasElement>(null)
   const offscreenRef = useRef<HTMLCanvasElement | null>(null)
   const [activeFilter, setActiveFilter] = useState<ImageTag | "all">("all")
@@ -263,6 +302,21 @@ export function GalleryCanvas({ fullPage = false, showFilters = false, showClose
 
     function startFlip() {
       const next = filteredFor(pendingFilterRef.current)
+      filterRef.current = pendingFilterRef.current
+
+      if (disableFlip) {
+        // Instant swap — no rotation, no stagger.
+        cards.forEach(card => {
+          const item = next[(card.row * COLS + card.col) % next.length]
+          card.imgIdx = item.i
+          card.nextIdx = item.i
+          card.swapped = true
+          card.flip = 0
+        })
+        idle = false
+        return
+      }
+
       const maxDiag = (ROWS - 1) + (COLS - 1)
       cards.forEach(card => {
         const item = next[(card.row * COLS + card.col) % next.length]
@@ -274,7 +328,6 @@ export function GalleryCanvas({ fullPage = false, showFilters = false, showClose
         // Diagonal wave: top-left flips first, bottom-right last.
         card.delay = ((card.row + card.col) / maxDiag) * FLIP_STAGGER
       })
-      filterRef.current = pendingFilterRef.current
       flipActive = true
       flipT = 0
       idle = false
@@ -466,37 +519,84 @@ export function GalleryCanvas({ fullPage = false, showFilters = false, showClose
   }
 
   return (
-    <div style={{ position: "relative", borderRadius: fullPage ? 0 : 8, overflow: "hidden" }}>
+    <div style={{ position: "relative", height: fillParent ? "100%" : undefined, borderRadius: fullPage ? 0 : 8, overflow: "hidden" }}>
       <canvas
         ref={canvasRef}
         style={{
           width: "100%",
-          height: fullPage ? "100dvh" : 600,
+          height: fullPage ? "100dvh" : fillParent ? "100%" : boxHeight,
           display: "block", cursor: "grab",
+          // Without this, a touch-drag pans the gallery *and* the browser's
+          // default touch-scroll fires at the same time, so the page keeps
+          // scrolling underneath while the user is trying to pan the
+          // canvas — most noticeable in the boxed (non-fullscreen) view,
+          // which sits inside a normally-scrollable page.
+          touchAction: "none",
         }}
       />
 
       {showFilters && (
-        <div style={{
-          position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)",
-          zIndex: 10, display: "flex", gap: 4,
-          background: "rgba(255,255,255,0.08)", backdropFilter: "blur(12px)",
-          borderRadius: 999, padding: "4px", border: "1px solid rgba(255,255,255,0.1)",
-        }}>
+        <div style={
+          filterVariant === "v2"
+            ? {
+                position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)",
+                zIndex: 10, display: "flex", gap: 3,
+                background: "rgba(255,255,255,0.12)", backdropFilter: "blur(12px)",
+                borderRadius: 10, padding: 3, border: "1px solid rgba(255,255,255,0.14)",
+              }
+            : {
+                position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)",
+                zIndex: 10, display: "flex", gap: 4,
+                background: "rgba(255,255,255,0.08)", backdropFilter: "blur(12px)",
+                borderRadius: 999, padding: "4px", border: "1px solid rgba(255,255,255,0.1)",
+              }
+        }>
           {FILTERS.map(f => (
-            <button key={f.value} onClick={() => { playClick(); setActiveFilter(f.value) }} style={{
-              fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 500,
-              letterSpacing: "-0.01em", textTransform: "none",
-              padding: "6px 16px", borderRadius: 999, border: "none",
-              cursor: "pointer", position: "relative", background: "transparent",
-              color: activeFilter === f.value ? "#111" : "rgba(255,255,255,0.5)",
-              transition: "color 0.2s ease", zIndex: 1,
-            }}>
+            <button
+              key={f.value}
+              onClick={() => { sound(); setActiveFilter(f.value) }}
+              style={
+                filterVariant === "v2"
+                  ? {
+                      fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 500,
+                      letterSpacing: "-0.01em", textTransform: "none",
+                      padding: "6px 14px", borderRadius: 8, border: "1px solid transparent",
+                      cursor: "pointer", position: "relative", background: "transparent",
+                      color: activeFilter === f.value ? "#1A1A1A" : "rgba(255,255,255,0.6)",
+                      transition: "color 0.15s ease", zIndex: 1,
+                    }
+                  : {
+                      fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 500,
+                      letterSpacing: "-0.01em", textTransform: "none",
+                      padding: "6px 16px", borderRadius: 999, border: "none",
+                      cursor: "pointer", position: "relative", background: "transparent",
+                      color: activeFilter === f.value ? "#111" : "rgba(255,255,255,0.5)",
+                      transition: "color 0.2s ease", zIndex: 1,
+                    }
+              }
+            >
               {activeFilter === f.value && (
-                <motion.div layoutId="filter-pill" style={{
-                  position: "absolute", inset: 0, borderRadius: 999,
-                  background: "rgba(255,255,255,0.9)", zIndex: -1,
-                }} transition={{ type: "spring", stiffness: 400, damping: 30 }} />
+                <motion.div
+                  layoutId="filter-pill"
+                  style={
+                    filterVariant === "v2"
+                      ? {
+                          position: "absolute", inset: 0, borderRadius: 8,
+                          background: "rgba(255,255,255,0.95)",
+                          boxShadow: "0 1px 3px rgba(0,0,0,0.15), 0 1px 2px -1px rgba(0,0,0,0.15)",
+                          zIndex: -1,
+                        }
+                      : {
+                          position: "absolute", inset: 0, borderRadius: 999,
+                          background: "rgba(255,255,255,0.9)", zIndex: -1,
+                        }
+                  }
+                  transition={
+                    filterVariant === "v2"
+                      ? { type: "spring", stiffness: 500, damping: 40 }
+                      : { type: "spring", stiffness: 400, damping: 30 }
+                  }
+                />
               )}
               {f.label}
             </button>
@@ -505,17 +605,33 @@ export function GalleryCanvas({ fullPage = false, showFilters = false, showClose
       )}
 
       {showClose ? (
-        <Link href="/about" onClick={() => playClick()} style={{ ...btnStyle, textDecoration: "none" }}>
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-          </svg>
-        </Link>
+        onClose ? (
+          <button onClick={() => { sound(); onClose() }} style={{ ...btnStyle, textDecoration: "none" }}>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </button>
+        ) : (
+          <Link href="/about" onClick={() => playClick()} style={{ ...btnStyle, textDecoration: "none" }}>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </Link>
+        )
       ) : (
-        <Link href="/gallery" onClick={() => playClick()} style={{ ...btnStyle, textDecoration: "none" }}>
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-            <path d="M1 6V1h5M10 1h5v5M15 10v5h-5M6 15H1v-5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </Link>
+        onExpand ? (
+          <button onClick={() => { sound(); onExpand() }} style={{ ...btnStyle, textDecoration: "none" }}>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <path d="M1 6V1h5M10 1h5v5M15 10v5h-5M6 15H1v-5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        ) : (
+          <Link href="/gallery" onClick={() => playClick()} style={{ ...btnStyle, textDecoration: "none" }}>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <path d="M1 6V1h5M10 1h5v5M15 10v5h-5M6 15H1v-5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </Link>
+        )
       )}
     </div>
   )

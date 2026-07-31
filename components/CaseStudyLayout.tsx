@@ -381,7 +381,7 @@ function MediaBox({ src, video }: { src: string; video?: boolean }) {
       }}
     >
       {video
-        ? <video ref={videoRef} src={src} autoPlay muted loop playsInline preload="metadata" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} style={{ width: "100%", display: "block" }} />
+        ? <video ref={videoRef} src={src} muted loop playsInline preload="metadata" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} style={{ width: "100%", display: "block" }} />
         /* eslint-disable-next-line @next/next/no-img-element */
         : <CaseStudyImage src={src} alt="" draggable={false} style={{ width: "100%", display: "block" }} />
       }
@@ -412,6 +412,60 @@ function MediaBox({ src, video }: { src: string; video?: boolean }) {
         </div>
       )}
     </div>
+  )
+}
+
+// Image variant of MediaBox for a section that links elsewhere (sec.href) —
+// the image itself becomes the click target instead of only the title text
+// above it, with a "Click me!" tooltip on hover so it doesn't read as inert.
+function LinkedMediaBox({ src, href }: { src: string; href: string }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <Link
+      href={href}
+      onClick={() => playClick()}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position: "relative",
+        display: "block",
+        borderRadius: 8,
+        overflow: "visible",
+        cursor: "pointer",
+      }}
+    >
+      <div style={{
+        borderRadius: 8,
+        overflow: "hidden",
+        backgroundColor: "var(--surface)",
+        border: "1px solid var(--border)",
+        transform: hovered ? "scale(1.01)" : "scale(1)",
+        transition: "transform 0.3s cubic-bezier(0.22,1,0.36,1)",
+      }}>
+        <CaseStudyImage src={src} alt="" draggable={false} style={{ width: "100%", display: "block" }} />
+      </div>
+      <div style={{
+        position: "absolute",
+        top: 16,
+        left: "50%",
+        transform: `translate(-50%, ${hovered ? "0" : "6px"})`,
+        opacity: hovered ? 1 : 0,
+        transition: "opacity 0.15s ease, transform 0.15s ease",
+        pointerEvents: "none",
+        padding: "6px 12px",
+        borderRadius: 100,
+        backgroundColor: "rgba(0,0,0,0.7)",
+        backdropFilter: "blur(4px)",
+        color: "#fff",
+        fontFamily: "var(--font-sans)",
+        fontSize: "0.8125rem",
+        fontWeight: 500,
+        letterSpacing: "-0.01em",
+        whiteSpace: "nowrap",
+      }}>
+        Click me!
+      </div>
+    </Link>
   )
 }
 
@@ -474,7 +528,7 @@ function LabeledMediaTile({ src, video }: { src: string; video?: boolean }) {
       }}
     >
       {video
-        ? <video ref={videoRef} src={src} autoPlay muted loop playsInline onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} style={{ width: "100%", height: "100%", display: "block", objectFit: "cover" }} />
+        ? <video ref={videoRef} src={src} muted loop playsInline preload="metadata" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} style={{ width: "100%", height: "100%", display: "block", objectFit: "cover" }} />
         /* eslint-disable-next-line @next/next/no-img-element */
         : <CaseStudyImage src={src} alt="" draggable={false} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
       }
@@ -556,7 +610,7 @@ function BentoTile({ item }: { item: BentoItem }) {
       }}
     >
       {item.video && (
-        <video ref={videoRef} src={item.video} autoPlay muted loop playsInline preload="metadata" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} style={{ width: "100%", display: "block" }} />
+        <video ref={videoRef} src={item.video} muted loop playsInline preload="metadata" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} style={{ width: "100%", display: "block" }} />
       )}
       {item.image && <CaseStudyImage src={item.image} alt={item.label ?? ""} draggable={false} style={{ width: "100%", display: "block" }} />}
       {item.video && (
@@ -812,7 +866,7 @@ function ChapterVideo({ src, chapters }: { src: string; chapters: { time: number
         <video
           ref={videoRef}
           src={src}
-          autoPlay muted loop playsInline preload="metadata"
+          muted loop playsInline preload="metadata"
           onClick={togglePlay}
           onLoadedMetadata={e => setDuration(e.currentTarget.duration)}
           onPlay={() => setPlaying(true)}
@@ -1397,7 +1451,7 @@ function AccordionMediaTile({
         ? <video
             ref={videoRef}
             src={src}
-            autoPlay muted loop playsInline preload="metadata"
+            muted loop playsInline preload="metadata"
             onPlay={() => setPlaying(true)}
             onPause={() => setPlaying(false)}
             style={fill
@@ -2372,10 +2426,14 @@ function SectionBlock({ sec, id }: { sec: Section; id?: string }) {
       )}
 
       {!sec.beforeAfter && !sec.tabs && hasTopMedia && !sec.imageLabels && (
-        <MediaGrid
-          srcs={topImages.length ? topImages : undefined}
-          videos={sec.videos?.length ? sec.videos : undefined}
-        />
+        sec.href && sec.image && !sec.images && !sec.videos?.length ? (
+          <LinkedMediaBox src={sec.image} href={sec.href} />
+        ) : (
+          <MediaGrid
+            srcs={topImages.length ? topImages : undefined}
+            videos={sec.videos?.length ? sec.videos : undefined}
+          />
+        )
       )}
       {!sec.beforeAfter && !sec.tabs && hasTopMedia && sec.imageLabels && (
         <div className="rsp-stack" style={{ display: "grid", gridTemplateColumns: sec.stackImages ? "1fr" : `repeat(${topImages.length}, 1fr)`, gap: 16 }}>

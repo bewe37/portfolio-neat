@@ -1,14 +1,16 @@
 "use client"
 
+import { useRef } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { useLazyVideo } from "@/lib/use-lazy-video"
 
 const PROJECTS = [
   {
     title: "Rethinking the Overlay as a Control Surface",
     meta: "Product Design · Shipped 2025",
     href: "/amd_ai_project",
-    cover: "/ThumbnailNewAMD.mp4",
+    cover: "/AMDThumbnailNew.mp4",
     area: "wide",
   },
   {
@@ -43,6 +45,8 @@ const PROJECTS = [
 
 function ProjectTile({ project }: { project: (typeof PROJECTS)[number] }) {
   const isVideo = project.cover.endsWith(".mp4")
+  const videoRef = useRef<HTMLVideoElement>(null)
+  useLazyVideo(videoRef)
 
   return (
     <Link
@@ -63,8 +67,8 @@ function ProjectTile({ project }: { project: (typeof PROJECTS)[number] }) {
     >
       {isVideo ? (
         <video
+          ref={videoRef}
           src={project.cover}
-          autoPlay
           loop
           muted
           playsInline
@@ -197,7 +201,7 @@ export default function ExplorePage() {
               margin: 0,
             }}
           >
-            I work on complicated tools and dense software — the kind people depend on every day but rarely
+            I work on complicated tools and dense software, the kind people depend on every day but rarely
             feel good to use. Making those feel human is what I do.
           </p>
 

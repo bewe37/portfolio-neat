@@ -17,7 +17,7 @@ export default function AmdProject() {
         {
           label: "Overview",
           title: "No system, no standards, and a full redesign on the horizon.",
-          body: "When I joined AMD's UX team, the product didn't have a shared design foundation. Designers organized files differently, colors were applied inconsistently, and components varied from screen to screen. The team was also preparing for a full software redesign, which meant the inconsistency wasn't just a current problem. It was about to be a much bigger one. I took on building the design system from the ground up, not as a cleanup effort, but as the structural layer the redesign would be built on top of.",
+          body: "When I joined AMD's UX team, the product didn't have a shared design foundation. Designers organized files differently, colors were applied inconsistently, and components varied from screen to screen. The team was also preparing for a full software redesign, which meant the inconsistency wasn't just a current problem. So, I took on building the design system from the ground up, not as a cleanup effort, but as the structural layer the redesign would be built on top of.",
         },
         {
           label: "Goals",
@@ -64,7 +64,7 @@ export default function AmdProject() {
               body:  "I defined primitive tokens as the raw color palette and mapped them to semantic tokens applied across components. Components reference intent-driven values instead of hardcoded hex codes, so a single update propagates everywhere it matters.",
             },
             {
-              image: "/Tokens1.png",
+              image: "/SemanticTokens.png",
               body:   "Once the primitives were set, I mapped them to semantic tokens named by purpose or state. Components always reference role-based values, which made global updates straightforward and kept the system from drifting as it grew.",
             },
             {
@@ -85,7 +85,7 @@ export default function AmdProject() {
             {
               image:  "/ComponentAnatomy.png",
               title:  "Starting with the essentials.",
-              body:   "I began with the most-used components — buttons, navigation, inputs — and built outward as designs got stakeholder approval. Starting small kept the system manageable and let me validate the token layer before scaling.",
+              body:   "I began with the most-used components (buttons, navigation, inputs) and built outward as designs got stakeholder approval. Starting small kept the system manageable and let me validate the token layer before scaling.",
             },
             {
               image:  "/CommonComponents.png",
@@ -95,7 +95,7 @@ export default function AmdProject() {
             {
               image:  "/ApplyFoundationalDesignTokens.png",
               title:  "Tokens all the way down.",
-              body:   "Every component references tokens, never hardcoded values. As the system matured, I defined the rules behind each one — which radius applies at which nesting level, how spacing scales across sizes. Updates propagate everywhere without breaking anything.",
+              body:   "Every component references tokens, never hardcoded values. As the system matured, I defined the rules behind each one: which radius applies at which nesting level, how spacing scales across sizes. Updates propagate everywhere without breaking anything.",
             },
             {
               image:  "/ColorStructure.png",
